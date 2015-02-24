@@ -1,8 +1,6 @@
 # Enscalator
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/enscalator`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Enscalator is based on [bazaarvoice/cloudformation-ruby-dsl](https://github.com/bazaarvoice/cloudformation-ruby-dsl) and helps cloudforming en-japan applications
 
 ## Installation
 
@@ -22,7 +20,16 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+```ruby
+require 'enscalator'
+
+en_app('vpc-1234',{'a' => 'rtb-1234', 'c' => 'rtb-5678'},'sg-1234') do
+
+  # Whatever extra parameter/mappings/resources/output you need
+  # cf https://github.com/bazaarvoice/cloudformation-ruby-dsl
+
+end.exec!
+```
 
 ## Development
 
@@ -32,7 +39,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/enscalator/fork )
+1. Fork it ( https://github.com/en-japan/enscalator/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
