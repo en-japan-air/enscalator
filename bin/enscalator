@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'enscalator'
+require 'trollop'
+
+SUB_COMMANDS = %w(vpc)
+
+OPTS = Trollop::options do
+  opt :region, "AWS region to create stack", type: String
+end
+
+cmd = ARGV.shift # get the subcommand
+cmd_opts = case cmd
+  when "vpc" # do nothing
+    Trollop::options do
+    end
+  else
+    Trollop::die "unknown subcommand #{cmd.inspect}"
+  end
+
+

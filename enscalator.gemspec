@@ -27,4 +27,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
 
   spec.add_runtime_dependency "cloudformation-ruby-dsl", "~> 0.4"
+  spec.add_runtime_dependency 'trollop', '~> 2.1'
+
 end
