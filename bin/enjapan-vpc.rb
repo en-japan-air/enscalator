@@ -336,9 +336,9 @@ rich_template do
               :AssociatePublicIpAddress => 'true',
               :DeviceIndex => '0',
               :SubnetId => ref('PublicSubnet1'),
+              :GroupSet => [ ref('NATSecurityGroup') ],
           },
       ],
-      :SecurityGroupIds => [ ref('NATSecurityGroup') ],
       :Tags => [
           { :Key => 'Name', :Value => 'NATDevice1' },
       ],
@@ -354,9 +354,9 @@ rich_template do
               :AssociatePublicIpAddress => 'true',
               :DeviceIndex => '0',
               :SubnetId => ref('PublicSubnet2'),
+              :GroupSet => [ ref('NATSecurityGroup') ],
           },
       ],
-      :SecurityGroupIds => [ ref('NATSecurityGroup') ],
       :Tags => [
           { :Key => 'Name', :Value => 'NATDevice2' },
       ],

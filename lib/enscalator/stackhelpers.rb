@@ -22,8 +22,8 @@ def select_outputs(outputs, keys)
 end
 
 def get_resource(stack,key)
-  resource = stack(resource)
-  resource.nil? ? select_output(stack.outputs,key) : resource.physical_resource_id 
+  resource = stack.resource(key).physical_resource_id rescue nil
+  resource.nil? ? select_output(stack.outputs,key) : resource
 end
 
 def generate_parameters(stack, keys)
