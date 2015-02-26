@@ -2,7 +2,7 @@ require 'cloudformation-ruby-dsl/cfntemplate'
 require_relative 'richtemplate'
 
 def en_app(vpc: nil,
-           start_ip_idx: nil,
+           start_ip_idx: 4,
            private_route_tables: {},
            private_security_group: '',
            &block)
@@ -51,7 +51,7 @@ module Enscalator
 
       mapping 'AWSRegionNetConfig',
         (EnJapanConfiguration::vpc_net_mapping.map do |k,v|
-          subs = IPAddress(v[:VPC]).subnet(24).drop(start_ip_idx.to_i).take(4).map(&:to_string)
+          subs = IPAddress(v[:VPC]).subnet(24).drop(start_ip_idx).take(4).map(&:to_string)
           {
             k => {
               :applicationA => subs[0], :applicationC => subs[1],
