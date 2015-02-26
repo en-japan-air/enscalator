@@ -23,7 +23,9 @@ Or install it yourself as:
 ```ruby
 require 'enscalator'
 
-en_app('vpc-1234',{'a' => 'rtb-1234', 'c' => 'rtb-5678'},'sg-1234') do
+en_app(vpc: 'vpc-1234', start_ip_idx: '4',
+    private_route_tables: {'a' => 'rtb-1234', 'c' => 'rtb-5678'},
+    private_security_group: 'sg-1234') do
 
   # Whatever extra parameter/mappings/resources/output you need
   # cf https://github.com/bazaarvoice/cloudformation-ruby-dsl
