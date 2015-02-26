@@ -172,6 +172,11 @@ module Enscalator
       File.write(temp_file, template_string)
 
       cmdline = ['aws', 'cloudformation'] + ARGV + ['--template-body', 'file://' + temp_file] + cfn_tags_options
+      cfn_params, cmdline = extract_options(cmdline, %w(), %w(--parameters))
+      if cfn_params.count > 1
+        cfn_params = cfn_params.drop(1).first.split(';').map {|x| key, val = x.split('='); {'ParameterKey' => key, 'ParameterValue' => val}}
+        cmdline = cmdline + ['--parameters', cfn_params.to_json]
+      end
 
       # Add the required default capability if no capabilities were specified
       cmdline = cmdline + ['--capabilities', 'CAPABILITY_IAM'] if not ARGV.include?('--capabilities') or ARGV.include?('-c')
