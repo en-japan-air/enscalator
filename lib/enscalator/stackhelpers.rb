@@ -27,7 +27,7 @@ def get_resource(stack,key)
 end
 
 def generate_parameters(stack, keys)
-  return keys.map do |k| 
+  keys.map do |k| 
     v = get_resource(stack,k)
     { :parameter_key => k, :parameter_value => v }
   end
