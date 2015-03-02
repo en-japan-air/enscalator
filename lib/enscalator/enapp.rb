@@ -57,8 +57,6 @@ module Enscalator
       mapping 'AWSRegionNetConfig',
         (EnJapanConfiguration::mapping_vpc_net.map do |k,v|
           subs = IPAddress(v[:VPC]).subnet(24).map(&:to_string).drop(start_ip_idx).take(4)
-        (EnJapanConfiguration::vpc_net_mapping.map do |k,v|
-          subs = IPAddress(v[:VPC]).subnet(24).drop(start_ip_idx).take(4).map(&:to_string)
           {
             k => {
               :applicationA => subs[0], :applicationC => subs[1],
