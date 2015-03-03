@@ -33,6 +33,10 @@ en_app(vpc: 'vpc-1234', start_ip_idx: 4,
 end.exec!
 ```
 
+```bash
+$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;MyKey=MyValue'
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
