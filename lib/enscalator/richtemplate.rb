@@ -16,7 +16,7 @@ module Enscalator
       value :Description => desc
     end
 
-    def vpc(name, cidr, enableDnsSupport:nil, enableDnsHostnames:nil, dependsOn:[], tags:{}) 
+    def vpc(name, cidr, enableDnsSupport:nil, enableDnsHostnames:nil, dependsOn:[], tags:{})
       properties = {
         :CidrBlock => cidr,
       }
@@ -103,9 +103,19 @@ module Enscalator
 
     end
 
+    def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
+      parameter "#{instance_name}AllocatedStorage",
+        :Default => default.to_s,
+        :Description => "The size of the #{instance_name} (Gb)",
+        :Type => 'Number',
+        :MinValue => min.to_s,
+        :MaxValue => max.to_s,
+        :ConstraintDescription => "must be between #{min} and #{max}Gb."
+    end
+
     def parameter_instance_class(instance_name, default: 't2.micro', allowed_values:[])
       allowed = allowed_values.any? ? allowed_values :
-                %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
+        %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
                    m1.large m1.xlarge m2.xlarge m2.2xlarge m2.4xlarge m3.medium
                    m3.large m3.xlarge m3.2xlarge c1.medium c1.xlarge c3.large
                    c3.xlarge c3.2xlarge c3.4xlarge c3.8xlarge c4.large c4.xlarge
