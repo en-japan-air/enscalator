@@ -1,7 +1,7 @@
 
 module Enscalator
   class EnJapanConfiguration
-    def self.vpc_net_mapping
+    def self.mapping_vpc_net
       {
         'us-east-1' => { :VPC => '10.0.0.0/16', :Public1 => '10.0.0.0/24', :Public2 => '10.0.4.0/24' },
         'us-west-2' => { :VPC => '10.8.0.0/16', :Public1 => '10.8.0.0/24', :Public2 => '10.8.4.0/24' },

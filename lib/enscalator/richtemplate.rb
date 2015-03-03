@@ -12,6 +12,10 @@ module Enscalator
       tags.map { |k,v| {:Key => k, :Value => v}}
     end
 
+    def description(desc)
+      value :Description => desc
+    end
+
     def vpc(name, cidr, enableDnsSupport:nil, enableDnsHostnames:nil, dependsOn:[], tags:{}) 
       properties = {
         :CidrBlock => cidr,
@@ -121,9 +125,24 @@ module Enscalator
       }
       options[:DependsOn] = dependsOn unless dependsOn.empty?
       resource name, options
-
     end
 
+    def parameter(name, options)
+      default(:Parameters, {})[name] = options
+      @parameters[name] ||= options[:Default]
+      class_eval do
+        define_method :"ref_#{name.underscore}" do
+          ref(name)
+        end
+      end
+    end
+
+    def method_missing(m, *args, &block)
+      if m =~ /\Aref_/
+        name = m.to_s.scan(/\Aref_(.*)/).flatten.first
+        ref(name.camelize)
+      end
+    end
 
     def exec!()
       cfn_cmd_2(self)

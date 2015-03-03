@@ -99,7 +99,7 @@ rich_template do
           }
 
   mapping 'AWSRegionNetConfig',
-          Enscalator::EnJapanConfiguration::vpc_net_mapping
+          Enscalator::EnJapanConfiguration::mapping_vpc_net
 
   resource 'VPC', :Type => 'AWS::EC2::VPC', :Properties => {
       :CidrBlock => find_in_map('AWSRegionNetConfig', aws_region, 'VPC'),
