@@ -16,7 +16,7 @@ module Enscalator
       value :Description => desc
     end
 
-    def vpc(name, cidr, enableDnsSupport:nil, enableDnsHostnames:nil, dependsOn:[], tags:{}) 
+    def vpc(name, cidr, enableDnsSupport:nil, enableDnsHostnames:nil, dependsOn:[], tags:{})
       properties = {
         :CidrBlock => cidr,
       }
@@ -101,6 +101,34 @@ module Enscalator
       raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
       raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
 
+    end
+
+    def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
+      parameter "#{instance_name}AllocatedStorage",
+        :Default => default.to_s,
+        :Description => "The size of the #{instance_name} (Gb)",
+        :Type => 'Number',
+        :MinValue => min.to_s,
+        :MaxValue => max.to_s,
+        :ConstraintDescription => "must be between #{min} and #{max}Gb."
+    end
+
+    def parameter_instance_class(instance_name, default: 't2.micro', allowed_values:[])
+      allowed = allowed_values.any? ? allowed_values :
+        %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
+                   m1.large m1.xlarge m2.xlarge m2.2xlarge m2.4xlarge m3.medium
+                   m3.large m3.xlarge m3.2xlarge c1.medium c1.xlarge c3.large
+                   c3.xlarge c3.2xlarge c3.4xlarge c3.8xlarge c4.large c4.xlarge
+                   c4.2xlarge c4.4xlarge c4.8xlarge g2.2xlarge r3.large r3.xlarge
+                   r3.2xlarge r3.4xlarge r3.8xlarge i2.xlarge i2.2xlarge i2.4xlarge
+                   i2.8xlarge hi1.4xlarge hs1.8xlarge cr1.8xlarge cc2.8xlarge cg1.4xlarge)
+
+      parameter "#{instance_name}InstanceClass",
+        :Default => default,
+        :Description => "The #{instance_name} instance type",
+        :Type => 'String',
+        :AllowedValues => allowed,
+        :ConstraintDescription => "must select a valid #{instance_name} instance type."
     end
 
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})

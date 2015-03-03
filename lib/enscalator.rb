@@ -8,6 +8,7 @@ require 'enscalator/plugins/ubuntu'
 require 'enscalator/plugins/rethinkdb'
 require 'enscalator/en_japan_configuration'
 require 'enscalator/richtemplate'
+require 'enscalator/stackhelpers'
 require 'enscalator/enapp'
 
 module Enscalator
