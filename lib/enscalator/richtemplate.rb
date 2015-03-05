@@ -134,19 +134,28 @@ module Enscalator
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       raise "VPC instance #{name} can not contain NetworkInterfaces and subnet or security_groups" if properties.include?(:NetworkInterfaces)
       raise "VPC instance #{name} can not contain non VPC SecurityGroups" if properties.include?(:SecurityGroups)
+      properties[:ImageId] = image_id
       properties[:SubnetId] = subnet
       properties[:SecurityGroupIds] = security_groups
+      if properties[:Tags] && !properties[:Tags].any?{|x| x[:Key] == 'Name'}
+        properties[:Tags] += {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+      end
       options = {
         :Type => 'AWS::EC2::Instance',
         :Properties => properties
       }
+
       options[:DependsOn] = dependsOn unless dependsOn.empty?
       resource name, options
     end
 
     def instance_with_network(name, image_id, network_interfaces, properties:{})
       raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups" if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
+      properties[:ImageId] = image_id
       properties[:NetworkInterfaces] = network_interfaces
+      if properties[:Tags] &&  !properties[:Tags].any?{|x| x[:Key] == 'Name'}
+        properties[:Tags] += {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+      end
       options = {
         :Type => 'AWS::EC2::Instance',
         :Properties => properties
