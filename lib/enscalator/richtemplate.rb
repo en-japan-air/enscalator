@@ -5,19 +5,17 @@ def rich_template(&block)
 end
 
 module Enscalator
-
   class RichTemplateDSL < TemplateDSL
-
     def pre_run(&block)
-      return @pre_run_block ||= block if block_given?
-      @pre_run_block.call
+      @pre_run_block ||= block if block_given?
+      @pre_run_block.call if @pre_run_block
     end
 
     def post_run(&block)
       return @post_run_block ||= block if block_given?
-      @post_run_block.call
+      @post_run_block.call if @post_run_block
     end
-
+    
     def get_dns_records(zone_name: nil, region: 'us-east-1')
       client = Aws::Route53::Client.new(region: region)
       zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
@@ -222,7 +220,6 @@ module Enscalator
     end
 
     def exec!()
-      pre_run
       cfn_cmd_2(self)
       post_run
     end
@@ -384,7 +381,5 @@ module Enscalator
 
       File.delete(temp_file)
     end
-
   end
-
 end
