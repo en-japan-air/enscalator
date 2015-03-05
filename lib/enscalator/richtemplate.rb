@@ -8,6 +8,16 @@ module Enscalator
 
   class RichTemplateDSL < TemplateDSL
 
+    def pre_run(&block)
+      return @pre_run_block ||= block if block_given?
+      @pre_run_block.call
+    end
+
+    def post_run(&block)
+      return @post_run_block ||= block if block_given?
+      @post_run_block.call
+    end
+
     def tags_to_properties(tags)
       tags.map { |k,v| {:Key => k, :Value => v}}
     end
@@ -182,7 +192,9 @@ module Enscalator
     end
 
     def exec!()
+      pre_run
       cfn_cmd_2(self)
+      post_run
     end
 
     def cfn_cmd_2(template)
@@ -341,8 +353,6 @@ module Enscalator
       end
 
       File.delete(temp_file)
-
-      exit(true)
     end
 
   end
