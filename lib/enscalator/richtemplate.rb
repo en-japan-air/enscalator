@@ -135,10 +135,14 @@ module Enscalator
       options
     end
 
-    def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
-      raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
-      raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
+    def resource(name, options)
+      super
 
+      if options[:Type] && %w{AWS::EC2::Instance}.include?(options[:Type])
+        output "#{name}PrivateIpAddress",
+          :Description => "#{name} Private IP Address",
+          :Value => get_att(name, 'PrivateIp')
+      end
     end
 
     def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
@@ -167,6 +171,11 @@ module Enscalator
         :Type => 'String',
         :AllowedValues => allowed,
         :ConstraintDescription => "must select a valid #{instance_name} instance type."
+    end
+
+    def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
+      raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
+      raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
     end
 
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
