@@ -6,6 +6,8 @@ end
 
 module Enscalator
   class RichTemplateDSL < TemplateDSL
+    include Route53
+
     def pre_run(&block)
       @pre_run_block ||= block if block_given?
       @pre_run_block.call if @pre_run_block
@@ -14,36 +16,6 @@ module Enscalator
     def post_run(&block)
       return @post_run_block ||= block if block_given?
       @post_run_block.call if @post_run_block
-    end
-    
-    def get_dns_records(zone_name: nil, region: 'us-east-1')
-      client = Aws::Route53::Client.new(region: region)
-      zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
-      records = client.list_resource_record_sets(hosted_zone_id: zone.id)
-      records.values.flatten.map{|x| {name: x.name, type: x.type, records: x.resource_records.map(&:value)} if x.is_a?(Aws::Structure)}.compact
-    end
-
-    def upsert_dns_record(zone_name: nil, record_name: nil, type: 'A', region: 'us-east-1', values: [])
-      client = Aws::Route53::Client.new(region: region)
-      zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
-
-      client.change_resource_record_sets(
-        hosted_zone_id: zone.id,
-        change_batch: {
-          comment: "dns record for #{record_name}",
-          changes: [
-            {
-              action: "UPSERT",
-              resource_record_set: {
-                name: record_name,
-                type: type,
-                resource_records: values.map{|x| {value: x}},
-                ttl: 300
-              }
-            }
-          ]
-        }
-      )
     end
 
     def tags_to_properties(tags)
@@ -214,32 +186,39 @@ module Enscalator
     def parameter(name, options)
       default(:Parameters, {})[name] = options
       @parameters[name] ||= options[:Default]
-      class_eval do
-        define_method :"ref_#{name.underscore}" do
-          ref(name)
-        end
-      end
-    end
-
-    def method_missing(m, *args, &block)
-      if m =~ /\Aref_/
-        name = m.to_s.scan(/\Aref_(.*)/).flatten.first
-        ref(name.camelize)
+      self.class.send(:define_method, :"ref_#{name.underscore}") do
+        ref(name)
       end
     end
 
     def exec!()
-      cfn_cmd_2(self)
+      cfn_cmd_3(self)
       post_run
     end
 
+    def cfn_cmd_3(template)
+      if @options[:create_stack]
+        params = @options[:parameters]
+        params = params.split(';').map {|x| key, val = x.split('='); {'ParameterKey' => key, 'ParameterValue' => val}}
+
+        command = %Q{aws cloudformation create-stack --stack-name #{@options[:stack_name]} \
+                     --region #{@options[:region]} --parameters '#{params.to_json}' \
+                    --template-body '#{template.to_json}'}
+        system(command)
+      end
+
+      if @options[:expand]
+        puts JSON.pretty_generate(template)
+      end
+    end
+
     def cfn_cmd_2(template)
-      action = ARGV[0]
+      action = argv[0]
       unless %w(expand diff validate create-stack update-stack).include? action
         $stderr.puts "usage: #{$PROGRAM_NAME} <expand|diff|validate|create-stack|update-stack>"
         exit(2)
       end
-      unless (ARGV & %w(--template-body --template-url)).empty?
+      unless (argv & %w(--template-body --template-url)).empty?
         $stderr.puts "#{File.basename($PROGRAM_NAME)}:  The --template-body and --template-url command-line options are not allowed."
         exit(2)
       end
@@ -275,7 +254,7 @@ module Enscalator
       temp_file = File.absolute_path("#{$PROGRAM_NAME}.expanded.json")
       File.write(temp_file, template_string)
 
-      cmdline = ['aws', 'cloudformation'] + ARGV + ['--template-body', 'file://' + temp_file] + cfn_tags_options
+      cmdline = ['aws', 'cloudformation'] + ['--parameters', @options] + ['--template-body', 'file://' + temp_file] + cfn_tags_options
       cfn_params, cmdline = extract_options(cmdline, %w(), %w(--parameters))
       if cfn_params.count > 1
         cfn_params = cfn_params.drop(1).first.split(';').map {|x| key, val = x.split('='); {'ParameterKey' => key, 'ParameterValue' => val}}
@@ -283,7 +262,7 @@ module Enscalator
       end
 
       # Add the required default capability if no capabilities were specified
-      cmdline = cmdline + ['--capabilities', 'CAPABILITY_IAM'] if not ARGV.include?('--capabilities') or ARGV.include?('-c')
+      cmdline = cmdline + ['--capabilities', 'CAPABILITY_IAM'] if not argv.include?('--capabilities') or argv.include?('-c')
 
       case action
       when 'diff'
@@ -291,7 +270,7 @@ module Enscalator
         # Diff the current template for an existing stack with the expansion of this template.
 
         # The --parameters and --tag options were used to expand the template but we don't need them anymore.  Discard.
-        _, cfn_options = extract_options(ARGV[1..-1], %w(), %w(--parameters --tag))
+        _, cfn_options = extract_options(argv[1..-1], %w(), %w(--parameters --tag))
 
         # Separate the remaining command-line options into options for 'cfn-cmd' and options for 'diff'.
         cfn_options, diff_options = extract_options(cfn_options, %w(),
@@ -340,7 +319,7 @@ module Enscalator
 
       when 'update-stack'
         # Pick out the subset of cfn-update-stack options that apply to cfn-describe-stacks.
-        cfn_options, other_options = extract_options(ARGV[1..-1], %w(),
+        cfn_options, other_options = extract_options(argv[1..-1], %w(),
                                                      %w(--stack-name --region --connection-timeout -I --access-key-id -S --secret-key -K --ec2-private-key-file-path -U --url))
 
         # If the first argument is a stack name then shift it over to cfn_options.

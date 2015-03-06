@@ -1,12 +1,20 @@
 require 'cloudformation-ruby-dsl/cfntemplate'
 require_relative 'richtemplate'
 
-def en_app(&block)
-  Enscalator::EnAppTemplateDSL.new(&block)
-end
-
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
+    def ref_resource_subnet_a
+      ref('ResourceSubnetA')
+    end
+    
+    def ref_resource_subnet_c
+      ref('ResourceSubnetC')
+    end
+
+    def ref_application_security_group
+      ref('ApplicationSecurityGroup')
+    end
+
     def basic_setup(vpc: nil, start_ip_idx: 16,
                     private_security_group: '',
                     private_route_tables: {})
@@ -48,8 +56,8 @@ module Enscalator
         subnet(
           "ApplicationSubnet#{z.upcase}",
           vpc,
-          find_in_map('AWSRegionNetConfig', aws_region, "application#{z.upcase}"),
-          availabilityZone: join('', aws_region, z),
+          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "application#{z.upcase}"),
+          availabilityZone: join('', ref('AWS::Region'), z),
           tags:{
             'Network' => 'Private',
             'Application' => aws_stack_name,
@@ -62,8 +70,8 @@ module Enscalator
         subnet(
           "ResourceSubnet#{z.upcase}",
           vpc,
-          find_in_map('AWSRegionNetConfig', aws_region, "resource#{z.upcase}"),
-          availabilityZone: join('', aws_region, z),
+          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "resource#{z.upcase}"),
+          availabilityZone: join('', ref('AWS::Region'), z),
           tags:{
             'Network' => 'Private',
             'Application' => aws_stack_name
