@@ -22,7 +22,7 @@ Or install it yourself as:
 
 ### CLI
 ```bash
-MAC0002-2140350% enscalator -h
+$> enscalator -h
 Options:
   -l, --list-templates    List all available templates
   -t, --template=<s>      Template name
@@ -50,6 +50,9 @@ Right now you have a couchbase plugin available.
 When you want to use your plugin you just have to `include PluginName` inside your template. See lib/enscalator/template/jobposting.rb for an example.  
 Don't forget to `require` your new plugin in lib/enscalator.rb.
 
+```bash
+$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;MyKey=MyValue'
+```
 
 #### What's pre_run and post_run?
 **pre_run** is a method called **BEFORE** the template generation. It's a good place to make some calls to the AWS SDK for instance.  
