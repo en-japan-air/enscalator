@@ -11,21 +11,15 @@ module Enscalator
       end
 
       def tpl
-        pre_run do
-          region = @options[:region]
-          client = Aws::CloudFormation::Client.new(region: region)
-          cfn = Aws::CloudFormation::Resource.new(client: client)
-          stack = cfn.stack('enjapan-vpc')
-          vpc_id = select_output(stack.outputs, 'VpcId')
-          private_security_group = select_output(stack.outputs, 'PrivateSecurityGroup')
-          private_route_tables = { 'a' => get_resource(stack, 'PrivateRouteTable1'),
-                                   'c' => get_resource(stack, 'PrivateRouteTable2') }
+        description 'JobPosting service network and database infrastructure'
 
-          basic_setup vpc: vpc_id,
-            start_ip_idx: 20,
-            private_security_group: private_security_group,
-            private_route_tables: private_route_tables
+        pre_run do
+          magic_setup stack_name: 'enjapan-vpc',
+            region: @options[:region],                                                                                                                       
+            start_ip_idx: 20
         end
+
+        couchbase_init("Jobposting")
 
         post_run do
           region = @options[:region]
@@ -41,9 +35,6 @@ module Enscalator
           type: 'A', region: region, values: [ipaddr])
         end
 
-        couchbase_init("Jobposting")
-
-        description 'JobPosting service network and database infrastructure'
 
       end
     end

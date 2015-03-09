@@ -19,6 +19,21 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
+    def magic_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
+      client = Aws::CloudFormation::Client.new(region: region)
+      cfn = Aws::CloudFormation::Resource.new(client: client)
+      stack = cfn.stack(stack_name)
+      vpc_id = select_output(stack.outputs, 'VpcId')
+      private_security_group = select_output(stack.outputs, 'PrivateSecurityGroup')
+      private_route_tables = { 'a' => get_resource(stack, 'PrivateRouteTable1'),
+                               'c' => get_resource(stack, 'PrivateRouteTable2') }
+
+      basic_setup vpc: vpc_id,
+        start_ip_idx: start_ip_idx,
+        private_security_group: private_security_group,
+        private_route_tables: private_route_tables                                                                                                       
+    end
+
     def basic_setup(vpc: nil, start_ip_idx: 16,
                     private_security_group: '',
                     private_route_tables: {})
