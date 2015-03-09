@@ -39,7 +39,7 @@ module Enscalator
           type: 'A', region: region, values: [ipaddr])
         end
 
-        description 'Interaction service network and database infrastructure'
+        description 'JobPosting service network and database infrastructure'
 
         parameter 'KeyName',
           :Description => 'Name of the ssh key pair',
