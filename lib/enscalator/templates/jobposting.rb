@@ -35,7 +35,7 @@ module Enscalator
           ipaddr = get_resource(stack, 'CouchbasePrivateIpAddress')
 
           upsert_dns_record(zone_name: 'enjapan.local.',
-                            record_name: "couchbase.#{stack_name}.#{region}.enjapan.local.",
+                            record_name: "couchbase.#{stack_name}.enjapan.local.",
           type: 'A', region: region, values: [ipaddr])
         end
 
