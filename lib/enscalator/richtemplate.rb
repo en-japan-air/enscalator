@@ -117,6 +117,41 @@ module Enscalator
       end
     end
 
+    def parameter_name(instance_name, default: nil, min_length: 1, max_length: 64)
+      parameter "#{instance_name}Name",
+        :Default => default ? default.to_s : "#{instance_name}",
+        :Description => "#{instance_name} name",
+        :Type => "String",
+        :MinLength => min_length,
+        :MaxLength => max_length,
+        :AllowedPattern => "[a-zA-Z][a-zA-Z0-9]*",
+        :ConstraintDescription => "must begin with a letter and contain only alphanumeric characters."
+    end
+
+    def parameter_username(instance_name, default: "root", min_length: 1, max_length: 16)
+      parameter "#{instance_name}Name",
+        :Default => default,
+        :NoEcho => "true",
+        :Description => "Username for #{instance_name} access",
+        :Type => "String",
+        :MinLength => min_length,
+        :MaxLength => max_length,
+        :AllowedPattern => "[a-zA-Z][a-zA-Z0-9]*",
+        :ConstraintDescription => "must begin with a letter and contain only alphanumeric characters."
+    end
+
+    def parameter_password(instance_name, default: "password", min_length: 8, max_length: 41)
+      parameter "#{instance_name}Name",
+        :Default => default,
+        :NoEcho => "true",
+        :Description => "Password for #{instance_name} access",
+        :Type => "String",
+        :MinLength => min_length,
+        :MaxLength => max_length,
+        :AllowedPattern => "[a-zA-Z0-9]*",
+        :ConstraintDescription => "must contain only alphanumeric characters."
+    end
+
     def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
       parameter "#{instance_name}AllocatedStorage",
         :Default => default.to_s,

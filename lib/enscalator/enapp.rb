@@ -6,9 +6,13 @@ module Enscalator
     def ref_resource_subnet_a
       ref('ResourceSubnetA')
     end
-    
+
     def ref_resource_subnet_c
       ref('ResourceSubnetC')
+    end
+
+    def ref_resource_security_group
+      ref('ResourceSecurityGroup')
     end
 
     def ref_application_security_group
@@ -86,6 +90,21 @@ module Enscalator
         }
       end
 
+      security_group_vpc 'ResourceSecurityGroup',
+        'Enable internal access to interaction service database',
+        ref_vpc_id,
+        securityGroupEgress:[],
+        securityGroupIngress: [
+          { :IpProtocol => 'tcp', :FromPort => '22', :ToPort => '22', :CidrIp => '0.0.0.0/0' },
+          {
+            :IpProtocol => 'tcp',
+            :FromPort => '0',
+            :ToPort => '65535',
+            :SourceSecurityGroupId => ref_application_security_group,
+          },
+        ], dependsOn:[], tags:{}
+
+
       security_group_vpc(
         'ApplicationSecurityGroup',
         'Security group of the application servers',
@@ -96,7 +115,52 @@ module Enscalator
         }
       )
 
-    end
+      parameter 'WebServerPort',
+        :Description => 'TCP/IP Port for the web service',
+        :Type => 'Number',
+        :MinValue => '0',
+        :MaxValue => '65535',
+        :ConstraintDescription => 'must be an integer between 0 and 65535.'
 
+      resource 'LoadBalancer', :Type => 'AWS::ElasticLoadBalancing::LoadBalancer', :Properties => {
+        :LoadBalancerName => join('-', aws_stack_name, 'elb'),
+        :Listeners => [
+          {
+            :LoadBalancerPort => '80',
+            :InstancePort => ref('WebServerPort'),
+            :Protocol => 'HTTP',
+          },
+        ],
+        :HealthCheck => {
+          :Target => join('', 'HTTP:', ref_web_server_port, '/'),
+          :HealthyThreshold => '3',
+          :UnhealthyThreshold => '5',
+          :Interval => '30',
+          :Timeout => '5',
+        },
+        :Scheme => 'internal',
+        :SecurityGroups => [ ref_private_security_group ],
+        :Subnets => [
+          ref_resource_subnet_a,
+          ref_resource_subnet_c
+        ],
+          :Tags => [
+            {
+              :Key => 'Name',
+              :Value => join('-', aws_stack_name, 'elb'),
+            },
+            {
+              :Key => 'Application',
+              :Value => aws_stack_name,
+            },
+            { :Key => 'Network', :Value => 'Private' },
+        ],
+      }
+
+      output "LoadBalancerDnsName",
+        :Description => "LoadBalancer DNS Name",
+        :Value => get_att('LoadBalancer', 'DNSName')
+
+    end
   end
 end
