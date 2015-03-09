@@ -13,6 +13,7 @@ require 'enscalator/richtemplate'
 require 'enscalator/stackhelpers'
 require 'enscalator/enapp'
 require 'enscalator/templates/jobposting'
+require 'enscalator/templates/interaction'
 
 module Enscalator
 end
