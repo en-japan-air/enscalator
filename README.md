@@ -41,8 +41,15 @@ $> enscalator -t Interaction -r us-west-1 -s Interaction -c -p 'CouchbaseInterac
 
 ### How to write a template
 Templates are stored in lib/enscalator/templates/.  
-When your template is done you need to require it in lib/enscalator.rb.  
+When your template is done you need to `require` it in lib/enscalator.rb.  
 You'll find the list of helpers you can use in lib/richtemplate.rb and lib/enapp.rb
+
+### How to write a plugin and include it?
+Plugins are stored in lib/enscalator/plugins/.  
+Right now you have a couchbase plugin available.  
+When you want to use your plugin you just have to `include PluginName` inside your template. See lib/enscalator/template/jobposting.rb for an example.  
+Don't forget to `require` your new plugin in lib/enscalator.rb.
+
 
 #### What's pre_run and post_run?
 **pre_run** is a method called **BEFORE** the template generation. It's a good place to make some calls to the AWS SDK for instance.  
