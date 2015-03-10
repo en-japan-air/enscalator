@@ -42,7 +42,9 @@ $> enscalator -t Interaction -r us-west-1 -s Interaction -c -p 'CouchbaseInterac
 ### How to write a template
 Templates are stored in lib/enscalator/templates/.  
 When your template is done you need to `require` it in lib/enscalator.rb.  
-You'll find the list of helpers you can use in lib/richtemplate.rb and lib/enapp.rb
+You'll find the list of helpers you can use in lib/richtemplate.rb and lib/enapp.rb  
+Check [lib/templates/jobposting.rb](lib/templates/jobposting.rb) for an example.
+
 
 ### How to write a plugin and include it?
 Plugins are stored in lib/enscalator/plugins/.  
