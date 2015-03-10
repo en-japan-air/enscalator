@@ -12,13 +12,7 @@ module Enscalator
         :'sa-east-1' => { :amd64 => 'ami-59229f44' }
       }
 
-      parameter "Couchbase#{db_name}KeyName",
-        :Description => 'Name of the ssh key pair',
-        :Type => 'String',
-        :MinLength => '1',
-        :MaxLength => '64',
-        :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
-        :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
+      parameter_keyname "Couchbase#{db_name}"
 
       parameter_allocated_storage "Couchbase#{db_name}",
         default: 5,

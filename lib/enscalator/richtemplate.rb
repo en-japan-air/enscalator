@@ -117,6 +117,16 @@ module Enscalator
       end
     end
 
+    def parameter_keyname(instance_name)
+      parameter "#{instance_name}Keyname",
+        :Description => "Name of the #{instance_name} ssh key pair",
+        :Type => 'String',
+        :MinLength => '1',
+        :MaxLength => '64',
+        :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
+        :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
+    end
+
     def parameter_name(instance_name, default: nil, min_length: 1, max_length: 64)
       parameter "#{instance_name}Name",
         :Default => default ? default.to_s : "#{instance_name}",
@@ -129,7 +139,7 @@ module Enscalator
     end
 
     def parameter_username(instance_name, default: "root", min_length: 1, max_length: 16)
-      parameter "#{instance_name}Name",
+      parameter "#{instance_name}Username",
         :Default => default,
         :NoEcho => "true",
         :Description => "Username for #{instance_name} access",
@@ -141,7 +151,7 @@ module Enscalator
     end
 
     def parameter_password(instance_name, default: "password", min_length: 8, max_length: 41)
-      parameter "#{instance_name}Name",
+      parameter "#{instance_name}Password",
         :Default => default,
         :NoEcho => "true",
         :Description => "Password for #{instance_name} access",
