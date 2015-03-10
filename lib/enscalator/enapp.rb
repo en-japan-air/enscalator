@@ -1,36 +1,51 @@
 require 'cloudformation-ruby-dsl/cfntemplate'
 require_relative 'richtemplate'
 
-def en_app(vpc: nil,
-           start_ip_idx: 16,
-           private_route_tables: {},
-           private_security_group: '',
-           &block)
-  Enscalator::EnAppTemplateDSL.new(
-    vpc,
-    start_ip_idx,
-    private_route_tables,
-    private_security_group,
-    &block)
-end
-
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
-    def initialize(vpc,
-                   start_ip_idx,
-                   private_route_tables,
-                   private_security_group,
-                   &block)
-
-      super(&block)
-      create_app(vpc, start_ip_idx, private_route_tables,private_security_group)
+    def ref_resource_subnet_a
+      ref('ResourceSubnetA')
     end
 
-    def create_app(vpc,
-                   start_ip_idx,
-                   private_route_tables,
-                   private_security_group)
+    def ref_resource_subnet_c
+      ref('ResourceSubnetC')
+    end
 
+    def ref_resource_security_group
+      ref('ResourceSecurityGroup')
+    end
+
+    def ref_application_security_group
+      ref('ApplicationSecurityGroup')
+    end
+
+    # Do exactly like basic_setup but the vpc_id, private_security_group,
+    # and the route tables are automatically filled from the stack stack_name
+    def magic_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
+      client = Aws::CloudFormation::Client.new(region: region)
+      cfn = Aws::CloudFormation::Resource.new(client: client)
+      stack = cfn.stack(stack_name)
+      vpc_id = select_output(stack.outputs, 'VpcId')
+      private_security_group = select_output(stack.outputs, 'PrivateSecurityGroup')
+      private_route_tables = { 'a' => get_resource(stack, 'PrivateRouteTable1'),
+                               'c' => get_resource(stack, 'PrivateRouteTable2') }
+
+      basic_setup vpc: vpc_id,
+        start_ip_idx: start_ip_idx,
+        private_security_group: private_security_group,
+        private_route_tables: private_route_tables                                                                                                       
+    end
+
+    # vpc is the vpc_id
+    # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
+    #   (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
+    # private_security_group is the id of the security group with access to the NAT instances
+    # private_route_tables are the route tables to the NAT instances
+    # Private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}
+    #   a and c being the suffixes of the availability zones
+    def basic_setup(vpc: nil, start_ip_idx: 16,
+                    private_security_group: '',
+                    private_route_tables: {})
       parameter 'VpcId',
         :Description => 'The Id of the VPC',
         :Default => vpc,
@@ -56,21 +71,21 @@ module Enscalator
 
       mapping 'AWSRegionNetConfig',
         (EnJapanConfiguration::mapping_vpc_net.map do |k,v|
-          subs = IPAddress(v[:VPC]).subnet(24).map(&:to_string).drop(start_ip_idx).take(4)
-          {
-            k => {
-              :applicationA => subs[0], :applicationC => subs[1],
-              :resourceA => subs[2], :resourceC => subs[3]
-            }
+        subs = IPAddress(v[:VPC]).subnet(24).map(&:to_string).drop(start_ip_idx).take(4)
+        {
+          k => {
+            :applicationA => subs[0], :applicationC => subs[1],
+            :resourceA => subs[2], :resourceC => subs[3]
           }
-        end.reduce(:merge).with_indifferent_access)
+        }
+      end.reduce(:merge).with_indifferent_access)
 
       private_route_tables.keys.map do |z|
         subnet(
           "ApplicationSubnet#{z.upcase}",
           vpc,
-          find_in_map('AWSRegionNetConfig', aws_region, "application#{z.upcase}"),
-          availabilityZone: join('', aws_region, z),
+          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "application#{z.upcase}"),
+          availabilityZone: join('', ref('AWS::Region'), z),
           tags:{
             'Network' => 'Private',
             'Application' => aws_stack_name,
@@ -83,8 +98,8 @@ module Enscalator
         subnet(
           "ResourceSubnet#{z.upcase}",
           vpc,
-          find_in_map('AWSRegionNetConfig', aws_region, "resource#{z.upcase}"),
-          availabilityZone: join('', aws_region, z),
+          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "resource#{z.upcase}"),
+          availabilityZone: join('', ref('AWS::Region'), z),
           tags:{
             'Network' => 'Private',
             'Application' => aws_stack_name
@@ -99,6 +114,21 @@ module Enscalator
         }
       end
 
+      security_group_vpc 'ResourceSecurityGroup',
+        'Enable internal access to interaction service database',
+        ref_vpc_id,
+        securityGroupEgress:[],
+        securityGroupIngress: [
+          { :IpProtocol => 'tcp', :FromPort => '22', :ToPort => '22', :CidrIp => '0.0.0.0/0' },
+          {
+            :IpProtocol => 'tcp',
+            :FromPort => '0',
+            :ToPort => '65535',
+            :SourceSecurityGroupId => ref_application_security_group,
+          },
+        ], dependsOn:[], tags:{}
+
+
       security_group_vpc(
         'ApplicationSecurityGroup',
         'Security group of the application servers',
@@ -109,7 +139,52 @@ module Enscalator
         }
       )
 
-    end
+      parameter 'WebServerPort',
+        :Description => 'TCP/IP Port for the web service',
+        :Type => 'Number',
+        :MinValue => '0',
+        :MaxValue => '65535',
+        :ConstraintDescription => 'must be an integer between 0 and 65535.'
 
+      resource 'LoadBalancer', :Type => 'AWS::ElasticLoadBalancing::LoadBalancer', :Properties => {
+        :LoadBalancerName => join('-', aws_stack_name, 'elb'),
+        :Listeners => [
+          {
+            :LoadBalancerPort => '80',
+            :InstancePort => ref('WebServerPort'),
+            :Protocol => 'HTTP',
+          },
+        ],
+        :HealthCheck => {
+          :Target => join('', 'HTTP:', ref_web_server_port, '/'),
+          :HealthyThreshold => '3',
+          :UnhealthyThreshold => '5',
+          :Interval => '30',
+          :Timeout => '5',
+        },
+        :Scheme => 'internal',
+        :SecurityGroups => [ ref_private_security_group ],
+        :Subnets => [
+          ref_resource_subnet_a,
+          ref_resource_subnet_c
+        ],
+          :Tags => [
+            {
+              :Key => 'Name',
+              :Value => join('-', aws_stack_name, 'elb'),
+            },
+            {
+              :Key => 'Application',
+              :Value => aws_stack_name,
+            },
+            { :Key => 'Network', :Value => 'Private' },
+        ],
+      }
+
+      output "LoadBalancerDnsName",
+        :Description => "LoadBalancer DNS Name",
+        :Value => get_att('LoadBalancer', 'DNSName')
+
+    end
   end
 end
