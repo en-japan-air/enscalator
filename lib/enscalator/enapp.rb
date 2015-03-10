@@ -20,7 +20,7 @@ module Enscalator
     end
 
     # Do exactly like basic_setup but the vpc_id, private_security_group,
-    # and the route tables are automatically filled
+    # and the route tables are automatically filled from the stack stack_name
     def magic_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
       client = Aws::CloudFormation::Client.new(region: region)
       cfn = Aws::CloudFormation::Resource.new(client: client)
@@ -37,9 +37,12 @@ module Enscalator
     end
 
     # vpc is the vpc_id
-    # start_ip_idx is the starting ip address inside the vpc subnet for this stack
-    # private_security_group id of the vpc
+    # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
+    #   (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
+    # private_security_group is the id of the security group with access to the NAT instances
     # private_route_tables are the route tables to the NAT instances
+    # Private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}
+    #   a and c being the suffixes of the availability zones
     def basic_setup(vpc: nil, start_ip_idx: 16,
                     private_security_group: '',
                     private_route_tables: {})
