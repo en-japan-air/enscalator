@@ -49,8 +49,8 @@ Check [lib/templates/jobposting.rb](lib/templates/jobposting.rb) for an example.
 
 
 ### How to write a plugin and include it?
-Plugins are stored in lib/enscalator/plugins/.  
-Right now you have a couchbase plugin available.  
+Plugins are modules and stored in lib/enscalator/plugins/.  
+Right now you have a [couchbase plugin](lib/enscalator/plugins/couchbase.rb) available.  
 When you want to use your plugin you just have to `include PluginName` inside your template. See lib/enscalator/template/jobposting.rb for an example.  
 Don't forget to `require` your new plugin in lib/enscalator.rb.
 
