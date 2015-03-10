@@ -5,8 +5,18 @@ def rich_template(&block)
 end
 
 module Enscalator
-
   class RichTemplateDSL < TemplateDSL
+    include Route53
+
+    def pre_run(&block)
+      @pre_run_block ||= block if block_given?
+      @pre_run_block.call if @pre_run_block
+    end
+
+    def post_run(&block)
+      return @post_run_block ||= block if block_given?
+      @post_run_block.call if @post_run_block
+    end
 
     def tags_to_properties(tags)
       tags.map { |k,v| {:Key => k, :Value => v}}
@@ -97,10 +107,59 @@ module Enscalator
       options
     end
 
-    def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
-      raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
-      raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
+    def resource(name, options)
+      super
 
+      if options[:Type] && %w{AWS::EC2::Instance}.include?(options[:Type])
+        output "#{name}PrivateIpAddress",
+          :Description => "#{name} Private IP Address",
+          :Value => get_att(name, 'PrivateIp')
+      end
+    end
+
+    def parameter_keyname(instance_name)
+      parameter "#{instance_name}Keyname",
+        :Description => "Name of the #{instance_name} ssh key pair",
+        :Type => 'String',
+        :MinLength => '1',
+        :MaxLength => '64',
+        :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
+        :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
+    end
+
+    def parameter_name(instance_name, default: nil, min_length: 1, max_length: 64)
+      parameter "#{instance_name}Name",
+        :Default => default ? default.to_s : "#{instance_name}",
+        :Description => "#{instance_name} name",
+        :Type => "String",
+        :MinLength => min_length,
+        :MaxLength => max_length,
+        :AllowedPattern => "[a-zA-Z][a-zA-Z0-9]*",
+        :ConstraintDescription => "must begin with a letter and contain only alphanumeric characters."
+    end
+
+    def parameter_username(instance_name, default: "root", min_length: 1, max_length: 16)
+      parameter "#{instance_name}Username",
+        :Default => default,
+        :NoEcho => "true",
+        :Description => "Username for #{instance_name} access",
+        :Type => "String",
+        :MinLength => min_length,
+        :MaxLength => max_length,
+        :AllowedPattern => "[a-zA-Z][a-zA-Z0-9]*",
+        :ConstraintDescription => "must begin with a letter and contain only alphanumeric characters."
+    end
+
+    def parameter_password(instance_name, default: "password", min_length: 8, max_length: 41)
+      parameter "#{instance_name}Password",
+        :Default => default,
+        :NoEcho => "true",
+        :Description => "Password for #{instance_name} access",
+        :Type => "String",
+        :MinLength => min_length,
+        :MaxLength => max_length,
+        :AllowedPattern => "[a-zA-Z0-9]*",
+        :ConstraintDescription => "must contain only alphanumeric characters."
     end
 
     def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
@@ -131,22 +190,36 @@ module Enscalator
         :ConstraintDescription => "must select a valid #{instance_name} instance type."
     end
 
+    def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
+      raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
+      raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
+    end
+
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       raise "VPC instance #{name} can not contain NetworkInterfaces and subnet or security_groups" if properties.include?(:NetworkInterfaces)
       raise "VPC instance #{name} can not contain non VPC SecurityGroups" if properties.include?(:SecurityGroups)
+      properties[:ImageId] = image_id
       properties[:SubnetId] = subnet
       properties[:SecurityGroupIds] = security_groups
+      if properties[:Tags] && !properties[:Tags].any?{|x| x[:Key] == 'Name'}
+        properties[:Tags] += {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+      end
       options = {
         :Type => 'AWS::EC2::Instance',
         :Properties => properties
       }
+
       options[:DependsOn] = dependsOn unless dependsOn.empty?
       resource name, options
     end
 
     def instance_with_network(name, image_id, network_interfaces, properties:{})
       raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups" if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
+      properties[:ImageId] = image_id
       properties[:NetworkInterfaces] = network_interfaces
+      if properties[:Tags] &&  !properties[:Tags].any?{|x| x[:Key] == 'Name'}
+        properties[:Tags] += {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+      end
       options = {
         :Type => 'AWS::EC2::Instance',
         :Properties => properties
@@ -158,31 +231,39 @@ module Enscalator
     def parameter(name, options)
       default(:Parameters, {})[name] = options
       @parameters[name] ||= options[:Default]
-      class_eval do
-        define_method :"ref_#{name.underscore}" do
-          ref(name)
-        end
-      end
-    end
-
-    def method_missing(m, *args, &block)
-      if m =~ /\Aref_/
-        name = m.to_s.scan(/\Aref_(.*)/).flatten.first
-        ref(name.camelize)
+      self.class.send(:define_method, :"ref_#{name.underscore}") do
+        ref(name)
       end
     end
 
     def exec!()
-      cfn_cmd_2(self)
+      cfn_cmd_3(self)
+      post_run
+    end
+
+    def cfn_cmd_3(template)
+      if @options[:create_stack]
+        params = @options[:parameters]
+        params = params.split(';').map {|x| key, val = x.split('='); {'ParameterKey' => key, 'ParameterValue' => val}}
+
+        command = %Q{aws cloudformation create-stack --stack-name #{@options[:stack_name]} \
+                     --region #{@options[:region]} --parameters '#{params.to_json}' \
+                    --template-body '#{template.to_json}'}
+        system(command)
+      end
+
+      if @options[:expand]
+        puts JSON.pretty_generate(template)
+      end
     end
 
     def cfn_cmd_2(template)
-      action = ARGV[0]
+      action = argv[0]
       unless %w(expand diff validate create-stack update-stack).include? action
         $stderr.puts "usage: #{$PROGRAM_NAME} <expand|diff|validate|create-stack|update-stack>"
         exit(2)
       end
-      unless (ARGV & %w(--template-body --template-url)).empty?
+      unless (argv & %w(--template-body --template-url)).empty?
         $stderr.puts "#{File.basename($PROGRAM_NAME)}:  The --template-body and --template-url command-line options are not allowed."
         exit(2)
       end
@@ -218,7 +299,7 @@ module Enscalator
       temp_file = File.absolute_path("#{$PROGRAM_NAME}.expanded.json")
       File.write(temp_file, template_string)
 
-      cmdline = ['aws', 'cloudformation'] + ARGV + ['--template-body', 'file://' + temp_file] + cfn_tags_options
+      cmdline = ['aws', 'cloudformation'] + ['--parameters', @options] + ['--template-body', 'file://' + temp_file] + cfn_tags_options
       cfn_params, cmdline = extract_options(cmdline, %w(), %w(--parameters))
       if cfn_params.count > 1
         cfn_params = cfn_params.drop(1).first.split(';').map {|x| key, val = x.split('='); {'ParameterKey' => key, 'ParameterValue' => val}}
@@ -226,7 +307,7 @@ module Enscalator
       end
 
       # Add the required default capability if no capabilities were specified
-      cmdline = cmdline + ['--capabilities', 'CAPABILITY_IAM'] if not ARGV.include?('--capabilities') or ARGV.include?('-c')
+      cmdline = cmdline + ['--capabilities', 'CAPABILITY_IAM'] if not argv.include?('--capabilities') or argv.include?('-c')
 
       case action
       when 'diff'
@@ -234,7 +315,7 @@ module Enscalator
         # Diff the current template for an existing stack with the expansion of this template.
 
         # The --parameters and --tag options were used to expand the template but we don't need them anymore.  Discard.
-        _, cfn_options = extract_options(ARGV[1..-1], %w(), %w(--parameters --tag))
+        _, cfn_options = extract_options(argv[1..-1], %w(), %w(--parameters --tag))
 
         # Separate the remaining command-line options into options for 'cfn-cmd' and options for 'diff'.
         cfn_options, diff_options = extract_options(cfn_options, %w(),
@@ -283,7 +364,7 @@ module Enscalator
 
       when 'update-stack'
         # Pick out the subset of cfn-update-stack options that apply to cfn-describe-stacks.
-        cfn_options, other_options = extract_options(ARGV[1..-1], %w(),
+        cfn_options, other_options = extract_options(argv[1..-1], %w(),
                                                      %w(--stack-name --region --connection-timeout -I --access-key-id -S --secret-key -K --ec2-private-key-file-path -U --url))
 
         # If the first argument is a stack name then shift it over to cfn_options.
@@ -332,10 +413,6 @@ module Enscalator
       end
 
       File.delete(temp_file)
-
-      exit(true)
     end
-
   end
-
 end

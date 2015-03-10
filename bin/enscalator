@@ -3,19 +3,27 @@
 require 'enscalator'
 require 'trollop'
 
-SUB_COMMANDS = %w(vpc)
-
+argv = ARGV.dup
 OPTS = Trollop::options do
-  opt :region, "AWS region to create stack", type: String
+  opt :list_templates, "List all available templates", default: false
+  opt :template, "Template name", type: String
+  opt :region,  "AWS Region", type: String, default: 'us-east-1'
+  opt :parameters, "Parameters 'Key1=Value1;Key2=Value2'", type: String
+  opt :stack_name, "Stack name", type: String
+  opt :create_stack, "Create the stack", default: false
+  opt :expand, "Print template's JSON", default: false
 end
 
-cmd = ARGV.shift # get the subcommand
-cmd_opts = case cmd
-  when "vpc" # do nothing
-    Trollop::options do
-    end
-  else
-    Trollop::die "unknown subcommand #{cmd.inspect}"
-  end
+templates = Enscalator::Templates.constants.map(&:to_s)
 
+if OPTS[:list_templates]
+  STDERR.puts "Available templates:"
+  STDERR.puts templates.sort
+  exit
+end 
 
+if OPTS[:template] && templates.include?(OPTS[:template])
+  Object.const_get("Enscalator::Templates::#{OPTS[:template]}").new(OPTS.merge({ARGV: argv})).exec!
+else
+  STDERR.puts "Template #{OPTS[:template]} doesn't exist"
+end

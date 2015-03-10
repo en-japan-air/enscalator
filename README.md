@@ -20,28 +20,54 @@ Or install it yourself as:
 
 ## Usage
 
-```ruby
-require 'enscalator'
-
-en_app(vpc: 'vpc-1234', start_ip_idx: 4,
-    private_route_tables: {'a' => 'rtb-1234', 'c' => 'rtb-5678'},
-    private_security_group: 'sg-1234') do
-
-  # Whatever extra parameter/mappings/resources/output you need
-  # cf https://github.com/bazaarvoice/cloudformation-ruby-dsl
-
-end.exec!
+### CLI
+```bash
+$> enscalator -h
+Options:
+  -l, --list-templates    List all available templates
+  -t, --template=<s>      Template name
+  -r, --region=<s>        AWS Region (default: us-east-1)
+  -p, --parameters=<s>    Parameters 'Key1=Value1;Key2=Value2'
+  -s, --stack-name=<s>    Stack name
+  -c, --create-stack      Create the stack
+  -e, --expand            Print template's JSON
+  -h, --help              Show this message
 ```
+
+Example:
+```bash
+$> enscalator -t Interaction -r us-west-1 -s Interaction -c -p 'CouchbaseInteractionKeyName=test;WebServerPort=9000'
+```
+
+### How to write a template
+Templates are stored in lib/enscalator/templates/.  
+When your template is done you need to `require` it in lib/enscalator.rb.  
+You'll find the list of helpers you can use in lib/richtemplate.rb and lib/enapp.rb.  
+For each template you write you'll automatically get a ResourceSecurityGroup, an ApplicationSecurityGroup, a ResourceSubnetA/ResourceSubnetB, ApplicationSubnetA/ApplicationSubnetB, and a loadBalancer. Everything attached to a VPC called enjapan-vpc.  
+That's why you always need to precise the start_ip_idx as a parameter of magic_setup/basic_setup, it's the starting ip address in the subnet.
+Check [lib/templates/jobposting.rb](lib/templates/jobposting.rb) for an example.
+
+
+### How to write a plugin and include it?
+Plugins are modules and stored in lib/enscalator/plugins/.  
+Right now you have a [couchbase plugin](lib/enscalator/plugins/couchbase.rb) available.  
+When you want to use your plugin you just have to `include PluginName` inside your template. See lib/enscalator/template/jobposting.rb for an example.  
+Don't forget to `require` your new plugin in lib/enscalator.rb.
 
 ```bash
-$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;MyKey=MyValue'
+$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;WebServerPort=9000'
 ```
+
+#### What's pre_run and post_run?
+**pre_run** is a method called **BEFORE** the template generation. It's a good place to make some calls to the AWS SDK for instance.  
+**post_run** is a method called **AFTER** the stack is created. It's a good place to create some DNS records in route53 for instance.
+
+## Notes
+The ubuntu plugin in [lib/enscalator/plugins/ubuntu.rb](lib/enscalator/plugins/ubuntu.rb) is magic. It'll automatically get the AMIs ID from the ubuntu website.
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/console` for an interactive prompt that will allow you to experiment.
-
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle && bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release` to create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
 ## Contributing
 
