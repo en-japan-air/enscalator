@@ -19,6 +19,8 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
+    # Do exactly like basic_setup but the vpc_id, private_security_group,
+    # and the route tables are automatically filled
     def magic_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
       client = Aws::CloudFormation::Client.new(region: region)
       cfn = Aws::CloudFormation::Resource.new(client: client)
@@ -34,6 +36,10 @@ module Enscalator
         private_route_tables: private_route_tables                                                                                                       
     end
 
+    # vpc is the vpc_id
+    # start_ip_idx is the starting ip address inside the vpc subnet for this stack
+    # private_security_group id of the vpc
+    # private_route_tables are the route tables to the NAT instances
     def basic_setup(vpc: nil, start_ip_idx: 16,
                     private_security_group: '',
                     private_route_tables: {})
