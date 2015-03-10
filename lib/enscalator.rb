@@ -9,11 +9,13 @@ require 'enscalator/enapp'
 require 'enscalator/plugins/couchbase'
 require 'enscalator/plugins/ubuntu'
 require 'enscalator/plugins/rethinkdb'
+require 'enscalator/plugins/rds'
 require 'enscalator/en_japan_configuration'
 require 'enscalator/richtemplate'
 require 'enscalator/stackhelpers'
 require 'enscalator/templates/jobposting'
 require 'enscalator/templates/interaction'
+require 'enscalator/templates/auth_service'
 
 module Enscalator
 end
