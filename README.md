@@ -43,6 +43,8 @@ $> enscalator -t Interaction -r us-west-1 -s Interaction -c -p 'CouchbaseInterac
 Templates are stored in lib/enscalator/templates/.  
 When your template is done you need to `require` it in lib/enscalator.rb.  
 You'll find the list of helpers you can use in lib/richtemplate.rb and lib/enapp.rb  
+For each template you write you'll automatically get a ResourceSecurityGroup, an ApplicationSecurityGroup, a ResourceSubnetA/ResourceSubnetB, ApplicationSubnetA/ApplicationSubnetB, and a loadBalancer. Everything attached to a VPC called enjapan-vpc.  
+That's why you always need to precise the start_ip_idx as a parameter of magic_setup/basic_setup, it's the starting ip address in the subnet.
 Check [lib/templates/jobposting.rb](lib/templates/jobposting.rb) for an example.
 
 
@@ -53,7 +55,7 @@ When you want to use your plugin you just have to `include PluginName` inside yo
 Don't forget to `require` your new plugin in lib/enscalator.rb.
 
 ```bash
-$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;MyKey=MyValue'
+$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;WebServerPort=9000'
 ```
 
 #### What's pre_run and post_run?
