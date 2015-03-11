@@ -38,7 +38,11 @@ module Enscalator
         :AllocatedStorage => ref("RDS#{db_name}AllocatedStorage"),
         :Tags => [{:Key => "Name", :Value => "RDS#{db_name}Instance"}]
       }
-    end
 
+      output "#{db_name}EndpointAddress",
+        :Description => "#{db_name} Endpoint Address",
+        :Value => get_att("RDS#{db_name}Instance", 'Endpoint.Address')
+
+    end
   end
 end
