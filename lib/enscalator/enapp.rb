@@ -3,12 +3,25 @@ require_relative 'richtemplate'
 
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
+
+    def ref_application_subnet_a
+      ref('ApplicationSubnetA')
+    end
+
+    def ref_application_subnet_c
+      ref('ApplicationSubnetC')
+    end
+
     def ref_resource_subnet_a
       ref('ResourceSubnetA')
     end
 
     def ref_resource_subnet_c
       ref('ResourceSubnetC')
+    end
+
+    def ref_private_security_group
+      ref('PrivateSecurityGroup')
     end
 
     def ref_resource_security_group

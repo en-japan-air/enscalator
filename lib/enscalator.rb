@@ -16,6 +16,7 @@ require 'enscalator/stackhelpers'
 require 'enscalator/templates/jobposting'
 require 'enscalator/templates/interaction'
 require 'enscalator/templates/auth_service'
+require 'enscalator/templates/enslurp'
 
 module Enscalator
 end
