@@ -172,6 +172,38 @@ module Enscalator
         :ConstraintDescription => "must be between #{min} and #{max}Gb."
     end
 
+    def iam_s3_instance_profile
+      resource 'S3AccessRole', :Type => 'AWS::IAM::Role', :Properties => {
+        :AssumeRolePolicyDocument => {
+          :Statement => [
+            {
+              :Effect => 'Allow',
+              :Principal => { :Service => [ 'ec2.amazonaws.com' ] },
+              :Action => [ 'sts:AssumeRole' ],
+            },
+          ],
+        },
+        :Path => '/',
+      }
+
+      resource 'S3RolePolicies', :Type => 'AWS::IAM::Policy', :Properties => {
+        :PolicyName => 's3access',
+        :PolicyDocument => {
+          :Statement => [
+            { :Effect => 'Allow', :Action => 's3:*', :Resource => '*' },
+          ],
+        },
+        :Roles => [ ref('S3AccessRole') ],
+      }
+
+      resource 'S3InstanceProfile', :Type => 'AWS::IAM::InstanceProfile', :Properties => {
+        :Path => '/',
+        :Roles => [ ref('S3AccessRole') ],
+      }
+
+      ref('S3InstanceProfile')
+    end
+
     def parameter_instance_class(instance_name, default: 't2.micro', allowed_values:[])
       allowed = allowed_values.any? ? allowed_values :
         %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
@@ -248,7 +280,8 @@ module Enscalator
 
         command = %Q{aws cloudformation create-stack --stack-name #{@options[:stack_name]} \
                      --region #{@options[:region]} --parameters '#{params.to_json}' \
-                    --template-body '#{template.to_json}'}
+                     --capabilities #{@options[:capabilities]} \
+                     --template-body '#{template.to_json}'}
         system(command)
       end
 

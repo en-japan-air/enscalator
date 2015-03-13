@@ -12,6 +12,7 @@ OPTS = Trollop::options do
   opt :stack_name, "Stack name", type: String
   opt :create_stack, "Create the stack", default: false
   opt :expand, "Print template's JSON", default: false
+  opt :capabilities, "AWS capabilities", default: 'CAPABILITY_IAM'
 end
 
 templates = Enscalator::Templates.constants.map(&:to_s)
