@@ -7,6 +7,7 @@ require "enscalator/version"
 require 'enscalator/route53'
 require 'enscalator/enapp'
 require 'enscalator/plugins/couchbase'
+require 'enscalator/plugins/elasticsearch'
 require 'enscalator/plugins/ubuntu'
 require 'enscalator/plugins/rethinkdb'
 require 'enscalator/plugins/rds'
