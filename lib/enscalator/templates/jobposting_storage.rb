@@ -1,7 +1,7 @@
 
 module Enscalator
   module Templates
-    class JobPosting < Enscalator::EnAppTemplateDSL
+    class JobpostingStorageStorage < Enscalator::EnAppTemplateDSL
       include Elasticsearch # Include the Elasticsearch plugin for couchbase_init()
 
       def initialize(options={})
@@ -11,7 +11,7 @@ module Enscalator
       end
 
       def tpl
-        description 'JobPosting service network and database infrastructure'
+        description 'JobpostingStorage service network and database infrastructure'
 
         # pre_run takes a block and will be the first method called
         pre_run do
@@ -20,7 +20,7 @@ module Enscalator
             start_ip_idx: 20 # The start ip address inside the subnet for this template
         end
 
-        elasticsearch_init("Jobposting") # Create a couchbase instance with name "Jobposting"
+        elasticsearch_init("JobpostingStorage") # Create a couchbase instance with name "JobpostingStorage"
 
         # post_run will be run after the create-stack call is started
         post_run do
@@ -30,7 +30,7 @@ module Enscalator
           cfn = Aws::CloudFormation::Resource.new(client: client)
 
           stack = wait_stack(cfn, stack_name) # Wait for the stack to be created
-          ipaddr = get_resource(stack, 'ElasticsearchJobpostingPrivateIpAddress') # Get couchbase instance IP address
+          ipaddr = get_resource(stack, 'ElasticsearchJobpostingStoragePrivateIpAddress') # Get couchbase instance IP address
 
           # Create a DNS record in route53 for the couchbase instance
           upsert_dns_record(
