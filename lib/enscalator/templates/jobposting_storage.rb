@@ -1,7 +1,7 @@
 
 module Enscalator
   module Templates
-    class JobpostingStorageStorage < Enscalator::EnAppTemplateDSL
+    class JobpostingStorage < Enscalator::EnAppTemplateDSL
       include Elasticsearch # Include the Elasticsearch plugin for couchbase_init()
 
       def initialize(options={})
