@@ -148,6 +148,7 @@ module Enscalator
         vpc,
         securityGroupIngress: [
           { :IpProtocol => 'tcp', :FromPort => '0', :ToPort => '65535', :CidrIp => '10.0.0.0/8' },
+          { :IpProtocol => 'tcp', :FromPort => ref('WebServerPort'), :ToPort => ref('WebServerPort'), :SourceSecurityGroupId => ref_private_security_group, },
         ],
         tags: {
           'Name' => join('-', aws_stack_name, 'app', 'sg'),
