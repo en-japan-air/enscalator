@@ -412,8 +412,11 @@ module Enscalator
                 resource 'PrivateSecurityGroup', :DependsOn => [ 'VPC' ], :Type => 'AWS::EC2::SecurityGroup', :Properties => {
                   :GroupDescription => 'Allow the Application instances to access the NAT device',
                   :VpcId => ref('VPC'),
+                  :SecurityGroupEgress => [
+                    { :IpProtocol => 'tcp', :FromPort => '0', :ToPort => '65535', :CidrIp => '10.0.0.0/8' },
+                  ],
                   :SecurityGroupIngress => [
-                    { :IpProtocol => 'tcp', :FromPort => '22', :ToPort => '22', :CidrIp => '10.0.0.0/16' },
+                    { :IpProtocol => 'tcp', :FromPort => '0', :ToPort => '65535', :CidrIp => '10.0.0.0/8' },
                   ],
                 }
 
