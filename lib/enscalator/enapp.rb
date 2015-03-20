@@ -3,6 +3,12 @@ require_relative 'richtemplate'
 
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
+      def initialize(options={})
+        @options = options # Options contains the cli args
+        block = Proc.new { tpl }
+        super(&block)
+      end
+
 
     def ref_application_subnet_a
       ref('ApplicationSubnetA')
@@ -47,6 +53,20 @@ module Enscalator
         start_ip_idx: start_ip_idx,
         private_security_group: private_security_group,
         private_route_tables: private_route_tables                                                                                                       
+
+      post_run do
+        client = Aws::CloudFormation::Client.new(region: region)
+        cfn = Aws::CloudFormation::Resource.new(client: client)
+
+        stack = wait_stack(cfn, @options[:stack_name])
+        elb_name = select_output(stack.outputs, 'LoadBalancerDnsName')
+        upsert_dns_record(
+          zone_name: 'enjapan.local.',
+          record_name: "elb.#{@options[:stack_name]}.enjapan.local.",
+          type: 'CNAME', region: region, values: [elb_name]
+        )
+      end
+
     end
 
     # vpc is the vpc_id

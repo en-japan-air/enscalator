@@ -1,12 +1,6 @@
 module Enscalator
   module Templates
     class EnJapanVPC < Enscalator::RichTemplateDSL
-      def initialize(options={})
-        @options = options # Options contains the cli args
-        block = Proc.new { tpl }
-        super(&block)
-      end
-
       def tpl
         value :AWSTemplateFormatVersion => '2010-09-09'
 

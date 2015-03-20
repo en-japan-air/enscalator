@@ -4,12 +4,6 @@ module Enscalator
     class JobPostingStorage < Enscalator::EnAppTemplateDSL
       include Elasticsearch # Include the Elasticsearch plugin for couchbase_init()
 
-      def initialize(options={})
-        @options = options # Options contains the cli args
-        block = Proc.new { tpl }
-        super(&block)
-      end
-
       def tpl
         description 'JobPostingStorage service network and database infrastructure'
 

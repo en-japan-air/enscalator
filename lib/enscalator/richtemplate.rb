@@ -9,13 +9,16 @@ module Enscalator
     include Route53
 
     def pre_run(&block)
-      @pre_run_block ||= block if block_given?
-      @pre_run_block.call if @pre_run_block
+      (@pre_run_blocks ||= []) << block if block_given?
+      @pre_run_blocks.map(&:call) if @pre_run_blocks.any?
     end
 
     def post_run(&block)
-      return @post_run_block ||= block if block_given?
-      @post_run_block.call if @post_run_block
+      (@post_run_blocks ||= []) << block if block_given?
+    end
+
+    def post_run_call
+      @post_run_blocks.map(&:call) if @post_run_blocks.any?
     end
 
     def tags_to_properties(tags)
@@ -283,6 +286,7 @@ module Enscalator
                      --capabilities #{@options[:capabilities]} \
                      --template-body '#{template.to_json}'}
         system(command)
+        post_run_call
       end
 
       if @options[:expand]
