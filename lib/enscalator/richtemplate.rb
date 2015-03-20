@@ -8,6 +8,12 @@ module Enscalator
   class RichTemplateDSL < TemplateDSL
     include Route53
 
+    def initialize(options={}) 
+      @options = options # Options contains the cli args 
+      block = Proc.new { tpl } 
+      super(&block) 
+    end 
+
     def pre_run(&block)
       (@pre_run_blocks ||= []) << block if block_given?
       @pre_run_blocks.map(&:call) if @pre_run_blocks.any?

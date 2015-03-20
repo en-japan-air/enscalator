@@ -3,12 +3,6 @@ require_relative 'richtemplate'
 
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
-      def initialize(options={})
-        @options = options # Options contains the cli args
-        block = Proc.new { tpl }
-        super(&block)
-      end
-
 
     def ref_application_subnet_a
       ref('ApplicationSubnetA')
