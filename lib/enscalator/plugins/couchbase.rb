@@ -61,7 +61,7 @@ module Enscalator
           -u Administrator \
           -p 3fA76JWtzYbm 2>&1 >> /tmp/userdatalog
         /opt/couchbase/bin/couchbase-cli bucket-create -c 127.0.0.1:8091 \
-           --bucket=interactions \
+           --bucket=#{bucket} \
            --bucket-type=couchbase \
            --bucket-password=3fA76JWtzYbm \
            --bucket-port=11211 \
