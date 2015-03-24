@@ -25,7 +25,7 @@ end
 
 if OPTS[:template] && templates.include?(OPTS[:template])
   # for stack_name use template name as a base and convert it from camelcase to underscore case
-  OPTS[:stack_name] ||= OPTS[:template].underscore
+  OPTS[:stack_name] ||= OPTS[:template].underscore.gsub(/[_]/,"-")
   Object.const_get("Enscalator::Templates::#{OPTS[:template]}").new(OPTS.merge({ARGV: argv})).exec!
 else
   STDERR.puts "Template #{OPTS[:template]} doesn't exist"
