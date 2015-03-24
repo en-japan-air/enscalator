@@ -2,14 +2,14 @@ require 'open-uri'
 
 module Enscalator
   module Ubuntu
-    def ubuntu_init(instance_name)
+    def ubuntu_init(instance_name, storage_kind: 'ebs', virtualization: 'paravirtual')
       @ubuntu_mapping ||=
         mapping 'AWSUbuntuAMI',
         begin
           body = open('https://cloud-images.ubuntu.com/query/trusty/server/released.current.txt') {|f| f.read}
           mapping = {}
           body.split("\n").map{|x| x.split("\t")}
-          .select{|x| x[4] == 'ebs' && x[10] == 'paravirtual'}
+          .select{|x| x[4] == storage_kind && x[10] == virtualization}
           .map{|x| (mapping[x[6]] ||= {})[x[5]] = x[7]}
           mapping.with_indifferent_access
         end
