@@ -16,9 +16,10 @@ module Enscalator
 
       parameter_password "RDS#{db_name}"
 
-      parameter_instance_class "RDS#{db_name}", default: instance_class,
-                               allowed_values: %w(db.m1.small db.m1.large db.m1.xlarge
-                           db.m2.xlarge db.m2.2xlarge db.m2.4xlarge)
+      parameter_instance_class "RDS#{db_name}",
+        default: instance_class,
+        allowed_values: %w(db.m1.small db.m1.large db.m1.xlarge
+                        db.m2.xlarge db.m2.2xlarge db.m2.4xlarge)
 
       parameter "RDS#{db_name}StorageType",
                 :Default => storage_type,
