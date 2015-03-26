@@ -1,6 +1,10 @@
 module Enscalator
   module RDS
-    def rds_init(db_name, allocated_storage: 5, instance_class: "db.m1.small")
+    def rds_init(db_name,
+                 allocated_storage: 5,
+                 storage_type: 'gp2',
+                 instance_class: "db.m1.small")
+
       parameter_allocated_storage "RDS#{db_name}",
         default: allocated_storage,
         min: 5,
@@ -12,9 +16,16 @@ module Enscalator
 
       parameter_password "RDS#{db_name}"
 
-      parameter_instance_class "RDS#{db_name}", default: instance_class,
+      parameter_instance_class "RDS#{db_name}",
+        default: instance_class,
         allowed_values: %w(db.m1.small db.m1.large db.m1.xlarge
-                           db.m2.xlarge db.m2.2xlarge db.m2.4xlarge)
+                        db.m2.xlarge db.m2.2xlarge db.m2.4xlarge)
+
+      parameter "RDS#{db_name}StorageType",
+                :Default => storage_type,
+                :Description => 'Storage type to be associated with the DB instance',
+                :Type => 'String',
+                :AllowedValues => %w{ gp2 standard io1 }
 
       resource "RDS#{db_name}SubnetGroup", :Type => 'AWS::RDS::DBSubnetGroup', :Properties => {
         :DBSubnetGroupDescription => 'Subnet group within VPC',
@@ -36,6 +47,7 @@ module Enscalator
         :VPCSecurityGroups => [ ref_resource_security_group ],
         :DBSubnetGroupName => ref("RDS#{db_name}SubnetGroup"),
         :AllocatedStorage => ref("RDS#{db_name}AllocatedStorage"),
+        :StorageType => ref("RDS#{db_name}StorageType"),
         :Tags => [{:Key => "Name", :Value => "RDS#{db_name}Instance"}]
       }
 
