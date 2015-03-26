@@ -24,7 +24,7 @@ module Enscalator
     end
 
     def post_run_call
-      @post_run_blocks.map(&:call) if @post_run_blocks && @post_run_blocks.any?
+      @post_run_blocks.each(&:call) if @post_run_blocks
     end
 
     def tags_to_properties(tags)
