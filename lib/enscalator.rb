@@ -12,6 +12,7 @@ require 'enscalator/plugins/elasticsearch'
 require 'enscalator/plugins/ubuntu'
 require 'enscalator/plugins/rethinkdb'
 require 'enscalator/plugins/rds'
+require 'enscalator/plugins/rds_snapshot'
 require 'enscalator/en_japan_configuration'
 require 'enscalator/richtemplate'
 require 'enscalator/stackhelpers'
@@ -21,6 +22,7 @@ require 'enscalator/templates/jobposting_storage'
 require 'enscalator/templates/interaction'
 require 'enscalator/templates/auth_service'
 require 'enscalator/templates/enslurp'
+require 'enscalator/templates/cc_rds'
 
 module Enscalator
 end
