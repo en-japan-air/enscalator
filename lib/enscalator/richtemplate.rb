@@ -284,13 +284,35 @@ module Enscalator
 
     def cfn_cmd_3(template)
       if @options[:create_stack]
-        params = @options[:parameters]
-        params = params.split(';').map {|x| key, val = x.split('='); {'ParameterKey' => key, 'ParameterValue' => val}}
 
-        command = %Q{aws cloudformation create-stack --stack-name #{@options[:stack_name]} \
-                     --region #{@options[:region]} --parameters '#{params.to_json}' \
-                     --capabilities #{@options[:capabilities]} \
-                     --template-body '#{template.to_json}'}
+        command = %q{aws cloudformation create-stack}
+
+        if @options[:stack_name]
+          stack_name = @options[:stack_name]
+          command += " --stack-name #{stack_name}"
+        end
+
+        if @options[:region]
+          region = @options[:region]
+          command += " --region #{region}"
+        end
+
+        if @options[:capabilities]
+          capabilities = @options[:capabilities]
+          command += " --capabilities #{capabilities}"
+        end
+
+        if @options[:parameters]
+          params = @options[:parameters].split(';').map do |x|
+            key, val = x.split('=')
+            {:ParameterKey => key, :ParameterValue => val}
+          end
+
+          command += " --parameters '#{params.to_json}'"
+        end
+
+        command += " --template-body '#{template.to_json}'"
+
         system(command)
         post_run_call
       end

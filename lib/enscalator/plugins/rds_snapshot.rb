@@ -62,7 +62,7 @@ module Enscalator
         :Tags => [{:Key => "Name", :Value => "RDSInstance"}]
       }
 
-      output "RDS EndpointAddress",
+      output "RDSEndpointAddress",
         :Description => "RDS Endpoint Address",
         :Value => get_att("RDSInstance", 'Endpoint.Address')
 

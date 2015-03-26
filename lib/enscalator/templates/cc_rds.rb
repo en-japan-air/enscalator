@@ -25,7 +25,7 @@ module Enscalator
           cfn = Aws::CloudFormation::Resource.new(client: client)
 
           stack = wait_stack(cfn, stack_name)
-          host = get_resource(stack, 'AuthEndpointAddress')
+          host = get_resource(stack, 'RDSEndpointAddress')
 
           upsert_dns_record(
               zone_name: 'enjapan.prod.',
