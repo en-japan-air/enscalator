@@ -9,10 +9,10 @@ module Enscalator
         pre_run do
           magic_setup stack_name: 'enjapan-vpc',
                       region: @options[:region],
-                      start_ip_idx: 24
+                      start_ip_idx: 32
         end
 
-        rds_snapshot_init('rds:cc-production-20150306-2015-03-24-15-01',
+        rds_snapshot_init('cc-production-201503261040',
                           allocated_storage: 100,
                           multizone: 'true',
                           parameter_group: 'careercard-production-mysql',

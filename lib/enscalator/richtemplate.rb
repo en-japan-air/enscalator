@@ -16,7 +16,7 @@ module Enscalator
 
     def pre_run(&block)
       (@pre_run_blocks ||= []) << block if block_given?
-      @pre_run_blocks.map(&:call) if @post_run_blocks && @pre_run_blocks.any?
+      @pre_run_blocks.map(&:call) if @pre_run_blocks.any?
     end
 
     def post_run(&block)
