@@ -2,6 +2,7 @@ module Enscalator
   module RDS_Snapshot
     def rds_snapshot_init(snapshot_name,
                           allocated_storage: 5,
+                          storage_type: 'gp2',
                           multizone: 'false',
                           parameter_group: '***REMOVED***',
                           instance_class: "db.m1.small")
@@ -27,6 +28,12 @@ module Enscalator
                 :Default => parameter_group,
                 :Description => 'Custom parameter group for an RDS database family',
                 :Type => 'String'
+
+      parameter 'RDSStorageType',
+                :Default => storage_type,
+                :Description => 'Storage type to be associated with the DB instance',
+                :Type => 'String',
+                :AllowedValues => %w{ gp2 standard io1 }
 
       parameter_username "RDS"
 
@@ -59,6 +66,7 @@ module Enscalator
         :DBSubnetGroupName => ref("RDSSubnetGroup"),
         :DBParameterGroupName => ref("RDSParameterGroup"),
         :AllocatedStorage => ref("RDSAllocatedStorage"),
+        :StorageType => ref("RDSStorageType"),
         :Tags => [{:Key => "Name", :Value => "RDSInstance"}]
       }
 
