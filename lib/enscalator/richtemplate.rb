@@ -16,7 +16,10 @@ module Enscalator
 
     def pre_run(&block)
       (@pre_run_blocks ||= []) << block if block_given?
-      @pre_run_blocks.map(&:call) if @pre_run_blocks.any?
+    end
+
+    def pre_run_call
+      @pre_run_blocks.each(&:call) if @pre_run_blocks
     end
 
     def post_run(&block)
@@ -278,11 +281,19 @@ module Enscalator
     end
 
     def exec!()
+      if @options[:exec_pre_run_hook]
+        pre_run_call
+      end
+
       cfn_cmd_3(self)
-      post_run
+
+      if @options[:exec_post_run_hook]
+        post_run_call
+      end
     end
 
     def cfn_cmd_3(template)
+
       if @options[:create_stack]
 
         command = %q{aws cloudformation create-stack}
@@ -313,6 +324,7 @@ module Enscalator
 
         command += " --template-body '#{template.to_json}'"
 
+        pre_run_call
         system(command)
         post_run_call
       end
