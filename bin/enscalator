@@ -10,7 +10,7 @@ p = Trollop::Parser.new do
   opt :list_templates, %q{List all available templates}, default: false
   opt :template, %q{Template name}, type: String
   opt :region, %q{AWS Region}, type: String, default: 'us-east-1'
-  opt :parameters, %q{Parameters \'Key1=Value1;Key2=Value2\'}, type: String
+  opt :parameters, %q{Parameters 'Key1=Value1;Key2=Value2'}, type: String
   opt :stack_name, %q{Stack name}, type: String
   opt :create_stack, %q{Create the stack}, default: false
   opt :expand, %q{Print template's JSON}, default: false
@@ -40,7 +40,11 @@ if OPTS[:template] && templates.include?(OPTS[:template])
   # for stack_name use template name as a base and convert it from camelcase to underscore case
   OPTS[:stack_name] ||= OPTS[:template].underscore.gsub(/[_]/,"-")
   Object.const_get("Enscalator::Templates::#{OPTS[:template]}").new(OPTS.merge({ARGV: argv})).exec!
-elsif OPTS[:template_given]
-  STDERR.puts "Template #{OPTS[:template]} doesn't exist"
+elsif OPTS[:template_given] && !OPTS[:template].empty?
+  STDERR.puts %Q{Template "#{OPTS[:template]}" doesn't exist}
+elsif OPTS[:template].empty?
+  STDERR.puts 'Template name cannot be empty string'
+else
+  STDERR.puts 'Something terrible happened'
 end
 
