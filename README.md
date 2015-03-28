@@ -23,15 +23,18 @@ Or install it yourself as:
 ### CLI
 ```bash
 $> enscalator -h
-Options:
-  -l, --list-templates    List all available templates
-  -t, --template=<s>      Template name
-  -r, --region=<s>        AWS Region (default: us-east-1)
-  -p, --parameters=<s>    Parameters 'Key1=Value1;Key2=Value2'
-  -s, --stack-name=<s>    Stack name
-  -c, --create-stack      Create the stack
-  -e, --expand            Print template's JSON
-  -h, --help              Show this message
+Usage: enscalator [arguments]
+    -l, --list-templates        List all available templates
+    -t, --template=<s>          Template name
+    -r, --region=<s>            AWS Region (default: us-east-1)
+    -p, --parameters=<s>        Parameters 'Key1=Value1;Key2=Value2'
+    -s, --stack-name=<s>        Stack name
+    -c, --create-stack          Create the stack
+    -e, --expand                Print template's JSON
+    -x, --exec-pre-run-hook     Execute pre run hook
+    -o, --exec-post-run-hook    Execute post run hook
+    -a, --capabilities=<s>      AWS capabilities (default: CAPABILITY_IAM)
+    -h, --help                  Show this message
 ```
 
 Example:
