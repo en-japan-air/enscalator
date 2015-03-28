@@ -281,13 +281,13 @@ module Enscalator
     end
 
     def exec!()
-      if @options[:exec_pre_run_hook]
+      if @options[:create_stack] || @options[:exec_pre_run_hook]
         pre_run_call
       end
 
       cfn_cmd_3(self)
 
-      if @options[:exec_post_run_hook]
+      if @options[:create_stack] || @options[:exec_post_run_hook]
         post_run_call
       end
     end
@@ -324,9 +324,7 @@ module Enscalator
 
         command += " --template-body '#{template.to_json}'"
 
-        pre_run_call
         system(command)
-        post_run_call
       end
 
       if @options[:expand]
