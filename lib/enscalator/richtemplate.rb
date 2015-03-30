@@ -282,54 +282,54 @@ module Enscalator
 
     def exec!()
       if @options[:create_stack] || @options[:exec_pre_run_hook]
-        pre_run_call
+        pre_run_call unless @options[:without_pre_run_hook]
       end
 
-      cfn_cmd_3(self)
+      cfn_cmd_3(self) if @options[:create_stack]
 
       if @options[:create_stack] || @options[:exec_post_run_hook]
-        post_run_call
-      end
-    end
-
-    def cfn_cmd_3(template)
-
-      if @options[:create_stack]
-
-        command = %q{aws cloudformation create-stack}
-
-        if @options[:stack_name]
-          stack_name = @options[:stack_name]
-          command += " --stack-name #{stack_name}"
-        end
-
-        if @options[:region]
-          region = @options[:region]
-          command += " --region #{region}"
-        end
-
-        if @options[:capabilities]
-          capabilities = @options[:capabilities]
-          command += " --capabilities #{capabilities}"
-        end
-
-        if @options[:parameters]
-          params = @options[:parameters].split(';').map do |x|
-            key, val = x.split('=')
-            {:ParameterKey => key, :ParameterValue => val}
-          end
-
-          command += " --parameters '#{params.to_json}'"
-        end
-
-        command += " --template-body '#{template.to_json}'"
-
-        system(command)
+        post_run_call unless @options[:without_post_run_hook]
       end
 
       if @options[:expand]
-        puts JSON.pretty_generate(template)
+        puts JSON.pretty_generate(self)
       end
+    end
+
+    def cfn_cmd_3(template, cfn_cmd: 'create-stack')
+
+      command = %q{aws cloudformation}
+
+      command += " #{cfn_cmd}"
+
+      if @options[:stack_name]
+        stack_name = @options[:stack_name]
+        command += " --stack-name #{stack_name}"
+      end
+
+      if @options[:region]
+        region = @options[:region]
+        command += " --region #{region}"
+      end
+
+      if @options[:capabilities]
+        capabilities = @options[:capabilities]
+        command += " --capabilities #{capabilities}"
+      end
+
+      if @options[:parameters]
+        params = @options[:parameters].split(';').map do |x|
+          key, val = x.split('=')
+          {:ParameterKey => key, :ParameterValue => val}
+        end
+
+        command += " --parameters '#{params.to_json}'"
+      end
+
+      command += " --template-body '#{template.to_json}'"
+
+      # TODO: separate command setup and actual system call to its own methods
+      system(command)
     end
 
     def cfn_cmd_2(template)

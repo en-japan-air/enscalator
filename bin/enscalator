@@ -16,11 +16,15 @@ p = Trollop::Parser.new do
   opt :expand, %q{Print template's JSON}, default: false
   opt :exec_pre_run_hook, %q{Execute pre run hook}, default: false
   opt :exec_post_run_hook, %q{Execute post run hook}, default: false
+  opt :without_pre_run_hook, %q{Run without pre run hook}, default: false
+  opt :without_post_run_hook, %q{Run without post run hook}, default: false
   opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM'
 
   conflicts :list_templates, :expand, :create_stack
   conflicts :list_templates, :expand, :exec_pre_run_hook
   conflicts :list_templates, :expand, :exec_post_run_hook
+  conflicts :exec_pre_run_hook, :without_pre_run_hook
+  conflicts :exec_post_run_hook, :without_post_run_hook
 end
 
 OPTS = Trollop::with_standard_exception_handling p do
