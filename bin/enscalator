@@ -49,6 +49,6 @@ elsif OPTS[:template_given] && !OPTS[:template].empty?
 elsif OPTS[:template].empty?
   STDERR.puts 'Template name cannot be empty string'
 else
-  STDERR.puts 'Something terrible happened'
+  STDERR.puts 'Unable to parse command arguments'
 end
 
