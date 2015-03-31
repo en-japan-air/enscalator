@@ -7,15 +7,12 @@ module Enscalator
         description 'Production RDS stack for Career Card'
 
         pre_run do
-          puts "pre_run"
           magic_setup stack_name: 'enjapan-vpc',
                       region: @options[:region],
                       start_ip_idx: 32
         end
 
         run do
-          puts "run"
-          # rds_snapshot_init('cc-production-201503261040',
           rds_snapshot_init('cc-prod-20150331',
                             allocated_storage: 100,
                             multizone: 'true',
@@ -24,7 +21,6 @@ module Enscalator
         end
 
         post_run do
-          puts "post run"
           region = @options[:region]
           stack_name = @options[:stack_name]
           client = Aws::CloudFormation::Client.new(region: region)
