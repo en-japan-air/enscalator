@@ -9,7 +9,7 @@ module Enscalator
       records.values.flatten.map{|x| {name: x.name, type: x.type, records: x.resource_records.map(&:value)} if x.is_a?(Aws::Structure)}.compact
     end
 
-    def upsert_dns_record(zone_name: nil, record_name: nil, type: 'A', region: 'us-east-1', values: [])
+    def upsert_dns_record(zone_name: nil, record_name: nil, type: 'A', region: 'us-east-1', values: [], ttl: 300)
       client = Aws::Route53::Client.new(region: region)
       zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
 
@@ -24,7 +24,7 @@ module Enscalator
                 name: record_name,
                 type: type,
                 resource_records: values.map{|x| {value: x}},
-                ttl: 300
+                ttl: ttl
               }
             }
           ]

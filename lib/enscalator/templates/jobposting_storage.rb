@@ -5,7 +5,6 @@ module Enscalator
       include Elasticsearch # Include the Elasticsearch plugin for couchbase_init()
 
       def tpl
-        description 'JobPostingStorage service network and database infrastructure'
 
         # pre_run takes a block and will be the first method called
         pre_run do
@@ -13,6 +12,8 @@ module Enscalator
             region: @options[:region],
             start_ip_idx: 20 # The start ip address inside the subnet for this template
         end
+
+        description 'JobPostingStorage service network and database infrastructure'
 
         elasticsearch_init("JobPostingStorage") # Create a couchbase instance with name "JobpostingStorage"
 
@@ -33,7 +34,6 @@ module Enscalator
             type: 'A', region: region, values: [ipaddr]
           )
         end
-
 
       end
     end
