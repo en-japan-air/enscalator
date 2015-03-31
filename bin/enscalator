@@ -7,24 +7,21 @@ argv = ARGV.dup
 p = Trollop::Parser.new do
   banner "Usage: enscalator [arguments]"
 
-  opt :list_templates, %q{List all available templates}, default: false
-  opt :template, %q{Template name}, type: String
-  opt :region, %q{AWS Region}, type: String, default: 'us-east-1'
-  opt :parameters, %q{Parameters 'Key1=Value1;Key2=Value2'}, type: String
-  opt :stack_name, %q{Stack name}, type: String
-  opt :create_stack, %q{Create the stack}, default: false
-  opt :expand, %q{Print template's JSON}, default: false
-  opt :exec_pre_run_hook, %q{Execute pre run hook}, default: false
-  opt :exec_post_run_hook, %q{Execute post run hook}, default: false
-  opt :without_pre_run_hook, %q{Run without pre run hook}, default: false
-  opt :without_post_run_hook, %q{Run without post run hook}, default: false
-  opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM'
+  opt :list_templates, %q{List all available templates}, default: false, short: 'l'
+  opt :template, %q{Template name}, type: String, short: 't'
+  opt :region, %q{AWS Region}, type: String, default: 'us-east-1', short: 'r'
+  opt :parameters, %q{Parameters 'Key1=Value1;Key2=Value2'}, type: String, short: 'p'
+  opt :stack_name, %q{Stack name}, type: String, short: 's'
+  opt :create_stack, %q{Create the stack}, default: false, short: 'c'
+  opt :update_stack, %q{Update already deployed stack}, default: false, short: 'u'
+  opt :without_pre_run_hook, %q{Run without pre run hook}, default: false, short: 'e'
+  opt :without_run_hook, %q{Run without run hook}, default: false, short: 'n'
+  opt :without_exec, %q{Run without create/update stack (print JSON template instead)}, default: false, short: 'x'
+  opt :without_post_run_hook, %q{Run without post run hook}, default: false, short: 'o'
+  opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
 
-  conflicts :list_templates, :expand, :create_stack
-  conflicts :list_templates, :expand, :exec_pre_run_hook
-  conflicts :list_templates, :expand, :exec_post_run_hook
-  conflicts :exec_pre_run_hook, :without_pre_run_hook
-  conflicts :exec_post_run_hook, :without_post_run_hook
+  conflicts :list_templates, :create_stack, :update_stack
+  conflicts :without_exec, :create_stack, :update_stack
 end
 
 OPTS = Trollop::with_standard_exception_handling p do

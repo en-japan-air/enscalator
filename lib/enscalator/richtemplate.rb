@@ -276,39 +276,28 @@ module Enscalator
       end
     end
 
-    # add blocks to run queue
-    def enqueue(item)
-      (@run_queue ||= []) << item if item
+    def enqueue(items)
+      (@run_queue ||= []).concat(items)
     end
 
-    def exec!()
 
-      if @options[:exec_pre_run_hook] || !@options[:without_pre_run_hook]
-        @pre_run_blocks.each { |b| enqueue(b) } unless @options[:exec_post_run_hook]
-      end
+    def exec!
+      enqueue(@pre_run_blocks) unless @options[:without_pre_run_hook]
 
-      @run_blocks.each { |b| enqueue(b) }
+      enqueue(@run_blocks) unless @options[:without_run_hook]
 
-      if @options[:create_stack]
-        enqueue(Proc.new { cfn_cmd_3(self) }) unless @options[:exec_pre_run_hook] || @options[:exec_post_run_hook]
-      end
+      enqueue([ @options[:without_exec] ? Proc.new { puts JSON.pretty_generate(self) } : Proc.new { cfn_cmd_3(self) } ])
 
-      enqueue(Proc.new { puts JSON.pretty_generate(self)}) if @options[:expand]
+      enqueue(@post_run_blocks) unless @options[:without_post_run_hook]
 
-      if @options[:exec_post_run_hook] || !@options[:without_post_run_hook]
-        @post_run_blocks.each { |b| enqueue(b) } unless @options[:exec_pre_run_hook]
-      end
-
-      # actually execute blocks from the run_queue
       @run_queue.each(&:call) if @run_queue
-
     end
 
-    def cfn_cmd_3(template, cfn_cmd: 'create-stack')
+    def cfn_cmd_3(template)
 
       command = %q{aws cloudformation}
 
-      command += " #{cfn_cmd}"
+      command += @options[:create_stack] ? ' create-stack' : ' update-stack'
 
       if @options[:stack_name]
         stack_name = @options[:stack_name]
