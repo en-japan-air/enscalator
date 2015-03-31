@@ -32,8 +32,8 @@ Usage: enscalator [arguments]
   -s, --stack-name=<s>             Stack name
   -c, --create-stack               Create the stack
   -u, --update-stack               Update already deployed stack
-  -e, --pre-run, --no-pre-run      Use pre run hooks (default: true)
-  -o, --post-run, --no-post-run    Run without post run hook (default: true)
+  -e, --pre-run, --no-pre-run      Use pre-run hooks (default: true)
+  -o, --post-run, --no-post-run    Use post-run hook (default: true)
   -x, --expand                     Print generated JSON template
   -a, --capabilities=<s>           AWS capabilities (default: CAPABILITY_IAM)
   -h, --help                       Show this message

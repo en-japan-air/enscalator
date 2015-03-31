@@ -14,8 +14,8 @@ p = Trollop::Parser.new do
   opt :stack_name, %q{Stack name}, type: String, short: 's'
   opt :create_stack, %q{Create the stack}, default: false, short: 'c'
   opt :update_stack, %q{Update already deployed stack}, default: false, short: 'u'
-  opt :pre_run, %q{Use pre run hooks}, default: true, short: 'e'
-  opt :post_run, %q{Run without post run hook}, default: true, short: 'o'
+  opt :pre_run, %q{Use pre-run hooks}, default: true, short: 'e'
+  opt :post_run, %q{Use post-run hook}, default: true, short: 'o'
   opt :expand, %q{Print generated JSON template}, default: false, short: 'x'
   opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
 
