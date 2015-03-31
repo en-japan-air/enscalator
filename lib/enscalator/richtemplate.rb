@@ -337,8 +337,7 @@ module Enscalator
       command += " --template-body '#{template.to_json}'"
 
       # TODO: separate command setup and actual system call to its own methods
-      #system(command)
-      puts "CALLED CREATE STACK"
+      system(command)
     end
 
     def cfn_cmd_2(template)
