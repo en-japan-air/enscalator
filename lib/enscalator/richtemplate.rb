@@ -18,16 +18,12 @@ module Enscalator
       (@pre_run_blocks ||= []) << block if block_given?
     end
 
-    def pre_run_call
-      @pre_run_blocks.each(&:call) if @pre_run_blocks
+    def run(&block)
+      (@run_blocks ||= []) << block if block
     end
 
     def post_run(&block)
       (@post_run_blocks ||= []) << block if block_given?
-    end
-
-    def post_run_call
-      @post_run_blocks.each(&:call) if @post_run_blocks
     end
 
     def tags_to_properties(tags)
@@ -280,20 +276,32 @@ module Enscalator
       end
     end
 
+    # add blocks to run queue
+    def enqueue(item)
+      (@run_queue ||= []) << item if item
+    end
+
     def exec!()
-      if @options[:create_stack] || @options[:exec_pre_run_hook]
-        pre_run_call unless @options[:without_pre_run_hook]
+
+      if @options[:exec_pre_run_hook] || !@options[:without_pre_run_hook]
+        @pre_run_blocks.each { |b| enqueue(b) } unless @options[:exec_post_run_hook]
       end
 
-      cfn_cmd_3(self) if @options[:create_stack]
+      @run_blocks.each { |b| enqueue(b) }
 
-      if @options[:create_stack] || @options[:exec_post_run_hook]
-        post_run_call unless @options[:without_post_run_hook]
+      if @options[:create_stack]
+        enqueue(Proc.new { cfn_cmd_3(self) }) unless @options[:exec_pre_run_hook] || @options[:exec_post_run_hook]
       end
 
-      if @options[:expand]
-        puts JSON.pretty_generate(self)
+      enqueue(Proc.new { puts JSON.pretty_generate(self)}) if @options[:expand]
+
+      if @options[:exec_post_run_hook] || !@options[:without_post_run_hook]
+        @post_run_blocks.each { |b| enqueue(b) } unless @options[:exec_pre_run_hook]
       end
+
+      # actually execute blocks from the run_queue
+      @run_queue.each(&:call) if @run_queue
+
     end
 
     def cfn_cmd_3(template, cfn_cmd: 'create-stack')
@@ -329,7 +337,8 @@ module Enscalator
       command += " --template-body '#{template.to_json}'"
 
       # TODO: separate command setup and actual system call to its own methods
-      system(command)
+      #system(command)
+      puts "CALLED CREATE STACK"
     end
 
     def cfn_cmd_2(template)

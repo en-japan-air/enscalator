@@ -12,11 +12,13 @@ module Enscalator
                       start_ip_idx: 32
         end
 
-        rds_snapshot_init('cc-production-201503261040',
-                          allocated_storage: 100,
-                          multizone: 'true',
-                          parameter_group: 'careercard-production-mysql',
-                          instance_class: 'db.m3.large')
+        run do
+          rds_snapshot_init('cc-production-201503261040',
+                            allocated_storage: 100,
+                            multizone: 'true',
+                            parameter_group: 'careercard-production-mysql',
+                            instance_class: 'db.m3.large')
+        end
 
         post_run do
           region = @options[:region]
