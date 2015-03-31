@@ -4,7 +4,6 @@ module Enscalator
       include RDS_Snapshot
 
       def tpl
-        description 'Production RDS stack for Career Card'
 
         pre_run do
           magic_setup stack_name: 'enjapan-vpc',
@@ -12,13 +11,13 @@ module Enscalator
                       start_ip_idx: 32
         end
 
-        run do
-          rds_snapshot_init('cc-prod-20150331',
-                            allocated_storage: 100,
-                            multizone: 'true',
-                            parameter_group: 'careercard-production-mysql',
-                            instance_class: 'db.m3.large')
-        end
+        description 'Production RDS stack for Career Card'
+
+        rds_snapshot_init('cc-prod-20150331',
+                          allocated_storage: 100,
+                          multizone: 'true',
+                          parameter_group: 'careercard-production-mysql',
+                          instance_class: 'db.m3.large')
 
         post_run do
           region = @options[:region]
@@ -34,6 +33,7 @@ module Enscalator
               record_name: "rds.#{stack_name}.enjapan.prod.",
               type: 'CNAME', region: region, values: [host], ttl: 30)
         end
+
       end
     end
   end

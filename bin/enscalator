@@ -14,14 +14,12 @@ p = Trollop::Parser.new do
   opt :stack_name, %q{Stack name}, type: String, short: 's'
   opt :create_stack, %q{Create the stack}, default: false, short: 'c'
   opt :update_stack, %q{Update already deployed stack}, default: false, short: 'u'
-  opt :without_pre_run_hook, %q{Run without pre run hook}, default: false, short: 'e'
-  opt :without_run_hook, %q{Run without run hook}, default: false, short: 'n'
-  opt :without_exec, %q{Run without create/update stack (print JSON template instead)}, default: false, short: 'x'
-  opt :without_post_run_hook, %q{Run without post run hook}, default: false, short: 'o'
+  opt :pre_run, %q{Use pre run hooks}, default: true, short: 'e'
+  opt :post_run, %q{Run without post run hook}, default: true, short: 'o'
+  opt :expand, %q{Print generated JSON template}, default: false, short: 'x'
   opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
 
-  conflicts :list_templates, :create_stack, :update_stack
-  conflicts :without_exec, :create_stack, :update_stack
+  conflicts :list_templates, :create_stack, :update_stack, :expand
 end
 
 OPTS = Trollop::with_standard_exception_handling p do
