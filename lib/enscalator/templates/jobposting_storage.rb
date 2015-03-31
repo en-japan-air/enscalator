@@ -14,7 +14,9 @@ module Enscalator
             start_ip_idx: 20 # The start ip address inside the subnet for this template
         end
 
-        elasticsearch_init("JobPostingStorage") # Create a couchbase instance with name "JobpostingStorage"
+        run do
+          elasticsearch_init("JobPostingStorage") # Create a couchbase instance with name "JobpostingStorage"
+        end
 
         # post_run will be run after the create-stack call is started
         post_run do
