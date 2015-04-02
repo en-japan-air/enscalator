@@ -5,7 +5,7 @@ require 'trollop'
 
 argv = ARGV.dup
 p = Trollop::Parser.new do
-  banner "Usage: enscalator [arguments]"
+  banner 'Usage: enscalator [arguments]'
 
   opt :list_templates, %q{List all available templates}, default: false, short: 'l'
   opt :template, %q{Template name}, type: String, short: 't'
@@ -15,7 +15,7 @@ p = Trollop::Parser.new do
   opt :create_stack, %q{Create the stack}, default: false, short: 'c'
   opt :update_stack, %q{Update already deployed stack}, default: false, short: 'u'
   opt :pre_run, %q{Use pre-run hooks}, default: true, short: 'e'
-  opt :post_run, %q{Use post-run hook}, default: true, short: 'o'
+  opt :post_run, %q{Use post-run hooks}, default: true, short: 'o'
   opt :expand, %q{Print generated JSON template}, default: false, short: 'x'
   opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
 
@@ -30,7 +30,7 @@ end
 templates = Enscalator::Templates.constants.map(&:to_s)
 
 if OPTS[:list_templates]
-  STDERR.puts "Available templates:"
+  STDERR.puts 'Available templates:'
   STDERR.puts templates.sort
   exit
 end
@@ -41,9 +41,7 @@ if OPTS[:template] && templates.include?(OPTS[:template])
   Object.const_get("Enscalator::Templates::#{OPTS[:template]}").new(OPTS.merge({ARGV: argv})).exec!
 elsif OPTS[:template_given] && !OPTS[:template].empty?
   STDERR.puts %Q{Template "#{OPTS[:template]}" doesn't exist}
-elsif OPTS[:template].empty?
-  STDERR.puts 'Template name cannot be empty string'
 else
-  STDERR.puts 'Unable to parse command arguments'
+  STDERR.puts 'Template name cannot be an empty string'
 end
 

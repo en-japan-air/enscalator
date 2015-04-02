@@ -23,6 +23,7 @@ require 'enscalator/templates/interaction'
 require 'enscalator/templates/auth_service'
 require 'enscalator/templates/enslurp'
 require 'enscalator/templates/cc_rds'
+require 'enscalator/templates/test_instance'
 
 module Enscalator
 end

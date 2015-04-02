@@ -4,6 +4,7 @@ def wait_stack(cfn, stack_name)
 
   stack = cfn.stack(stack_name)
 
+  # TODO: use gem curses to provide more friendly output
   loop do
     break unless stack.stack_status =~ /(CREATE|UPDATE)_IN_PROGRESS$/
       STDERR.puts "Waiting for stack to be created, currently #{stack.stack_status}"

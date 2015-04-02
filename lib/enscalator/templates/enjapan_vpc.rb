@@ -5,7 +5,7 @@ module Enscalator
 
         value :AWSTemplateFormatVersion => '2010-09-09'
 
-        value :Description => 'AWS CloudFormation en japan vpc enjapan-vpc.template: template creating en japan environment in a VPC. The stack contains 2 subnets: the first subnet is public and contains the load balancer, a NAT device for internet access from the private subnet and a bastion host to allow SSH access to the Elastic Beanstalk hosts. The second subnet is private and contains the Elastic Beanstalk instances. You will be billed for the AWS resources used if you create a stack from this template.'
+        value :Description => 'AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC. The stack contains 2 subnets: the first subnet is public and contains the load balancer, a NAT device for internet access from the private subnet and a bastion host to allow SSH access to the Elastic Beanstalk hosts. The second subnet is private and contains the Elastic Beanstalk instances. You will be billed for the AWS resources used if you create a stack from this template.'
 
         parameter 'BastionKeyName',
           :Description => 'Name of an existing EC2 KeyPair to enable SSH access to the bastion host',
@@ -98,6 +98,9 @@ module Enscalator
 
         mapping 'AWSRegionNetConfig',
           Enscalator::EnJapanConfiguration::mapping_vpc_net
+
+        mapping 'AWSRegion2AZ',
+          Enscalator::EnJapanConfiguration::mapping_availability_zones
 
         resource 'VPC', :Type => 'AWS::EC2::VPC', :Properties => {
           :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'VPC'),

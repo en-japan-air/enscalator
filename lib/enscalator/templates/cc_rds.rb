@@ -1,7 +1,7 @@
 module Enscalator
   module Templates
     class CareerCardProductionRDS < Enscalator::EnAppTemplateDSL
-      include RDS_Snapshot
+      include Enscalator::Plugins::RDS_Snapshot
 
       def tpl
 

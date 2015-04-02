@@ -226,7 +226,9 @@ module Enscalator
         :ConstraintDescription => "must select a valid #{instance_name} instance type."
     end
 
+    # TODO: if its not needed it should be deleted
     def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
+      warn "[Deprecated] Use instance_vpc or instance_with_network instead"
       raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
       raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
     end
@@ -260,7 +262,6 @@ module Enscalator
         :Type => 'AWS::EC2::Instance',
         :Properties => properties
       }
-      options[:DependsOn] = dependsOn unless dependsOn.empty?
       resource name, options
     end
 
@@ -273,7 +274,7 @@ module Enscalator
     end
 
     def enqueue(items)
-      (@run_queue ||= []).concat(items)
+      (@run_queue ||= []).concat( (items.nil? || items.empty?) ? [] : items )
     end
 
 
