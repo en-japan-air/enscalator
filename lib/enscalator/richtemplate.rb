@@ -14,10 +14,16 @@ module Enscalator
       super(&block) 
     end 
 
+    # Pre-run hook
+    #
+    # @param [Proc] block Hook body
     def pre_run(&block)
       (@pre_run_blocks ||= []) << block if block_given?
     end
 
+    # Post-run hook
+    #
+    # @param [Proc] block Hook body
     def post_run(&block)
       (@post_run_blocks ||= []) << block if block_given?
     end
@@ -26,6 +32,9 @@ module Enscalator
       tags.map { |k,v| {:Key => k, :Value => v}}
     end
 
+    # Template description
+    #
+    # @param [String] desc Template description
     def description(desc)
       value :Description => desc
     end
@@ -121,6 +130,9 @@ module Enscalator
       end
     end
 
+    # Keyname parameter
+    #
+    # @param [String] instance_name Instance name
     def parameter_keyname(instance_name)
       parameter "#{instance_name}KeyName",
         :Description => "Name of the #{instance_name} ssh key pair",
@@ -131,41 +143,65 @@ module Enscalator
         :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
     end
 
+    # Name parameter
+    #
+    # @param [String] instance_name Instance name
+    # @param [String] default Default name
+    # @param [Integer] min_length Minimum length
+    # @param [Integer] max_length Maximum length
     def parameter_name(instance_name, default: nil, min_length: 1, max_length: 64)
       parameter "#{instance_name}Name",
         :Default => default ? default.to_s : "#{instance_name}",
         :Description => "#{instance_name} name",
-        :Type => "String",
+        :Type => 'String',
         :MinLength => min_length,
         :MaxLength => max_length,
-        :AllowedPattern => "[a-zA-Z][a-zA-Z0-9]*",
-        :ConstraintDescription => "must begin with a letter and contain only alphanumeric characters."
+        :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
+        :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
     end
 
-    def parameter_username(instance_name, default: "root", min_length: 1, max_length: 16)
+    # Username parameter
+    #
+    # @param [String] instance_name Instance name
+    # @param [String] default Default username
+    # @param [Integer] min_length Minimum length
+    # @param [Integer] max_length Maximum length
+    def parameter_username(instance_name, default: 'root', min_length: 1, max_length: 16)
       parameter "#{instance_name}Username",
         :Default => default,
-        :NoEcho => "true",
+        :NoEcho => 'true',
         :Description => "Username for #{instance_name} access",
-        :Type => "String",
+        :Type => 'String',
         :MinLength => min_length,
         :MaxLength => max_length,
-        :AllowedPattern => "[a-zA-Z][a-zA-Z0-9]*",
-        :ConstraintDescription => "must begin with a letter and contain only alphanumeric characters."
+        :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
+        :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
     end
 
-    def parameter_password(instance_name, default: "password", min_length: 8, max_length: 41)
+    # Password parameter
+    #
+    # @param [String] instance_name Instance name
+    # @param [String] default Default value
+    # @param [Integer] min_length Minimum length
+    # @param [Integer] max_length Maximum length
+    def parameter_password(instance_name, default: 'password', min_length: 8, max_length: 41)
       parameter "#{instance_name}Password",
         :Default => default,
-        :NoEcho => "true",
+        :NoEcho => 'true',
         :Description => "Password for #{instance_name} access",
-        :Type => "String",
+        :Type => 'String',
         :MinLength => min_length,
         :MaxLength => max_length,
-        :AllowedPattern => "[a-zA-Z0-9]*",
-        :ConstraintDescription => "must contain only alphanumeric characters."
+        :AllowedPattern => '[a-zA-Z0-9]*',
+        :ConstraintDescription => 'must contain only alphanumeric characters.'
     end
 
+    # Allocated storage parameter
+    #
+    # @param [String] instance_name Instance name
+    # @param [String] default Default size of instance primary storage
+    # @param [Integer] min Minimal allowed value
+    # @param [Integer] max Maximum allowed value
     def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
       parameter "#{instance_name}AllocatedStorage",
         :Default => default.to_s,
@@ -176,6 +212,7 @@ module Enscalator
         :ConstraintDescription => "must be between #{min} and #{max}Gb."
     end
 
+    # IAM profile for s3
     def iam_s3_instance_profile
       resource 'S3AccessRole', :Type => 'AWS::IAM::Role', :Properties => {
         :AssumeRolePolicyDocument => {
@@ -208,6 +245,11 @@ module Enscalator
       ref('S3InstanceProfile')
     end
 
+    # Instance class (type) parameter
+    #
+    # @param [String] instance_name Instance name
+    # @param [String] default Default instance type
+    # @param [Array] allowed_values List of allowed values
     def parameter_instance_class(instance_name, default: 't2.micro', allowed_values:[])
       allowed = allowed_values.any? ? allowed_values :
         %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
@@ -226,13 +268,29 @@ module Enscalator
         :ConstraintDescription => "must select a valid #{instance_name} instance type."
     end
 
-    # TODO: if its not needed it should be deleted
+    # @deprecated
+    # Create ec2 instance
+    #
+    # @param [String] name Instance name
+    # @param [String] image_id Instance ami_id
+    # @param [String] subnet Instance subnet id
+    # @param [String] security_groups Instance security_groups (string of Security Groups IDs)
+    # @param [Array] dependsOn Resources necessary to be create prior to this instance
+    # @param [Hash] properties Other properties
     def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       warn '[Deprecated] Use instance_vpc or instance_with_network instead'
       raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
       raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
     end
 
+    # Create ec2 instance in given vpc
+    #
+    # @param [String] name Instance name
+    # @param [String] image_id Instance ami_id
+    # @param [String] subnet Instance subnet id
+    # @param [String] security_groups Instance security_groups (string of Security Groups IDs)
+    # @param [Array] dependsOn Resources necessary to be create prior to this instance
+    # @param [Hash] properties Other properties
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       raise "VPC instance #{name} can not contain NetworkInterfaces and subnet or security_groups" if properties.include?(:NetworkInterfaces)
       raise "VPC instance #{name} can not contain non VPC SecurityGroups" if properties.include?(:SecurityGroups)
@@ -251,6 +309,12 @@ module Enscalator
       resource name, options
     end
 
+    # Create ec2 instance with attached to it network interface
+    #
+    # @param [String] name Instance name
+    # @param [String] image_id Instance ami_id
+    # @param [String] network_interfaces Network interface
+    # @param [Hash] properties Other properties
     def instance_with_network(name, image_id, network_interfaces, properties:{})
       raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups" if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
       properties[:ImageId] = image_id
@@ -273,11 +337,14 @@ module Enscalator
       end
     end
 
+    # Adds block to the run queue
+    #
+    # @param [Array] items List of blocks
     def enqueue(items)
       (@run_queue ||= []).concat( items || [] )
     end
 
-
+    # Determine content of run queue and execute each block in queue in sequence
     def exec!
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
@@ -288,6 +355,9 @@ module Enscalator
       @run_queue.each(&:call) if @run_queue
     end
 
+    # Run aws sdk cloud-formation command with stack configuration and parameters
+    #
+    # @param [RichTemplateDSL] template Cloudformation template
     def cfn_cmd(template)
 
       command = %q{aws cloudformation}

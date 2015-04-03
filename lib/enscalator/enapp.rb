@@ -206,14 +206,14 @@ module Enscalator
 
     end
 
-    # TODO: deprecated, move this comment above
+    # @deprecated
     # vpc is the vpc_id
     # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
-    #   (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
+    # (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
     # private_security_group is the id of the security group with access to the NAT instances
     # private_route_tables are the route tables to the NAT instances
     # Private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}
-    #   a and c being the suffixes of the availability zones
+    # a and c being the suffixes of the availability zones
     def basic_setup(vpc: nil, start_ip_idx: 16,
                     private_security_group: '',
                     private_route_tables: {})
