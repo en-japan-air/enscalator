@@ -16,14 +16,14 @@ module Enscalator
 
     # Pre-run hook
     #
-    # @param [Proc] block Hook body
+    # @param block [Proc] hook body
     def pre_run(&block)
       (@pre_run_blocks ||= []) << block if block_given?
     end
 
     # Post-run hook
     #
-    # @param [Proc] block Hook body
+    # @param block [Proc] hook body
     def post_run(&block)
       (@post_run_blocks ||= []) << block if block_given?
     end
@@ -34,7 +34,7 @@ module Enscalator
 
     # Template description
     #
-    # @param [String] desc Template description
+    # @param desc [String] template description
     def description(desc)
       value :Description => desc
     end
@@ -132,7 +132,7 @@ module Enscalator
 
     # Keyname parameter
     #
-    # @param [String] instance_name Instance name
+    # @param instance_name [String] instance name
     def parameter_keyname(instance_name)
       parameter "#{instance_name}KeyName",
         :Description => "Name of the #{instance_name} ssh key pair",
@@ -145,10 +145,10 @@ module Enscalator
 
     # Name parameter
     #
-    # @param [String] instance_name Instance name
-    # @param [String] default Default name
-    # @param [Integer] min_length Minimum length
-    # @param [Integer] max_length Maximum length
+    # @param instance_name [String] instance name
+    # @param default [String] default name
+    # @param min_length [Integer] minimum length
+    # @param max_length [Integer] maximum length
     def parameter_name(instance_name, default: nil, min_length: 1, max_length: 64)
       parameter "#{instance_name}Name",
         :Default => default ? default.to_s : "#{instance_name}",
@@ -162,10 +162,10 @@ module Enscalator
 
     # Username parameter
     #
-    # @param [String] instance_name Instance name
-    # @param [String] default Default username
-    # @param [Integer] min_length Minimum length
-    # @param [Integer] max_length Maximum length
+    # @param instance_name [String] instance name
+    # @param default [String] default username
+    # @param min_length [Integer] minimum length
+    # @param max_length [Integer] maximum length
     def parameter_username(instance_name, default: 'root', min_length: 1, max_length: 16)
       parameter "#{instance_name}Username",
         :Default => default,
@@ -180,10 +180,10 @@ module Enscalator
 
     # Password parameter
     #
-    # @param [String] instance_name Instance name
-    # @param [String] default Default value
-    # @param [Integer] min_length Minimum length
-    # @param [Integer] max_length Maximum length
+    # @param instance_name [String] instance name
+    # @param default [String] default value
+    # @param min_length [Integer] minimum length
+    # @param max_length [Integer] maximum length
     def parameter_password(instance_name, default: 'password', min_length: 8, max_length: 41)
       parameter "#{instance_name}Password",
         :Default => default,
@@ -198,10 +198,10 @@ module Enscalator
 
     # Allocated storage parameter
     #
-    # @param [String] instance_name Instance name
-    # @param [String] default Default size of instance primary storage
-    # @param [Integer] min Minimal allowed value
-    # @param [Integer] max Maximum allowed value
+    # @param instance_name [String] instance name
+    # @param default [String] default size of instance primary storage
+    # @param min [Integer] minimal allowed value
+    # @param max [Integer] maximum allowed value
     def parameter_allocated_storage(instance_name, default: 5, min: 5, max: 1024)
       parameter "#{instance_name}AllocatedStorage",
         :Default => default.to_s,
@@ -247,9 +247,9 @@ module Enscalator
 
     # Instance class (type) parameter
     #
-    # @param [String] instance_name Instance name
-    # @param [String] default Default instance type
-    # @param [Array] allowed_values List of allowed values
+    # @param instance_name [String] instance name
+    # @param default [String] default instance type
+    # @param allowed_values [Array] list of allowed values
     def parameter_instance_class(instance_name, default: 't2.micro', allowed_values:[])
       allowed = allowed_values.any? ? allowed_values :
         %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
@@ -268,15 +268,15 @@ module Enscalator
         :ConstraintDescription => "must select a valid #{instance_name} instance type."
     end
 
-    # @deprecated
+    # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
     # Create ec2 instance
     #
-    # @param [String] name Instance name
-    # @param [String] image_id Instance ami_id
-    # @param [String] subnet Instance subnet id
-    # @param [String] security_groups Instance security_groups (string of Security Groups IDs)
-    # @param [Array] dependsOn Resources necessary to be create prior to this instance
-    # @param [Hash] properties Other properties
+    # @param name [String] instance name
+    # @param image_id [String] instance ami_id
+    # @param subnet [String] instance subnet id
+    # @param security_groups [String] instance security_groups (string of Security Groups IDs)
+    # @param dependsOn [Array] resources necessary to be create prior to this instance
+    # @param properties [Hash] other properties
     def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       warn '[Deprecated] Use instance_vpc or instance_with_network instead'
       raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
@@ -285,12 +285,12 @@ module Enscalator
 
     # Create ec2 instance in given vpc
     #
-    # @param [String] name Instance name
-    # @param [String] image_id Instance ami_id
-    # @param [String] subnet Instance subnet id
-    # @param [String] security_groups Instance security_groups (string of Security Groups IDs)
-    # @param [Array] dependsOn Resources necessary to be create prior to this instance
-    # @param [Hash] properties Other properties
+    # @param name [String] instance name
+    # @param image_id [String] instance ami_id
+    # @param subnet [String] instance subnet id
+    # @param security_groups [String] instance security_groups (string of Security Groups IDs)
+    # @param dependsOn [Array] resources necessary to be create prior to this instance
+    # @param properties [Hash] other properties
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       raise "VPC instance #{name} can not contain NetworkInterfaces and subnet or security_groups" if properties.include?(:NetworkInterfaces)
       raise "VPC instance #{name} can not contain non VPC SecurityGroups" if properties.include?(:SecurityGroups)
@@ -311,10 +311,10 @@ module Enscalator
 
     # Create ec2 instance with attached to it network interface
     #
-    # @param [String] name Instance name
-    # @param [String] image_id Instance ami_id
-    # @param [String] network_interfaces Network interface
-    # @param [Hash] properties Other properties
+    # @param name [String] instance name
+    # @param image_id [String] instance ami_id
+    # @param network_interfaces [String] network interfaces
+    # @param properties [Hash] other properties
     def instance_with_network(name, image_id, network_interfaces, properties:{})
       raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups" if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
       properties[:ImageId] = image_id
@@ -339,7 +339,7 @@ module Enscalator
 
     # Adds block to the run queue
     #
-    # @param [Array] items List of blocks
+    # @param items [Array] list of blocks
     def enqueue(items)
       (@run_queue ||= []).concat( items || [] )
     end
@@ -357,7 +357,7 @@ module Enscalator
 
     # Run aws sdk cloud-formation command with stack configuration and parameters
     #
-    # @param [RichTemplateDSL] template Cloudformation template
+    # @param template [RichTemplateDSL] cloudformation template
     def cfn_cmd(template)
 
       command = %q{aws cloudformation}

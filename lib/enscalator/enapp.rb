@@ -34,19 +34,9 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
-    def client(region)
-      raise RuntimeError, 'Unable to proceed without region' if region && region.empty?
-      Aws::CloudFormation::Client.new(region: region)
-    end
-
-    def get_cfn(client)
-      raise RuntimeError, 'Unable to query resource without client' unless client
-      Aws::CloudFormation::Resource.new(client: client)
-    end
-
     # Do like with magic_setup, but without basic_setup and post_run hook
     def pre_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
-      cfn = get_cfn(client(region))
+      cfn = cfn_client(region)
       stack = cfn.stack(stack_name)
       vpc_id = select_output(stack.outputs, 'VpcId')
       private_security_group = select_output(stack.outputs, 'PrivateSecurityGroup')
@@ -181,7 +171,7 @@ module Enscalator
     # Do exactly like basic_setup but the vpc_id, private_security_group,
     # and the route tables are automatically filled from the stack stack_name
     def magic_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
-      cfn = get_cfn(client(region))
+      cfn = cfn_client(region)
       stack = cfn.stack(stack_name)
       vpc_id = select_output(stack.outputs, 'VpcId')
       private_security_group = select_output(stack.outputs, 'PrivateSecurityGroup')
@@ -194,7 +184,7 @@ module Enscalator
         private_route_tables: private_route_tables                                                                                                       
 
       post_run do
-        cfn = get_cfn(client(region))
+        cfn = cfn_client(region)
         stack = wait_stack(cfn, @options[:stack_name])
         elb_name = select_output(stack.outputs, 'LoadBalancerDnsName')
         upsert_dns_record(

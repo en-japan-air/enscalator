@@ -4,6 +4,7 @@ module Enscalator
   module StackHelpers
 
     def cfn_client(region)
+      raise RuntimeError, 'Unable to proceed without region' if region && region.empty?
       client = Aws::CloudFormation::Client.new(region: region)
       Aws::CloudFormation::Resource.new(client: client)
     end
@@ -49,7 +50,7 @@ module Enscalator
       end
     end
 
-    # @deprecated
+    # @deprecated cloudformation command is not used anymore
     def call_script(region,
                     dependent_stack_name,
                     script_path,
@@ -71,7 +72,7 @@ module Enscalator
       end
     end
 
-    # @deprecated
+    # @deprecated cloudformation command is not used anymore
     def create_stack(region,
                      dependent_stack_name,
                      template,
