@@ -4,6 +4,8 @@ require_relative 'richtemplate'
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
 
+    include Enscalator::StackHelpers
+
     def ref_application_subnet_a
       ref('ApplicationSubnetA')
     end
@@ -145,7 +147,7 @@ module Enscalator
                              :IpProtocol => 'tcp',
                              :FromPort => '22',
                              :ToPort => '22',
-                             :CidrIp => EnJapanConfiguration.mapping_vpc_net[region][:VPC]
+                             :CidrIp => '10.0.0.0/8'
                            },
                            {
                              :IpProtocol => 'tcp',
@@ -165,7 +167,7 @@ module Enscalator
                            { :IpProtocol => 'tcp',
                              :FromPort => '0',
                              :ToPort => '65535',
-                             :CidrIp => EnJapanConfiguration.mapping_vpc_net[region][:VPC]
+                             :CidrIp => '10.0.0.0/8'
                            },
                          ],
                          tags: {
@@ -204,7 +206,7 @@ module Enscalator
 
     end
 
-    # TODO: deprecated, move
+    # TODO: deprecated, move this comment above
     # vpc is the vpc_id
     # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
     #   (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
@@ -363,5 +365,6 @@ module Enscalator
         :Value => get_att('LoadBalancer', 'DNSName')
 
     end
-  end
-end
+
+  end # EnAppTemplateDSL
+end # module Enscalator

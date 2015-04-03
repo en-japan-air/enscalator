@@ -2,6 +2,7 @@
 
 module Enscalator
   module Route53
+
     def get_dns_records(zone_name: nil, region: 'us-east-1')
       client = Aws::Route53::Client.new(region: region)
       zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
@@ -31,5 +32,6 @@ module Enscalator
         }
       )
     end
-  end
-end
+
+  end # module Route53
+end # module Enscalator

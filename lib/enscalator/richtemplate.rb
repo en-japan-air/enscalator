@@ -228,7 +228,7 @@ module Enscalator
 
     # TODO: if its not needed it should be deleted
     def instance(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
-      warn "[Deprecated] Use instance_vpc or instance_with_network instead"
+      warn '[Deprecated] Use instance_vpc or instance_with_network instead'
       raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
       raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
     end
@@ -274,7 +274,7 @@ module Enscalator
     end
 
     def enqueue(items)
-      (@run_queue ||= []).concat( (items.nil? || items.empty?) ? [] : items )
+      (@run_queue ||= []).concat( items || [] )
     end
 
 
