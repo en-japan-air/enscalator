@@ -22,8 +22,7 @@ module Enscalator
         post_run do
           region = @options[:region]
           stack_name = @options[:stack_name]
-          client = Aws::CloudFormation::Client.new(region: region)
-          cfn = Aws::CloudFormation::Resource.new(client: client)
+          cfn = cfn_client(@options[:region])
 
           stack = wait_stack(cfn, stack_name)
           host = get_resource(stack, 'RDSEndpointAddress')

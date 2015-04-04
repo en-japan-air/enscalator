@@ -5,6 +5,7 @@ module Enscalator
     class TestEC2Instance < Enscalator::EnAppTemplateDSL
 
       include Enscalator::Plugins::Ubuntu
+      include Enscalator::Plugins::Elb
 
       def tpl
         warn '[Warning] Deploying testing instance, do NOT rely on it to run some code'
@@ -23,6 +24,7 @@ module Enscalator
           private_key_file = File.join(ENV['HOME'], '.ssh', @key_name)
           client = Aws::EC2::Client.new region: @options[:region]
 
+          # remove existing key
           if File.exists?(private_key_file)
             key_pair_client = Aws::EC2::KeyPair.new(@key_name, client: client)
 
@@ -31,16 +33,16 @@ module Enscalator
               # TODO: find sane and working way to calculate fingerprint of local private key
               client.delete_key_pair dry_run: false, key_name: @key_name
               File.unlink(private_key_file)
-            else
-              # create new key
-              @key_pair = client.create_key_pair dry_run: false, key_name: @key_name
-              File.open(private_key_file, 'w') do |wfile|
-                wfile.write(@key_pair.key_material)
-              end
-              File.chmod(0600, private_key_file)
-              puts %Q{Created new ssh key with fingerprint: #{@key_pair.key_fingerprint}}
             end
           end
+
+          # create new key
+          @key_pair = client.create_key_pair dry_run: false, key_name: @key_name
+          File.open(private_key_file, 'w') do |wfile|
+            wfile.write(@key_pair.key_material)
+          end
+          File.chmod(0600, private_key_file)
+          puts %Q{Created new ssh key with fingerprint: #{@key_pair.key_fingerprint}}
         end
 
         description 'Instance to test enscalator setup/deployment'
@@ -54,6 +56,9 @@ module Enscalator
                     storage_kind: 'ebs',
                     virtualization: 'paravirtual',
                     allocate_public_ip: true
+
+        elb_init @options[:stack_name],
+                 @options[:region]
 
       end
     end

@@ -38,20 +38,25 @@ module Enscalator
     def pre_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
       cfn = cfn_client(region)
       stack = cfn.stack(stack_name)
-      vpc_id = select_output(stack.outputs, 'VpcId')
-      private_security_group = select_output(stack.outputs, 'PrivateSecurityGroup')
+      vpc_id = get_resource(stack, 'VpcId')
+      private_security_group = get_resource(stack, 'PrivateSecurityGroup')
       private_route_tables = { 'a' => get_resource(stack, 'PrivateRouteTable1'),
                                'c' => get_resource(stack, 'PrivateRouteTable2') }
 
       flat_setup vpc: vpc_id,
-                 region: region,
                  start_ip_idx: start_ip_idx,
                  private_security_group: private_security_group,
                  private_route_tables: private_route_tables
     end
 
+    # vpc is the vpc_id
+    # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
+    # (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
+    # private_security_group is the id of the security group with access to the NAT instances
+    # private_route_tables are the route tables to the NAT instances
+    # Private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}
+    # a and c being the suffixes of the availability zones
     def flat_setup(vpc: nil,
-                   region: nil,
                    start_ip_idx: 16,
                    private_security_group: '',
                    private_route_tables: {})
@@ -90,7 +95,6 @@ module Enscalator
           }
         end.reduce(:merge).with_indifferent_access)
 
-      # TODO: move this to separate elb plugin
       private_route_tables.keys.map do |z|
         subnet(
           "ApplicationSubnet#{z.upcase}",
@@ -118,7 +122,6 @@ module Enscalator
         )
       end
 
-      # TODO: move this to separate elb plugin
       private_route_tables.keys.map do |z|
         resource "RouteTableAssociation#{z.upcase}",
                  :Type => 'AWS::EC2::SubnetRouteTableAssociation',
@@ -143,22 +146,21 @@ module Enscalator
                              :IpProtocol => 'tcp',
                              :FromPort => '0',
                              :ToPort => '65535',
-                             :SourceSecurityGroupId => ref_application_security_group # TODO: move this to elb plugin
+                             :SourceSecurityGroupId => ref_application_security_group
                            },
                          ],
                          dependsOn:[],
                          tags:{}
 
-      # TODO: move this to elb plugin
       security_group_vpc 'ApplicationSecurityGroup',
                          'Security group of the application servers',
-                         ref_vpc_id,
+                         vpc,
                          securityGroupIngress: [
                            { :IpProtocol => 'tcp',
                              :FromPort => '0',
                              :ToPort => '65535',
                              :CidrIp => '10.0.0.0/8'
-                           },
+                           }
                          ],
                          tags: {
                              'Name' => join('-', aws_stack_name, 'app', 'sg'),
@@ -168,6 +170,7 @@ module Enscalator
     end
 
     # TODO: move this logic to elb plugin
+    # @deprecated
     # Do exactly like basic_setup but the vpc_id, private_security_group,
     # and the route tables are automatically filled from the stack stack_name
     def magic_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
@@ -197,13 +200,6 @@ module Enscalator
     end
 
     # @deprecated
-    # vpc is the vpc_id
-    # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
-    # (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
-    # private_security_group is the id of the security group with access to the NAT instances
-    # private_route_tables are the route tables to the NAT instances
-    # Private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}
-    # a and c being the suffixes of the availability zones
     def basic_setup(vpc: nil, start_ip_idx: 16,
                     private_security_group: '',
                     private_route_tables: {})

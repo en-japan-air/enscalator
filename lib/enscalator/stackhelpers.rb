@@ -31,7 +31,7 @@ module Enscalator
     end
 
     def select_output(outputs, key)
-      outputs.select { |a| a.output_key == key }[0].output_value
+      outputs.select { |a| a.output_key == key }.first.output_value
     end
 
     def select_outputs(outputs, keys)
