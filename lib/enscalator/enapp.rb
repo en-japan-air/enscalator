@@ -4,7 +4,7 @@ require_relative 'richtemplate'
 module Enscalator
   class EnAppTemplateDSL < RichTemplateDSL
 
-    include Enscalator::StackHelpers
+    include Enscalator::Helpers
 
     def ref_application_subnet_a
       ref('ApplicationSubnetA')
@@ -34,7 +34,7 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
-    # Query and configure VPC parameter required for the stack
+    # Query and pre-configure VPC parameters required for the stack
     #
     # @param stack_name [String] name of the cloudformation stack
     # @param region [String] valid Amazon AWS region
@@ -43,29 +43,31 @@ module Enscalator
       cfn = cfn_client(region)
       stack = cfn.stack(stack_name)
       vpc_id = get_resource(stack, 'VpcId')
-      private_security_group = get_resource(stack, 'PrivateSecurityGroup')
-      private_route_tables = { 'a' => get_resource(stack, 'PrivateRouteTable1'),
+      vpc_private_security_group = get_resource(stack, 'PrivateSecurityGroup')
+      vpc_private_route_tables = { 'a' => get_resource(stack, 'PrivateRouteTable1'),
                                'c' => get_resource(stack, 'PrivateRouteTable2') }
 
-      flat_setup vpc: vpc_id,
-                 start_ip_idx: start_ip_idx,
-                 private_security_group: private_security_group,
-                 private_route_tables: private_route_tables
+      basic_setup vpc_id,
+                 start_ip_idx,
+                 vpc_private_security_group,
+                 vpc_private_route_tables
     end
 
     alias_method :magic_setup, :pre_setup
 
-    # vpc is the vpc_id
-    # start_ip_idx is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
-    # (see M https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
-    # private_security_group is the id of the security group with access to the NAT instances
-    # private_route_tables are the route tables to the NAT instances
-    # Private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}
-    # a and c being the suffixes of the availability zones
-    def flat_setup(vpc: nil,
-                   start_ip_idx: 16,
-                   private_security_group: '',
-                   private_route_tables: {})
+    # Setup VPC configuration which is required in order to create stack
+    #
+    # @param vpc [String] the vpc_id
+    # @param start_ip_idx [Integer] is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
+    #  (see https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
+    # @param private_security_group [String] the id of the security group with access to the NAT instances
+    # @param private_route_tables [Hash] the route tables to the NAT instances
+    #  private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}, where
+    #  a and c being the suffixes of the availability zones
+    def basic_setup(vpc,
+                   start_ip_idx,
+                   private_security_group,
+                   private_route_tables)
 
       parameter 'VpcId',
                 :Description => 'The Id of the VPC',

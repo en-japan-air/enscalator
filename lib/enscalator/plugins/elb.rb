@@ -4,8 +4,8 @@ module Enscalator
 
       # Internet facing ELB instance
       #
-      # @param stack_name [String] stack name ( @options[:stack_name] )
-      # @param region [String] region ( @options[:region] )
+      # @param stack_name [String] must be stack name from @options[:stack_name]
+      # @param region [String] must be region from @options[:region]
       # @param elb_name [String, Hash] ELB instance name - can be either String or Fn::Join
       # @param web_server_port [Integer] application port to which ELB redirects traffic
       # @param zone_name [String] zone name attached to the vpc

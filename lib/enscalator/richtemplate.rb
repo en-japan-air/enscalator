@@ -5,11 +5,16 @@ def rich_template(&block)
 end
 
 module Enscalator
+
+  # DSL specific for enscalator
   class RichTemplateDSL < TemplateDSL
     include Route53
 
+    # Constructor
+    #
+    # @param options [Hash] command-line arguments
     def initialize(options={}) 
-      @options = options # Options contains the cli args 
+      @options = options
       block = Proc.new { tpl } 
       super(&block) 
     end 
@@ -28,6 +33,10 @@ module Enscalator
       (@post_run_blocks ||= []) << block if block_given?
     end
 
+    # Convert tags to properties
+    #
+    # @param tags [Hash] collection of tags
+    # @return [Array] list of properties
     def tags_to_properties(tags)
       tags.map { |k,v| {:Key => k, :Value => v}}
     end
@@ -329,6 +338,10 @@ module Enscalator
       resource name, options
     end
 
+    # Dynamically define methods to access related parameters
+    #
+    # @param name [String] parameter key
+    # @param options [Hash] options
     def parameter(name, options)
       default(:Parameters, {})[name] = options
       @parameters[name] ||= options[:Default]
