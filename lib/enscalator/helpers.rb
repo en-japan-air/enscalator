@@ -8,7 +8,7 @@ module Enscalator
     #  taken from: https://nickcharlton.net/posts/ruby-subprocesses-with-stdout-stderr-streams.html
     class Subprocess
 
-      # Create new subprocess and executed cmd
+      # Create new subprocess and execute command there
       #
       # @param cmd [String] command to be executed
       # @param block [Proc] block handling stdout, stderr and thread
@@ -97,9 +97,28 @@ module Enscalator
     # @param stack [Aws::CloudFormation::Stack] cloudformation stack instance
     # @param key [String] resource identifier (key)
     # @return [String] AWS resource identifier
+    # @raise [ArgumentError] when stack is nil
     def get_resource(stack, key)
+      raise ArgumentError, 'stack must not be nil' if stack.nil?
       resource = stack.resource(key).physical_resource_id rescue nil
-      resource.nil? ? select_output(stack.outputs, key) : resource
+      output = resource.nil? ? stack.outputs.select { |a| a.output_key == key } : resource
+      output.nil? ? output.first.output_value : output
+    end
+
+    # Get list of resources for given keys
+    #
+    # @param stack [Aws::CloudFormation::Stack] cloudformation stack instance
+    # @param keys [Array] list of resource identifiers (keys)
+    # @return [String] list of AWS resource identifiers
+    # @raise [ArgumentError] when stack is nil
+    def get_resources(stack, keys)
+      raise ArgumentError, 'stack must not be nil' if stack.nil?
+      keys.map do |k|
+        out = stack.outputs.select do |o|
+          o.output_key == k
+        end
+        out.first.output_value
+      end
     end
 
     # Generate parameters list
@@ -132,7 +151,7 @@ module Enscalator
 
       cfn = cfn_client(region)
       stack = wait_stack(cfn, dependent_stack_name)
-      args = select_outputs(stack.outputs,keys).join(' ')
+      args = select_outputs(stack.outputs, keys).join(' ')
 
       cmd = [script_path, prepend_args, args, append_args]
 
