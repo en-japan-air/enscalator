@@ -36,14 +36,17 @@ module Enscalator
           find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'amd64'),
           ref_resource_subnet_a,
           [ref_private_security_group, ref_resource_security_group],
-          dependsOn:[], properties: {
+          dependsOn: [],
+          properties: {
             :KeyName => ref("Ubuntu#{instance_name}KeyName"),
             :InstanceType => ref("Ubuntu#{instance_name}InstanceClass")
           })
 
         resource "Ubuntu#{instance_name}PublicIpAddress",
                  :Type => 'AWS::EC2::EIP',
-                 :Properties => { :InstanceId => ref("Ubuntu#{instance_name}") } if allocate_public_ip
+                 :Properties => {
+                     :InstanceId => ref("Ubuntu#{instance_name}")
+                 } if allocate_public_ip
       end
 
     end # Ubuntu

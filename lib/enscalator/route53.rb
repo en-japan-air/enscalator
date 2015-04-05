@@ -3,17 +3,43 @@
 module Enscalator
   module Route53
 
-    def get_dns_records(zone_name: nil, region: 'us-east-1')
-      client = Aws::Route53::Client.new(region: region)
-      zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
-      records = client.list_resource_record_sets(hosted_zone_id: zone.id)
-      records.values.flatten.map{|x| {name: x.name, type: x.type, records: x.resource_records.map(&:value)} if x.is_a?(Aws::Structure)}.compact
+    # Route 53 client
+    #
+    # @param region [String] AWS region identifier
+    # @return [Aws::Route53::Client]
+    def route53_client(region: 'us-east-1')
+      Aws::Route53::Client.new(region: region)
     end
 
-    def upsert_dns_record(zone_name: nil, record_name: nil, type: 'A', region: 'us-east-1', values: [], ttl: 300)
-      client = Aws::Route53::Client.new(region: region)
+    # Get existing DNS records
+    #
+    # @param zone_name [String] zone name
+    def get_dns_records(zone_name: nil)
+      client = route53_client
       zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
+      records = client.list_resource_record_sets(hosted_zone_id: zone.id)
+      records.values.flatten.map { |x|
+        { name: x.name,
+          type: x.type,
+          records: x.resource_records.map(&:value)
+        } if x.is_a?(Aws::Structure)
+      }.compact
+    end
 
+    # Create DNS record in given hosted zone
+    #
+    # @param zone_name [String] name of the hosted zone
+    # @param record_name [String] name of the dns record
+    # @param type [String] record type (NS, MX, CNAME and etc.)
+    # @param values [Array] list of record values
+    # @param ttl [Integer] time to live
+    def upsert_dns_record(zone_name: nil,
+                          record_name: nil,
+                          type: 'A',
+                          values: [],
+                          ttl: 300)
+      client = route53_client
+      zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
       client.change_resource_record_sets(
         hosted_zone_id: zone.id,
         change_batch: {

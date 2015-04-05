@@ -48,6 +48,14 @@ module Enscalator
       value :Description => desc
     end
 
+    # VPC resource
+    #
+    # @param name [String] name of the vpc name
+    # @param cidr [String] ip address block in CIDR notation (Classless Inter-Domain Routing)
+    # @param enableDnsSupport [String] enable dns support
+    # @param enableDnsHostnames [String] enable dns hostname
+    # @param dependsOn [Array] list of resources this vpc needs
+    # @param tags [Hash] tags
     def vpc(name, cidr, enableDnsSupport:nil, enableDnsHostnames:nil, dependsOn:[], tags:{})
       properties = {
         :CidrBlock => cidr,
@@ -66,7 +74,13 @@ module Enscalator
       resource name, options
     end
 
-
+    # Subnet resource
+    #
+    # @param name [String] name of the vpc name
+    # @param cidr [String] ip address block in CIDR notation (Classless Inter-Domain Routing)
+    # @param availabilityZone [String] availability zone where subnet gets created
+    # @param dependsOn [Array] list of resources this vpc needs
+    # @param tags [Hash] tags
     def subnet(name, vpc, cidr, availabilityZone:'', dependsOn:[], tags:{})
       properties = {
         :VpcId => vpc,
@@ -87,6 +101,14 @@ module Enscalator
     end
 
 
+    # Security group
+    #
+    # @param name [String] name of the security group
+    # @param description [String] description
+    # @param securityGroupEgress [Array] list of outbound rules
+    # @param securityGroupIngress [Array] list of inbound rules
+    # @param dependsOn [Array] list of resources this vpc needs
+    # @param tags [Hash] tags
     def security_group(name, description, securityGroupEgress:[], securityGroupIngress:[], dependsOn:[], tags:{})
       properties = {
         :GroupDescription => description
@@ -105,6 +127,14 @@ module Enscalator
       resource name, options
     end
 
+    # VPC Security group
+    #
+    # @param name [String] name of the security group
+    # @param description [String] description
+    # @param securityGroupEgress [Array] list of outbound rules
+    # @param securityGroupIngress [Array] list of inbound rules
+    # @param dependsOn [Array] list of resources this vpc needs
+    # @param tags [Hash] tags
     def security_group_vpc(name, description, vpc, securityGroupEgress:[], securityGroupIngress:[], dependsOn:[], tags:{})
       properties = {
         :VpcId => vpc,
@@ -124,11 +154,19 @@ module Enscalator
       resource name, options
     end
 
+    # Network interface
+    #
+    # @param device_index [String] network interface device index
+    # @param options [Hash] options
     def network_interface(device_index, options:{})
       options[:DeviceIndex] = device_index
       options
     end
 
+    # Resource
+    #
+    # @param name [String] name
+    # @param options [Hash] options
     def resource(name, options)
       super
 
@@ -298,7 +336,7 @@ module Enscalator
     # @param image_id [String] instance ami_id
     # @param subnet [String] instance subnet id
     # @param security_groups [String] instance security_groups (string of Security Groups IDs)
-    # @param dependsOn [Array] resources necessary to be create prior to this instance
+    # @param dependsOn [Array] resources necessary to be created prior to this instance
     # @param properties [Hash] other properties
     def instance_vpc(name, image_id, subnet, security_groups, dependsOn:[], properties:{})
       raise "VPC instance #{name} can not contain NetworkInterfaces and subnet or security_groups" if properties.include?(:NetworkInterfaces)

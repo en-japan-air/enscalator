@@ -113,6 +113,15 @@ module Enscalator
       end
     end
 
+
+    # Call script
+    #
+    # @param region [String] AWS region identifier
+    # @param dependent_stack_name [String] name of the stack current stack depends on
+    # @param script_path [String] path to script
+    # @param keys [Array] keys
+    # @param prepend_args [String] prepend arguments
+    # @param append_args [String] append arguments
     # @deprecated this method is not used anymore
     def cfn_call_script(region,
                     dependent_stack_name,
@@ -126,8 +135,6 @@ module Enscalator
       args = select_outputs(stack.outputs,keys).join(' ')
 
       cmd = [script_path, prepend_args, args, append_args]
-
-      run_cmd
 
       begin
         res = run_cmd(cmd)

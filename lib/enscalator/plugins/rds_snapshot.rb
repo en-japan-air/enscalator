@@ -3,7 +3,6 @@ module Enscalator
     module RDS_Snapshot
 
       # TODO: merge this template with original RDS one
-
       def rds_snapshot_init(snapshot_name,
                             allocated_storage: 5,
                             storage_type: 'gp2',

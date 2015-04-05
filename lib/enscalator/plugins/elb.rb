@@ -80,7 +80,7 @@ module Enscalator
           upsert_dns_record(
               zone_name: zone_name,
               record_name: "elb.#{stack_name}.#{zone_name}",
-              type: 'CNAME', region: region, values: [elb_name]
+              type: 'CNAME', values: [elb_name]
           )
         end
       end

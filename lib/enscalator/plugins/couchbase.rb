@@ -4,6 +4,12 @@ module Enscalator
   module Plugins
     module Couchbase
 
+      # Couchbase instance
+      #
+      # @param db_name [String] database name
+      # @param bucket [String] bucket
+      # @param allocated_storage [Integer] size of instance primary storage
+      # @param instance_class [String] instance class (type)
       def couchbase_init(db_name,
                          bucket: nil,
                          allocated_storage: 5,
@@ -40,11 +46,17 @@ module Enscalator
                          dependsOn:[], properties: {
                            :KeyName => ref("Couchbase#{db_name}KeyName"),
                            :InstanceType => ref("Couchbase#{db_name}InstanceClass"),
-                           :UserData => Base64.encode64(_couchbase_user_data(bucket))
+                           :UserData => Base64.encode64(
+                               set_couchbase_user_data(bucket, 'Administrator', '3fA76JWtzYbm')
+                           )
                          })
       end
 
-      def _couchbase_user_data(bucket)
+      # Couchbase user data
+      #
+      # @param bucket [String] couchbase bucket
+      # @return [String] user data script
+      def set_couchbase_user_data(bucket, user, password)
         data =<<-EOG
           #!/usr/bin/env bash
           while [[ ! -e /opt/couchbase/var/lib/couchbase/couchbase-server.pid ]];do
@@ -59,24 +71,25 @@ module Enscalator
           RAMSIZE=`echo "($RAMSIZE/1000*(75/100.0))" | bc -l | xargs printf %0.f`
           INSTANCE=`curl http://169.254.169.254/latest/meta-data/instance-id`
           /opt/couchbase/bin/couchbase-cli cluster-init -c 127.0.0.1:8091 \
-            -u Administrator \
+            -u #{user} \
             -p $INSTANCE \
-            --cluster-init-password=3fA76JWtzYbm \
+            --cluster-init-password=#{password} \
             --cluster-init-ramsize=$RAMSIZE 2>&1 >> /tmp/userdatalog
           /opt/couchbase/bin/couchbase-cli node-init -c 127.0.0.1:8091 \
-            -u Administrator \
-            -p 3fA76JWtzYbm 2>&1 >> /tmp/userdatalog
+            -u #{user} \
+            -p #{password} 2>&1 >> /tmp/userdatalog
           /opt/couchbase/bin/couchbase-cli bucket-create -c 127.0.0.1:8091 \
              --bucket=#{bucket} \
              --bucket-type=couchbase \
-             --bucket-password=3fA76JWtzYbm \
+             --bucket-password=#{password} \
              --bucket-port=11211 \
              --bucket-ramsize=$RAMSIZE \
              --bucket-replica=1 \
              --bucket-priority=low \
              --wait \
-             -u Administrator -p 3fA76JWtzYbm 2>&1 >> /tmp/userdatalog
+             -u #{user} -p #{password} 2>&1 >> /tmp/userdatalog
         EOG
+        data
       end
 
     end # module Couchbase

@@ -2,6 +2,12 @@ module Enscalator
   module Plugins
     module RDS
 
+      # Amazon RDS instance
+      #
+      # @param db_name [String] database name
+      # @param allocated_storage [Integer] size of instance primary storage
+      # @param storage_type [String] instance storage type
+      # @param instance_class [String] instance class (type)
       def rds_init(db_name,
                    allocated_storage: 5,
                    storage_type: 'gp2',

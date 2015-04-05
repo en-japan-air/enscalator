@@ -1,7 +1,15 @@
 module Enscalator
   module Plugins
     module Elasticsearch
-      def elasticsearch_init(db_name, allocated_storage: 5, instance_class: 't2.medium')
+
+      # Elasticsearch instance
+      #
+      # @param db_name [String] database name
+      # @param allocated_storage [Integer] size of instance primary storage
+      # @param instance_class [String] instance class (type)
+      def elasticsearch_init(db_name,
+                             allocated_storage: 5,
+                             instance_class: 't2.medium')
         @elasticsearch_mapping ||=
           mapping 'AWSElasticsearchAMI', {
             :'us-east-1' => { :amd64 => 'ami-041c4e6c' },

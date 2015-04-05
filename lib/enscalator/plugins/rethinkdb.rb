@@ -2,6 +2,7 @@ module Enscalator
   module Plugins
     class RethinkDB
 
+      # Mapping for Rethinkdb x64 images
       def self.mapping_amd64
         {
           :'us-east-1' => {

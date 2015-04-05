@@ -36,7 +36,8 @@ module Enscalator
           upsert_dns_record(
             zone_name: 'enjapan.local.',
             record_name: "elasticsearch.#{stack_name}.enjapan.local.",
-            type: 'A', region: region, values: [ipaddr]
+            type: 'A',
+            values: [ipaddr]
           )
         end
 
