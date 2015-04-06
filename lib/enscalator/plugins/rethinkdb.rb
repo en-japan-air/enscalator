@@ -1,4 +1,6 @@
 module Enscalator
+
+  # Namespace for enscalator plugins
   module Plugins
 
     # RethinkDB appliance

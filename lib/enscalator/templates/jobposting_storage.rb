@@ -1,5 +1,9 @@
 module Enscalator
+
+  # Namespace for cloudformation templates
   module Templates
+
+    # Template for JobPosting storage
     class JobPostingStorage < Enscalator::EnAppTemplateDSL
 
       # include the Elasticsearch plugin for couchbase_init()

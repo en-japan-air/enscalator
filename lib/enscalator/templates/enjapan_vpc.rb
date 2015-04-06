@@ -1,5 +1,9 @@
 module Enscalator
+
+  # Namespace for cloudformation templates
   module Templates
+
+    # enJapan Amazon AWS virtual private cloud template
     class EnJapanVPC < Enscalator::RichTemplateDSL
       def tpl
 

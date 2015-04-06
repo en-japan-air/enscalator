@@ -3,7 +3,11 @@
 require 'Shellwords'
 
 module Enscalator
+
+  # Namespace for enscalator plugins
   module Plugins
+
+    # Plugin for Couchbase
     module Couchbase
 
       # Couchbase instance

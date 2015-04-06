@@ -26,5 +26,6 @@ require 'enscalator/templates/enslurp'
 require 'enscalator/templates/cc_rds'
 require 'enscalator/templates/test_instance'
 
+# Namespace for Enscalator related code
 module Enscalator
 end

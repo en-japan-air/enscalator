@@ -3,7 +3,7 @@ require 'yard'
 
 # Generate documentation with yard
 YARD::Rake::YardocTask.new do |t|
-  t.files   = ['lib/**/*.rb']   # optional
+  t.files   = ['lib/**/*.rb']
 end
 
 desc "Generate gem documentation (same as running 'rake yard')"

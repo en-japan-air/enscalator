@@ -2,6 +2,8 @@ require 'aws-sdk-core/client'
 
 module Enscalator
   module Templates
+
+    # Ubuntu instance for testing deployment configuration
     class TestEC2Instance < Enscalator::EnAppTemplateDSL
 
       include Enscalator::Plugins::Ubuntu

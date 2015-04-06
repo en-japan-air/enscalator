@@ -1,5 +1,9 @@
 module Enscalator
+
+  # namespace for template collection
   module Templates
+
+    # Production database for CareerCard
     class CareerCardProductionRDS < Enscalator::EnAppTemplateDSL
       include Enscalator::Plugins::RDS_Snapshot
 

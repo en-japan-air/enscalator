@@ -1,6 +1,8 @@
 # -*- encoding : utf-8 -*-
 
 module Enscalator
+
+  # Namespace for enscalator plugins
   module Plugins
 
     # Elasticsearch related configuration
