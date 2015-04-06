@@ -82,16 +82,6 @@ module Enscalator
       stack
     end
 
-    # TODO: refactor -> move logic to get_resource
-    def select_output(outputs, key)
-      outputs.select { |a| a.output_key == key }.first.output_value
-    end
-
-    # TODO: refactor -> move logic to get_resource
-    def select_outputs(outputs, keys)
-      keys.map { |k| select_output(outputs, k) }
-    end
-
     # Get resource for given key from given stack
     #
     # @param stack [Aws::CloudFormation::Stack] cloudformation stack instance
@@ -141,7 +131,7 @@ module Enscalator
     # @param keys [Array] keys
     # @param prepend_args [String] prepend arguments
     # @param append_args [String] append arguments
-    # @deprecated this method is not used anymore
+    # @deprecated this method is no longer used
     def cfn_call_script(region,
                     dependent_stack_name,
                     script_path,
@@ -151,16 +141,14 @@ module Enscalator
 
       cfn = cfn_client(region)
       stack = wait_stack(cfn, dependent_stack_name)
-      args = select_outputs(stack.outputs, keys).join(' ')
-
+      args = get_resources(stack, keys).join(' ')
       cmd = [script_path, prepend_args, args, append_args]
 
       begin
-        res = run_cmd(cmd)
-        puts res
-      rescue RuntimeError
-         puts $!.to_s
-         STDERR.puts cmd
+        run_cmd(cmd)
+      rescue Errno::ENOENT
+        puts $!.to_s
+        STDERR.puts cmd
       end
     end
 
@@ -173,9 +161,7 @@ module Enscalator
     # @param keys [Array] keys
     # @param extra_parameters [Array] additional parameters
     # @return [Aws::CloudFormation::Resource]
-    # @deprecated this method is not used anymore
-    #  Cloudformation already have create_stack method, thus including this module would throw this exception:
-    #  Aws::Resources::Errors::DefinitionError: unable to define method #create_stack, method already exists
+    # @deprecated this method is no longer used
     def cfn_create_stack(region,
                      dependent_stack_name,
                      template,
