@@ -22,7 +22,7 @@ require 'enscalator/templates/vpn'
 require 'enscalator/templates/jobposting_storage'
 require 'enscalator/templates/interaction'
 require 'enscalator/templates/auth_service'
-require 'enscalator/templates/enslurp'
+require 'enscalator/templates/enslurp_ami'
 require 'enscalator/templates/cc_rds'
 require 'enscalator/templates/test_instance'
 
