@@ -92,11 +92,19 @@ module Enscalator
     # @param key [String] resource identifier (key)
     # @return [String] AWS resource identifier
     # @raise [ArgumentError] when stack is nil
+    # @raise [ArgumentError] when key is nil or empty
     def get_resource(stack, key)
       raise ArgumentError, 'stack must not be nil' if stack.nil?
+      raise ArgumentError, 'key must not be nil nor empty' if key.nil? || key.empty?
+
+      # query with physical_resource_id
       resource = stack.resource(key).physical_resource_id rescue nil
-      output = resource.nil? ? stack.outputs.select { |a| a.output_key == key } : resource
-      output.nil? ? output.first.output_value : output
+      if resource.nil?
+        # fallback to values from stack.outputs
+        output = stack.outputs.select { |s| s.output_key == key }
+        resource = output.first.output_value rescue nil
+      end
+      resource
     end
 
     # Get list of resources for given keys
@@ -105,14 +113,12 @@ module Enscalator
     # @param keys [Array] list of resource identifiers (keys)
     # @return [String] list of AWS resource identifiers
     # @raise [ArgumentError] when stack is nil
+    # @raise [ArgumentError] when keys are nil or empty list
     def get_resources(stack, keys)
       raise ArgumentError, 'stack must not be nil' if stack.nil?
-      keys.map do |k|
-        out = stack.outputs.select do |o|
-          o.output_key == k
-        end
-        out.first.output_value
-      end
+      raise ArgumentError, 'key must not be nil nor empty' if keys.nil? || keys.empty?
+
+      keys.map { |k| get_resource(stack, k) }.compact
     end
 
     # Generate parameters list
