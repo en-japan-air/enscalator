@@ -15,10 +15,9 @@ module Enscalator
       # Create new subprocess and execute command there
       #
       # @param cmd [String] command to be executed
-      # @param block [Proc] block handling stdout, stderr and thread
-      def initialize(cmd, &block)
+      def initialize(cmd)
         # standard input is not used
-        Open3.popen3(cmd) do |stdin, stdout, stderr, thread|
+        Open3.popen3(cmd) do |_stdin, stdout, stderr, thread|
           { :out => stdout, :err => stderr }.each do |key, stream|
             Thread.new do
               until (line = stream.gets).nil? do
@@ -45,7 +44,7 @@ module Enscalator
       raise ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
       raise ArgumentError, 'Argument cannot be empty' if cmd.empty?
       command = cmd.join(' ')
-      Subprocess.new command do |stdout, stderr, thread|
+      Subprocess.new command do |stdout, stderr, _thread|
         STDOUT.puts stdout if stdout
         STDERR.puts stderr if stderr
       end

@@ -27,16 +27,6 @@ module Enscalator
                   :MaxValue => '65535',
                   :ConstraintDescription => 'must be an integer between 0 and 65535.'
 
-        # TODO: this has to be fixed, otherwise traffic from load-balancer is not allowed
-        # resource 'WebServerPortSecurityGroupId', :Type => 'AWS::EC2::SecurityGroupIngress',
-        #          :Properties => {
-        #              :IpProtocol => 'tcp',
-        #              :FromPort => ref('WebServerPort'),
-        #              :ToPort => ref('WebServerPort'),
-        #              :SourceSecurityGroupId => ref_private_security_group
-        #          },
-        #          :DependsOn => 'ApplicationSecurityGroup'
-
         resource 'LoadBalancer', :Type => 'AWS::ElasticLoadBalancing::LoadBalancer',
                  :Properties => {
                      :LoadBalancerName => elb_name,
@@ -55,7 +45,7 @@ module Enscalator
                          :Timeout => '5',
                      },
                      :Scheme => 'internal',
-                     :SecurityGroups => [ ref_private_security_group ],
+                     :SecurityGroups => [ ref_application_security_group ],
                      :Subnets => [
                          ref_resource_subnet_a,
                          ref_resource_subnet_c
@@ -71,6 +61,14 @@ module Enscalator
                          },
                          { :Key => 'Network', :Value => 'Private' },
                      ],
+                 }
+
+        resource 'WebServerPortSecurityGroupId', :Type => 'AWS::EC2::SecurityGroupIngress',
+                 :Properties => {
+                     :IpProtocol => 'tcp',
+                     :FromPort => ref('WebServerPort'),
+                     :ToPort => ref('WebServerPort'),
+                     :GroupId => get_att('ApplicationSecurityGroup', 'GroupId')
                  }
 
         output 'LoadBalancerDnsName',
