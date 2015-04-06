@@ -1,8 +1,13 @@
-
 module Enscalator
+
+  # Namespace for cloudformation templates
   module Templates
+
+    # Template for JobPosting storage
     class JobPostingStorage < Enscalator::EnAppTemplateDSL
-      include Elasticsearch # Include the Elasticsearch plugin for couchbase_init()
+
+      # include the Elasticsearch plugin for couchbase_init()
+      include Enscalator::Plugins::Elasticsearch
 
       def tpl
 
@@ -15,7 +20,8 @@ module Enscalator
 
         description 'JobPostingStorage service network and database infrastructure'
 
-        elasticsearch_init("JobPostingStorage") # Create a couchbase instance with name "JobpostingStorage"
+        # create a couchbase instance with name "JobpostingStorage"
+        elasticsearch_init("JobPostingStorage")
 
         # post_run will be run after the create-stack call is started
         post_run do
@@ -24,14 +30,18 @@ module Enscalator
           client = Aws::CloudFormation::Client.new(region: region)
           cfn = Aws::CloudFormation::Resource.new(client: client)
 
-          stack = wait_stack(cfn, stack_name) # Wait for the stack to be created
-          ipaddr = get_resource(stack, 'ElasticsearchJobPostingStoragePrivateIpAddress') # Get couchbase instance IP address
+          # wait for the stack to be created
+          stack = wait_stack(cfn, stack_name)
 
-          # Create a DNS record in route53 for the couchbase instance
+          # get couchbase instance IP address
+          ipaddr = get_resource(stack, 'ElasticsearchJobPostingStoragePrivateIpAddress')
+
+          # create a DNS record in route53 for the couchbase instance
           upsert_dns_record(
             zone_name: 'enjapan.local.',
             record_name: "elasticsearch.#{stack_name}.enjapan.local.",
-            type: 'A', region: region, values: [ipaddr]
+            type: 'A',
+            values: [ipaddr]
           )
         end
 

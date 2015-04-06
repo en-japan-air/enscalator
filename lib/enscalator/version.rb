@@ -1,3 +1,6 @@
+# -*- encoding : utf-8 -*-
+
 module Enscalator
-  VERSION = '0.1.0'
+  # Current version
+  VERSION = '0.2.0'
 end

@@ -1,7 +1,11 @@
 module Enscalator
+
+  # namespace for template collection
   module Templates
+
+    # Production database for CareerCard
     class CareerCardProductionRDS < Enscalator::EnAppTemplateDSL
-      include RDS_Snapshot
+      include Enscalator::Plugins::RDS_Snapshot
 
       def tpl
 
@@ -22,8 +26,7 @@ module Enscalator
         post_run do
           region = @options[:region]
           stack_name = @options[:stack_name]
-          client = Aws::CloudFormation::Client.new(region: region)
-          cfn = Aws::CloudFormation::Resource.new(client: client)
+          cfn = cfn_client(@options[:region])
 
           stack = wait_stack(cfn, stack_name)
           host = get_resource(stack, 'RDSEndpointAddress')
@@ -31,7 +34,7 @@ module Enscalator
           upsert_dns_record(
               zone_name: 'enjapan.prod.',
               record_name: "rds.#{stack_name}.enjapan.prod.",
-              type: 'CNAME', region: region, values: [host], ttl: 30)
+              type: 'CNAME', values: [host], ttl: 30)
         end
 
       end
