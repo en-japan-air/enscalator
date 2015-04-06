@@ -416,23 +416,23 @@ module Enscalator
     # @param template [RichTemplateDSL] cloudformation template
     def cfn_cmd(template)
 
-      command = %q{aws cloudformation}
+      command = %w{aws cloudformation}
 
-      command += @options[:create_stack] ? ' create-stack' : ' update-stack'
+      command << (@options[:create_stack] ? ' create-stack' : ' update-stack')
 
       if @options[:stack_name]
         stack_name = @options[:stack_name]
-        command += " --stack-name #{stack_name}"
+        command.concat(%W{--stack-name '#{stack_name}'})
       end
 
       if @options[:region]
         region = @options[:region]
-        command += " --region #{region}"
+        command.concat(%W{--region '#{region}'})
       end
 
       if @options[:capabilities]
         capabilities = @options[:capabilities]
-        command += " --capabilities #{capabilities}"
+        command.concat(%W{--capabilities '#{capabilities}'})
       end
 
       if @options[:parameters]
@@ -441,13 +441,12 @@ module Enscalator
           {:ParameterKey => key, :ParameterValue => val}
         end
 
-        command += " --parameters '#{params.to_json}'"
+        command.concat(%W{--parameters '#{params.to_json}'})
       end
 
-      command += " --template-body '#{template.to_json}'"
+      command.concat(%W{--template-body '#{template.to_json}'})
 
-      # TODO: separate command setup and actual system call to its own methods
-      system(command)
+      run_cmd(command)
     end
 
   end
