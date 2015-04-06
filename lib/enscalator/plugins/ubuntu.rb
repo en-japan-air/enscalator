@@ -2,11 +2,21 @@ require 'open-uri'
 
 module Enscalator
   module Plugins
+
+    # Ubuntu appliance
     module Ubuntu
 
+      # Create new Ubuntu instance
+      #
+      # @param instance_name [String] instance name
+      # @param storage_kind [String] storage kind (ebs or ephemeral)
+      # @param virtualization [String] virtualization kind (hvm or paravirtual)
+      # @param instance_class [String] instance class (type)
+      # @param allocate_public_ip [Boolean] automatically allocate public ip address
       def ubuntu_init(instance_name,
                       storage_kind: 'ebs',
                       virtualization: 'paravirtual',
+                      instance_class: 'm1.medium',
                       allocate_public_ip: false)
         @ubuntu_mapping ||=
           mapping 'AWSUbuntuAMI',
@@ -26,10 +36,11 @@ module Enscalator
           min: 5,
           max: 1024
 
-        parameter_instance_class "Ubuntu#{instance_name}", default: 'm1.medium',
-          allowed_values: %w(m1.medium m1.large m1.xlarge m2.xlarge
-                                m2.2xlarge m2.4xlarge c1.medium c1.xlarge
-                                cc1.4xlarge cc2.8xlarge cg1.4xlarge)
+        parameter_instance_class "Ubuntu#{instance_name}",
+                                 default: instance_class,
+                                 allowed_values: %w(m1.medium m1.large m1.xlarge m2.xlarge
+                                                 m2.2xlarge m2.4xlarge c1.medium c1.xlarge
+                                                 cc1.4xlarge cc2.8xlarge cg1.4xlarge)
 
         instance_vpc(
           "Ubuntu#{instance_name}",

@@ -1,5 +1,8 @@
+# -*- encoding : utf-8 -*-
+
 require 'cloudformation-ruby-dsl/cfntemplate'
 
+# Create new rich template
 def rich_template(&block)
   Enscalator::RichTemplateDSL.new(&block)
 end
@@ -8,9 +11,11 @@ module Enscalator
 
   # DSL specific for enscalator
   class RichTemplateDSL < TemplateDSL
-    include Route53
 
-    # Constructor
+    include Enscalator::Helpers
+    include Enscalator::Route53
+
+    # Create new RichTemplateDSL instance
     #
     # @param options [Hash] command-line arguments
     def initialize(options={}) 

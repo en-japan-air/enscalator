@@ -1,35 +1,46 @@
+# -*- encoding : utf-8 -*-
+
 require 'cloudformation-ruby-dsl/cfntemplate'
 require_relative 'richtemplate'
 
 module Enscalator
+
+  # Template DSL for common enJapan application stack
   class EnAppTemplateDSL < RichTemplateDSL
 
     include Enscalator::Helpers
 
+    # Reference to subnet in availability zone A
     def ref_application_subnet_a
       ref('ApplicationSubnetA')
     end
 
+    # Reference to subnet in availability zone C
     def ref_application_subnet_c
       ref('ApplicationSubnetC')
     end
 
+    # Reference to resource in availability zone A
     def ref_resource_subnet_a
       ref('ResourceSubnetA')
     end
 
+    # Reference to resource in availability zone C
     def ref_resource_subnet_c
       ref('ResourceSubnetC')
     end
 
+    # Reference to private security group
     def ref_private_security_group
       ref('PrivateSecurityGroup')
     end
 
+    # Reference to resource security group
     def ref_resource_security_group
       ref('ResourceSecurityGroup')
     end
 
+    # Reference to application security group
     def ref_application_security_group
       ref('ApplicationSecurityGroup')
     end

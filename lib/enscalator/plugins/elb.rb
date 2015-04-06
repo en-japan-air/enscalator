@@ -1,8 +1,10 @@
 module Enscalator
   module Plugins
+
+    # Internet facing ELB instance
     module Elb
 
-      # Internet facing ELB instance
+      # Create new ELB instance
       #
       # @param stack_name [String] must be stack name from @options[:stack_name]
       # @param region [String] must be region from @options[:region]

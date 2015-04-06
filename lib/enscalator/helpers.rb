@@ -1,7 +1,11 @@
+# -*- encoding : utf-8 -*-
+
 require 'open3'
 require 'ruby-progressbar'
 
 module Enscalator
+
+  # Collection of helper classes and static methods
   module Helpers
 
     # Executed command as sub-processes with stdout and stderr streams

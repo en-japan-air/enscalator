@@ -1,5 +1,11 @@
+# -*- encoding : utf-8 -*-
+
 module Enscalator
+
+  # Configuration specific for enJapan setup
   class EnJapanConfiguration
+
+    # VPC network mapping
     def self.mapping_vpc_net
       {
           :'us-east-1' => {:VPC => '10.0.0.0/16', :Public1 => '10.0.0.0/24', :Public2 => '10.0.4.0/24'},
@@ -14,6 +20,7 @@ module Enscalator
       }
     end
 
+    # VPC availability zones mapping
     def self.mapping_availability_zones
       {
           :'us-east-1' => {'AZ' => ['us-east-1a', 'us-east-1b', 'us-east-1c', 'us-east-1e']},

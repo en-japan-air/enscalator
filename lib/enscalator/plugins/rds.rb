@@ -1,8 +1,10 @@
 module Enscalator
   module Plugins
+
+    # Amazon RDS instance
     module RDS
 
-      # Amazon RDS instance
+      # Create new RDS instance with empty (default) database
       #
       # @param db_name [String] database name
       # @param allocated_storage [Integer] size of instance primary storage

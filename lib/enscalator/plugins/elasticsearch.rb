@@ -1,8 +1,12 @@
+# -*- encoding : utf-8 -*-
+
 module Enscalator
   module Plugins
+
+    # Elasticsearch related configuration
     module Elasticsearch
 
-      # Elasticsearch instance
+      # Create new elasticsearch instance
       #
       # @param db_name [String] database name
       # @param allocated_storage [Integer] size of instance primary storage

@@ -1,7 +1,17 @@
 module Enscalator
   module Plugins
+
+    # Amazon RDS instance created from snapshot
     module RDS_Snapshot
 
+      # Create new RDS instance from existing snapshot
+      #
+      # @param snapshot_name [String] snapshot name
+      # @param allocated_storage [Integer] size of instance primary storage
+      # @param storage_type [String] instance storage type
+      # @param multizone [String] deploy as multizone or use only single availability zone
+      # @param parameter_group [String] RDS instance parameter group
+      # @param instance_class [String] instance class (type)
       # TODO: merge this template with original RDS one
       def rds_snapshot_init(snapshot_name,
                             allocated_storage: 5,

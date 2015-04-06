@@ -1,5 +1,7 @@
 module Enscalator
   module Plugins
+
+    # RethinkDB appliance
     class RethinkDB
 
       # Mapping for Rethinkdb x64 images
