@@ -69,12 +69,14 @@ module Enscalator
     # Setup VPC configuration which is required in order to create stack
     #
     # @param vpc [String] the vpc_id
-    # @param start_ip_idx [Integer] is the starting ip address inside the vpc subnet for this stack (i.e 10.0.#{start_ip_idx}.0/24)
-    #  (see https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration)
+    # @param start_ip_idx [Integer] is the starting ip address inside the vpc subnet for this stack, i.e.
+    #   "10.0.start_ip_idx.0/24"
+    # (see {https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration})
     # @param private_security_group [String] the id of the security group with access to the NAT instances
     # @param private_route_tables [Hash] the route tables to the NAT instances
-    #  private_route_tables is a hash of the form {'a' => route_table_id1, 'c' => route_table_id2}, where
-    #  a and c being the suffixes of the availability zones
+    #  private_route_tables is a hash of the form Hash, where keys are 'a' and 'c'
+    #  being the suffixes of the availability zones and values are ids for route tables, e.g
+    #   "{'a' => route_table_id1, 'c' => route_table_id2 }"
     def basic_setup(vpc,
                    start_ip_idx,
                    private_security_group,
