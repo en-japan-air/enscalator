@@ -2,6 +2,7 @@
 
 require 'open3'
 require 'ruby-progressbar'
+require 'aws-sdk'
 
 module Enscalator
 
@@ -196,6 +197,43 @@ module Enscalator
       }
 
       cfn.create_stack(options)
+    end
+
+    # Create ssh public/private key pair, save private key for current user
+    #
+    # @param key_name [String] key name
+    # @param region [String] aws region
+    # @param force_create [Boolean] force to create a new ssh key
+    def create_ssh_key(key_name, region, force_create: false)
+      ec2_client = Aws::EC2::Client.new(region: region)
+
+      if !ec2_client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
+        # delete existed ssh key
+        ec2_client.delete_key_pair(key_name: key_name)
+
+        # create a new ssh key
+        key_pair = ec2_client.create_key_pair(key_name: key_name)
+        STDERR.puts "Created new ssh key with fingerprint: #{key_pair.key_fingerprint}"
+
+        # save private key for current user
+        private_key = File.join(ENV['HOME'], '.ssh', key_name)
+        File.open(private_key, 'w') do |wfile|
+          wfile.write(key_pair.key_material)
+        end
+        File.chmod(0600, private_key)
+      else
+        key_pair = Aws::EC2::KeyPair.new(key_name, client: ec2_client)
+        STDERR.puts "Existed ssh key with fingerprint: #{key_pair.key_fingerprint}"
+      end
+    end
+
+    # Read user data from file
+    #
+    # @param app_name [String] application name
+    def read_user_data(app_name)
+      user_data_path = File.join(File.expand_path('..', __FILE__), 'confs', 'user-data', app_name)
+      fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
+      File.read(user_data_path)
     end
 
   end # module Helpers

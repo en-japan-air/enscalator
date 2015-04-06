@@ -14,8 +14,7 @@ module Enscalator
         # pre_run takes a block and will be the first method called
         pre_run do
           magic_setup stack_name: 'enjapan-vpc',
-            region: @options[:region],
-            start_ip_idx: 20 # The start ip address inside the subnet for this template
+                      region: @options[:region]
         end
 
         description 'JobPostingStorage service network and database infrastructure'
