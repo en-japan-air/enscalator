@@ -30,6 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.2.0'
   spec.add_development_dependency 'rspec-expectations', '~> 3.2.0'
   spec.add_development_dependency 'awesome_print', '~> 1.6.1'
+  spec.add_development_dependency 'looksee', '~> 3.1.0'
 
   spec.add_runtime_dependency 'cloudformation-ruby-dsl', '~> 0.4'
   spec.add_runtime_dependency 'trollop', '~> 2.1'
@@ -37,5 +38,7 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'ipaddress', '~> 0.8'
   spec.add_runtime_dependency 'activesupport', '~> 4.2'
   spec.add_runtime_dependency 'ruby-progressbar', '~> 1.7.5'
+  spec.add_runtime_dependency 'nokogiri', '~> 1.6.6.2'
+  spec.add_runtime_dependency 'semantic', '~> 1.4.0'
 
 end
