@@ -48,7 +48,7 @@ module Enscalator
           raise ArgumentError, 'url cannot be empty' if base_url && base_url.empty?
           versions = fetch_versions(base_url)
           version = if tag && !tag.empty?
-                      versions.select { |v| v.to_s == tag }.first.to_s
+                      versions.select { |v| v == Semantic::Version.new(tag) }.first.to_s
                     else
                       versions.sort.last.to_s
                     end
