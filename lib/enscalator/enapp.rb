@@ -11,13 +11,13 @@ module Enscalator
     include Enscalator::Helpers
 
     START_IP_IDX_MAPPING = {
-      auth_service: 8,
-      cc_rds: 12,
-      enslurp_ami: 16,
-      enslurp_core_os: 20,
-      interaction: 24,
-      jobposting_storage: 28,
-      test_instance: 32
+      auth_service: 16,
+      enslurp_ami: 20,
+      enslurp_core_os: 24,
+      interaction: 28,
+      cc_rds: 32,
+      jobposting_storage: 36,
+      test_instance: 40
     }
 
     # Get start ip index according to class name
