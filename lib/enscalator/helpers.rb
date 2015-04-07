@@ -223,7 +223,7 @@ module Enscalator
         File.chmod(0600, private_key)
       else
         key_pair = Aws::EC2::KeyPair.new(key_name, client: ec2_client)
-        STDERR.puts "Existed ssh key with fingerprint: #{key_pair.key_fingerprint}"
+        STDERR.puts "Found existing ssh key with fingerprint: #{key_pair.key_fingerprint}"
       end
     end
 
