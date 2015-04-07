@@ -69,6 +69,7 @@ $> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-
 
 ## Notes
 The ubuntu plugin in [lib/enscalator/plugins/ubuntu.rb](lib/enscalator/plugins/ubuntu.rb) is magic. It'll automatically get the AMIs ID from the ubuntu website.
+CoreOS plugin in [lib/enscalator/plugins/core_os.rb] is pure magic. It would not only fetch AMI IDs, but also can do that from multiple release channels.
 
 ## Development
 
