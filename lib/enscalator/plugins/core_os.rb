@@ -13,7 +13,7 @@ module Enscalator
       class << self
 
         # CoreOS Release channels
-        #  (see {https://coreos.com/releases/} )
+        # @see https://coreos.com/releases
         CHANNELS=[:stable, :beta, :alpha]
 
         # Get CoreOS mapping for specific version from specific channel
@@ -71,13 +71,13 @@ module Enscalator
         # Parse and reformat CoreOS default mapping
         #
         # @param coreos_mapping [Array] list of region to virtualization kind mappings
-        # @return [Hash]
+        # @return [Hash] mapping, that can be referred to with find_in_map
         def parse_raw_mapping(coreos_mapping)
           if coreos_mapping
             amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
             Hash[
-                amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
-            ].with_indifferent_access rescue nil
+              amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
+            ].with_indifferent_access
           end
         end
 
@@ -99,12 +99,10 @@ module Enscalator
             mapping 'AWSCoreOSAMI', CoreOS.get_channel_version(channel: :stable)
 
         #
-        # NOTE: to use mapping call find_in_map with related virtualization kind
+        # NOTE: to actually use this mapping call find_in_map with related virtualization kind
         #
         # paravirtual: find_in_map('AWSCoreOSAMI', ref('AWS::Region'), 'pv')
         # hvm: find_in_map('AWSCoreOSAMI', ref('AWS::Region'), 'hvm')
-
-        # TODO: add specific parameters for CoreOS
 
       end
 
