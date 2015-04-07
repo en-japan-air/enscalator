@@ -16,7 +16,7 @@ module Enscalator
         @user_data = read_user_data('enslurp_core_os')
 
         pre_run do
-          pre_setup stack_name: 'test-vpc',
+          pre_setup stack_name: 'enjapan-vpc',
                     region: @options[:region]
 
           # create ssh key for application at aws
