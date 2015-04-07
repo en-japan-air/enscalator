@@ -85,7 +85,7 @@ module Enscalator
 
       end # class << self
 
-      # Initialize CoreOS related configurations:w
+      # Initialize CoreOS related configurations
       #
       def core_os_init
         mapping 'AWSCoreOSAMI', CoreOS.get_channel_version(channel: :stable)
