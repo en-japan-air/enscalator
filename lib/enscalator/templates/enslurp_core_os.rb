@@ -50,7 +50,7 @@ module Enscalator
                      }
                    ],
                    InstanceType: ref("#{@app_name}InstanceClass"),
-                   SecurityGroups: [ref_private_security_group, ref_resource_security_group],
+                   SecurityGroups: [ref_private_security_group, ref_application_security_group],
                    KeyName: @key_name,
                    UserData: Base64.encode64(@user_data)
                  }
@@ -60,7 +60,7 @@ module Enscalator
                  Properties: {
                    AvailabilityZones: get_availability_zones,
                    LaunchConfigurationName: ref("#{@app_name}LaunchConfiguration"),
-                   VPCZoneIdentifier: [ref_resource_subnet_a, ref_resource_subnet_c],
+                   VPCZoneIdentifier: [ref_application_subnet_a, ref_application_subnet_c],
                    DesiredCapacity: 0,
                    MinSize: 0,
                    MaxSize: 50,
