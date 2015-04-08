@@ -10,6 +10,32 @@ module Enscalator
 
     include Enscalator::Helpers
 
+    START_IP_IDX_MAPPING = {
+      auth_service: 16,
+      enslurp_ami: 20,
+      enslurp_core_os: 24,
+      interaction: 28,
+      cc_rds: 32,
+      jobposting_storage: 36,
+      test_instance: 40
+    }
+
+    # Get start ip index according to class name
+    def get_start_ip_idx
+      key = self.class.name.split('::').last.underscore
+      START_IP_IDX_MAPPING[key.to_sym] || fail('Need to add start ip index to START_IP_IDX_MAPPING for current template')
+    end
+
+    # Get availability zones
+    def get_availability_zones
+      Aws::EC2::Client.new(region: @options[:region])
+        .describe_availability_zones
+        .availability_zones
+        .select { |az| az.state == 'available' }
+        .collect(&:zone_name)
+        .select { |n| n =~ /[ac]$/ } # TODO: support all availability zones
+    end
+
     # Reference to subnet in availability zone A
     def ref_application_subnet_a
       ref('ApplicationSubnetA')
@@ -49,8 +75,7 @@ module Enscalator
     #
     # @param stack_name [String] name of the cloudformation stack
     # @param region [String] valid Amazon AWS region
-    # @param start_ip_idx [Integer] starting ip address inside vpc subnet of the stack
-    def pre_setup(stack_name: 'enjapan-vpc', region: 'us-east-1', start_ip_idx: 16)
+    def pre_setup(stack_name: 'enjapan-vpc', region: 'us-east-1')
       cfn = cfn_client(region)
       stack = cfn.stack(stack_name)
       vpc_id = get_resource(stack, 'VpcId')
@@ -59,7 +84,7 @@ module Enscalator
                                'c' => get_resource(stack, 'PrivateRouteTable2') }
 
       basic_setup vpc_id,
-                 start_ip_idx,
+                 get_start_ip_idx,
                  vpc_private_security_group,
                  vpc_private_route_tables
     end

@@ -11,8 +11,7 @@ module Enscalator
 
         pre_run do
           magic_setup stack_name: 'enjapan-vpc',
-                      region: @options[:region],
-                      start_ip_idx: 32
+                      region: @options[:region]
         end
 
         description 'Production RDS stack for Career Card'
