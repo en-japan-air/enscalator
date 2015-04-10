@@ -12,6 +12,7 @@ module Enscalator
 
     START_IP_IDX_MAPPING = {
       auth_service: 16,
+      cc_landing_page_generator: 20,
       enslurp: 24,
       interaction: 28,
       cc_rds: 32,
