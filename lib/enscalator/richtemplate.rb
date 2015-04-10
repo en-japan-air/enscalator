@@ -264,37 +264,51 @@ module Enscalator
         :ConstraintDescription => "must be between #{min} and #{max}Gb."
     end
 
-    # IAM profile for s3
-    def iam_s3_instance_profile
-      resource 'S3AccessRole', :Type => 'AWS::IAM::Role', :Properties => {
-        :AssumeRolePolicyDocument => {
-          :Statement => [
-            {
-              :Effect => 'Allow',
-              :Principal => { :Service => [ 'ec2.amazonaws.com' ] },
-              :Action => [ 'sts:AssumeRole' ],
-            },
-          ],
-        },
-        :Path => '/',
-      }
+    # iam instance profile with full access policies to passed services
+    #
+    # @param role_name [String] iam role name
+    # @param services [Array<String>] a list of aws service name
+    # @return [String] iam instance profile name
+    def iam_instance_profile_with_full_access(role_name, *services)
+      resource "#{role_name}Role",
+               Type: 'AWS::IAM::Role',
+               Properties: {
+                 AssumeRolePolicyDocument: {
+                   Statement: [
+                     {
+                       Effect: 'Allow',
+                       Principal: {
+                         Service: ['ec2.amazonaws.com']
+                       },
+                       Action: ['sts:AssumeRole'],
+                     }
+                   ]
+                 },
+                 Path: '/',
+                 Policies: [
+                   {
+                     PolicyName: "#{role_name}Policy",
+                     PolicyDocument: {
+                       Statement: services.map do |s|
+                         {
+                           Effect: 'Allow',
+                           Action: "#{s}:*",
+                           Resource: '*'
+                         }
+                       end
+                     }
+                   }
+                 ]
+               }
 
-      resource 'S3RolePolicies', :Type => 'AWS::IAM::Policy', :Properties => {
-        :PolicyName => 's3access',
-        :PolicyDocument => {
-          :Statement => [
-            { :Effect => 'Allow', :Action => 's3:*', :Resource => '*' },
-          ],
-        },
-        :Roles => [ ref('S3AccessRole') ],
-      }
+      resource "#{role_name}InstanceProfile",
+               Type: 'AWS::IAM::InstanceProfile',
+               Properties: {
+                 Path: '/',
+                 Roles: [ref("#{role_name}Role")]
+               }
 
-      resource 'S3InstanceProfile', :Type => 'AWS::IAM::InstanceProfile', :Properties => {
-        :Path => '/',
-        :Roles => [ ref('S3AccessRole') ],
-      }
-
-      ref('S3InstanceProfile')
+      ref("#{role_name}InstanceProfile")
     end
 
     # Instance class (type) parameter
