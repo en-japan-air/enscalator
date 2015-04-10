@@ -12,8 +12,7 @@ module Enscalator
 
     START_IP_IDX_MAPPING = {
       auth_service: 16,
-      enslurp_ami: 20,
-      enslurp_core_os: 24,
+      enslurp: 24,
       interaction: 28,
       cc_rds: 32,
       jobposting_storage: 36,
