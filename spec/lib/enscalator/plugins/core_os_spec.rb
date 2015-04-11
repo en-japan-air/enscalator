@@ -1,23 +1,106 @@
 require 'spec_helper'
 require 'semantic'
 
+def assert_mapping(mapping, regions)
+  expect(mapping.keys).to include(*regions)
+  mapping.values.each do |v|
+    expect(v).to include(*[:hvm, :pv])
+  end
+  mapping.values.map(&:values).flatten.each do |ami|
+    expect(ami).to match /ami[-][a-z0-9]{8}/
+  end
+end
+
+# Tests for public interfaces
 describe 'Enscalator::Plugins::CoreOS' do
+
+  regions = %w{eu-central-1 ap-northeast-1 sa-east-1
+               ap-southeast-2 ap-southeast-1 us-east-1
+               us-west-2 us-west-1 eu-west-1}
+
+  it 'should return ami mapping for CoreOS latest version in alpha channel' do
+    VCR.use_cassette 'coreos_latest_from_alpha_channel' do
+      mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :alpha)
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS 333.0.0 version in alpha channel' do
+    VCR.use_cassette 'coreos_333_0_0_from_alpha_channel' do
+      mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :alpha)
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS latest version in beta channel' do
+    VCR.use_cassette 'coreos_latest_from_beta_channel' do
+      mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS 444.4.0 version in beta channel' do
+    VCR.use_cassette 'coreos_444_4_0_from_beta_channel' do
+      mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS latest version in stable channel' do
+    VCR.use_cassette 'coreos_latest_from_stable_channel' do
+      mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS 522.4.0 version in stable channel' do
+    VCR.use_cassette 'coreos_522_4_0_from_stable_channel' do
+      mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS specific version (626.0.0) regardless of channel' do
+    VCR.use_cassette 'coreos_specific_version_626_0_0' do
+      mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '626.0.0')
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS specific version (612.1.0) regardless of channel' do
+    VCR.use_cassette 'coreos_specific_version_612_1_0' do
+      mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '612.1.0')
+      assert_mapping mapping, regions
+    end
+  end
+
+  it 'should return ami mapping for CoreOS specific version (607_0_0) regardless of channel' do
+    VCR.use_cassette 'coreos_specific_version_607_0_0' do
+      mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '607.0.0')
+      assert_mapping mapping, regions
+    end
+  end
+
+end
+
+# Tests for private methods in Enscalator::Plugins::CoreOS eigenclass
+describe 'Enscalator::Plugins::CoreOS.private_methods' do
 
   it 'should fetch mapping for specific version tag' do
     VCR.use_cassette 'coreos_522.5.0_from_stable_release_channel' do
       testUrl = 'http://stable.release.core-os.net/amd64-usr'
       mapping = Enscalator::Plugins::CoreOS.send(:fetch_mapping, testUrl, '522.5.0')
       expect(mapping.keys.size).to eq(9)
-      expect(mapping).to include('eu-central-1' => {'pv'=>'ami-448dbd59', 'hvm'=>'ami-468dbd5b'})
-      expect(mapping).to include('ap-northeast-1' => {'pv'=>'ami-0a05160b', 'hvm'=>'ami-0c05160d'})
-      expect(mapping).to include('sa-east-1' => {'pv'=>'ami-27b00d3a', 'hvm'=>'ami-23b00d3e'})
-      expect(mapping).to include('ap-southeast-2' => {'pv'=>'ami-b5295c8f', 'hvm'=>'ami-b7295c8d'})
-      expect(mapping).to include('ap-southeast-1' => {'pv'=>'ami-ba0f27e8', 'hvm'=>'ami-b40f27e6'})
-      expect(mapping).to include('us-east-1' => {'pv'=>'ami-3e750856', 'hvm'=>'ami-3c750854'})
-      expect(mapping).to include('us-west-2' => {'pv'=>'ami-bf2d728f', 'hvm'=>'ami-bd2d728d'})
-      expect(mapping).to include('us-west-1' => {'pv'=>'ami-8f534dca', 'hvm'=>'ami-8d534dc8'})
-      expect(mapping).to include('eu-west-1' => {'pv'=>'ami-e76dec90', 'hvm'=>'ami-f96dec8e'})
-      expect(mapping).not_to include('aaa' => { 'bbb' => 'ami-123', 'ccc' => 'ami-456'})
+      expect(mapping).to include('eu-central-1' => {'pv' => 'ami-448dbd59', 'hvm' => 'ami-468dbd5b'})
+      expect(mapping).to include('ap-northeast-1' => {'pv' => 'ami-0a05160b', 'hvm' => 'ami-0c05160d'})
+      expect(mapping).to include('sa-east-1' => {'pv' => 'ami-27b00d3a', 'hvm' => 'ami-23b00d3e'})
+      expect(mapping).to include('ap-southeast-2' => {'pv' => 'ami-b5295c8f', 'hvm' => 'ami-b7295c8d'})
+      expect(mapping).to include('ap-southeast-1' => {'pv' => 'ami-ba0f27e8', 'hvm' => 'ami-b40f27e6'})
+      expect(mapping).to include('us-east-1' => {'pv' => 'ami-3e750856', 'hvm' => 'ami-3c750854'})
+      expect(mapping).to include('us-west-2' => {'pv' => 'ami-bf2d728f', 'hvm' => 'ami-bd2d728d'})
+      expect(mapping).to include('us-west-1' => {'pv' => 'ami-8f534dca', 'hvm' => 'ami-8d534dc8'})
+      expect(mapping).to include('eu-west-1' => {'pv' => 'ami-e76dec90', 'hvm' => 'ami-f96dec8e'})
+      expect(mapping).not_to include('aaa' => {'bbb' => 'ami-123', 'ccc' => 'ami-456'})
     end
   end
 
@@ -35,7 +118,7 @@ describe 'Enscalator::Plugins::CoreOS' do
       expect(mapping).to include('us-west-2' => {'pv' => 'ami-0989a439', 'hvm' => 'ami-0789a437'})
       expect(mapping).to include('us-west-1' => {'pv' => 'ami-83d533c7', 'hvm' => 'ami-8dd533c9'})
       expect(mapping).to include('eu-west-1' => {'pv' => 'ami-57950a20', 'hvm' => 'ami-55950a22'})
-      expect(mapping).not_to include('aaa' => { 'bbb' => 'ami-123', 'ccc' => 'ami-456'})
+      expect(mapping).not_to include('aaa' => {'bbb' => 'ami-123', 'ccc' => 'ami-456'})
     end
   end
 
@@ -75,22 +158,22 @@ describe 'Enscalator::Plugins::CoreOS' do
 
   it 'should parse CoreOS ami mapping and return it in valid format' do
     testMapping = {
-        'amis' => [
+        :amis => [
             {
-                'name' => 'aws-region-1',
-                'pv' => 'ami-pv123abc',
-                'hvm' => 'ami-hvm123ab'
+                :name => 'aws-region-1',
+                :pv => 'ami-pv123abc',
+                :hvm => 'ami-hvm123ab'
             },
             {
-                'name' => 'aws-region-2',
-                'pv' => 'ami-pv333abc',
-                'hvm' => 'ami-hvm222ab'
+                :name => 'aws-region-2',
+                :pv => 'ami-pv333abc',
+                :hvm => 'ami-hvm222ab'
             }
         ]
-    }
+    }.with_indifferent_access
 
     resMapping = Enscalator::Plugins::CoreOS.send(:parse_raw_mapping, testMapping)
     expect(resMapping.keys).to eq(testMapping['amis'].map { |a| a['name'] })
-    expect(resMapping.values).to eq(testMapping['amis'].map { |a| a.reject { |k,_v| k == 'name' } })
+    expect(resMapping.values).to eq(testMapping['amis'].map { |a| a.reject { |k, _v| k == 'name' } })
   end
 end
