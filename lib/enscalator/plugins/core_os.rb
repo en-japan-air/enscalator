@@ -14,7 +14,7 @@ module Enscalator
 
         # CoreOS Release channels
         # @see https://coreos.com/releases
-        CHANNELS=[:stable, :beta, :alpha]
+        CHANNELS=[:alpha, :beta, :stable].freeze
 
         # Get CoreOS mapping for specific version from specific channel (stable, beta or alpha)
         #
@@ -34,8 +34,12 @@ module Enscalator
         # @return [Hash] CoreOS mapping for specific version
         #  (if version tag is not given, returns the most latest version number)
         def get_specific_version(tag: nil)
-          base_url = "http://beta.release.core-os.net/amd64-usr"
-          fetch_mapping(base_url, tag)
+          urls = CHANNELS.map { |c| "http://#{c}.release.core-os.net/amd64-usr" }
+          mapping = nil
+          urls.each do |u|
+            mapping = fetch_mapping(u, tag) unless mapping
+          end
+          mapping
         end
 
         private
@@ -77,7 +81,7 @@ module Enscalator
           if coreos_mapping
             amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
             Hash[
-              amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
+                amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
             ].with_indifferent_access
           end
         end
@@ -92,10 +96,10 @@ module Enscalator
       # @param instance_class [String] instance class (type)
       # @param allocate_public_ip [Boolean] automatically allocate public ip address
       def core_os_init(instance_name,
-                      storage_kind: 'ebs',
-                      virtualization: 'hvm',
-                      instance_class: 'm1.medium',
-                      allocate_public_ip: false)
+                       storage_kind: 'ebs',
+                       virtualization: 'hvm',
+                       instance_class: 'm1.medium',
+                       allocate_public_ip: false)
         @coreos_mapping ||=
             mapping 'AWSCoreOSAMI', CoreOS.get_channel_version(channel: :stable)
 

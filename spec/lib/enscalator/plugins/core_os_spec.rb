@@ -63,21 +63,21 @@ describe 'Enscalator::Plugins::CoreOS' do
   it 'should return ami mapping for CoreOS specific version (626.0.0) regardless of channel' do
     VCR.use_cassette 'coreos_specific_version_626_0_0' do
       mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '626.0.0')
-      assert_mapping mapping, regions
+      assert_mapping mapping, regions # specific version only available in alpha channel
     end
   end
 
   it 'should return ami mapping for CoreOS specific version (612.1.0) regardless of channel' do
     VCR.use_cassette 'coreos_specific_version_612_1_0' do
       mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '612.1.0')
-      assert_mapping mapping, regions
+      assert_mapping mapping, regions # specific version only available in beta channel
     end
   end
 
-  it 'should return ami mapping for CoreOS specific version (607_0_0) regardless of channel' do
+  it 'should return ami mapping for CoreOS specific version (607.0.0) regardless of channel' do
     VCR.use_cassette 'coreos_specific_version_607_0_0' do
       mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '607.0.0')
-      assert_mapping mapping, regions
+      assert_mapping mapping, regions # specific version only available in stable channel
     end
   end
 
