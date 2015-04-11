@@ -31,6 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec-expectations', '~> 3.2.0'
   spec.add_development_dependency 'rspec-mocks', '~> 3.2.1'
   spec.add_development_dependency 'webmock', '~> 1.21.0'
+  spec.add_development_dependency 'vcr', '~> 2.9.3'
   spec.add_development_dependency 'awesome_print', '~> 1.6.1'
   spec.add_development_dependency 'looksee', '~> 3.1.0'
 
