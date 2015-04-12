@@ -1,5 +1,8 @@
 # Enscalator
 
+[![Build Status](https://magnum.travis-ci.com/en-japan/enscalator.svg?token=hzDTonLsrtFjB1EvbfNy&branch=master)](https://magnum.travis-ci.com/en-japan/enscalator)
+[![Coverage Status](***REMOVED***c)](***REMOVED***)
+
 Enscalator is based on [bazaarvoice/cloudformation-ruby-dsl](https://github.com/bazaarvoice/cloudformation-ruby-dsl) and helps cloudforming en-japan applications
 
 ## Installation
