@@ -18,6 +18,20 @@ describe 'Enscalator::Plugins::CoreOS' do
                ap-southeast-2 ap-southeast-1 us-east-1
                us-west-2 us-west-1 eu-west-1}
 
+  it 'should create mapping template for CoreOS' do
+    VCR.use_cassette 'coreos_init_mapping_in_template' do
+      class CoreOSTestTemplate < Enscalator::EnAppTemplateDSL
+        include Enscalator::Plugins::CoreOS
+        define_method :tpl do
+          core_os_init
+        end
+      end
+      coreos_template = CoreOSTestTemplate.new
+      mapping_under_test = coreos_template.tpl
+      assert_mapping mapping_under_test, regions
+    end
+  end
+
   it 'should return ami mapping for CoreOS latest version in alpha channel' do
     VCR.use_cassette 'coreos_latest_from_alpha_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :alpha)
