@@ -1,6 +1,6 @@
 # -*- encoding : utf-8 -*-
 
-require 'Shellwords'
+require 'shellwords'
 
 module Enscalator
 
