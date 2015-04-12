@@ -10,4 +10,5 @@
 /tmp/
 .*.swp
 /.idea
+*.iml
 /.bin

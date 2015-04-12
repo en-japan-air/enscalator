@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 require 'open-uri'
 require 'nokogiri'
 require 'semantic'
@@ -88,30 +90,12 @@ module Enscalator
 
       end # class << self
 
-      # Create new CoreOS instance
+      # Initialize CoreOS related configurations
       #
-      # @param instance_name [String] instance name
-      # @param storage_kind [String] storage kind (ebs or ephemeral)
-      # @param virtualization [String] virtualization kind (hvm or paravirtual)
-      # @param instance_class [String] instance class (type)
-      # @param allocate_public_ip [Boolean] automatically allocate public ip address
-      def core_os_init(instance_name,
-                       storage_kind: 'ebs',
-                       virtualization: 'hvm',
-                       instance_class: 'm1.medium',
-                       allocate_public_ip: false)
-        @coreos_mapping ||=
-            mapping 'AWSCoreOSAMI', CoreOS.get_channel_version(channel: :stable)
-
-        #
-        # NOTE: to actually use this mapping call find_in_map with related virtualization kind
-        #
-        # paravirtual: find_in_map('AWSCoreOSAMI', ref('AWS::Region'), 'pv')
-        # hvm: find_in_map('AWSCoreOSAMI', ref('AWS::Region'), 'hvm')
-
+      def core_os_init
+        mapping 'AWSCoreOSAMI', CoreOS.get_channel_version(channel: :stable)
       end
 
-    end
-
-  end
-end
+    end # module CoreOS
+  end # module Plugins
+end # module Enscalator
