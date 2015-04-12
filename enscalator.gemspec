@@ -34,6 +34,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'vcr', '~> 2.9.3'
   spec.add_development_dependency 'awesome_print', '~> 1.6.1'
   spec.add_development_dependency 'looksee', '~> 3.1.0'
+  spec.add_development_dependency 'coveralls'
 
   spec.add_runtime_dependency 'cloudformation-ruby-dsl', '~> 0.4'
   spec.add_runtime_dependency 'trollop', '~> 2.1'

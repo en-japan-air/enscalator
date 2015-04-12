@@ -1,3 +1,6 @@
+require 'coveralls'
+Coveralls.wear!
+
 require 'enscalator'
 require 'pry'
 require 'vcr'
