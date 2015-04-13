@@ -39,7 +39,7 @@ module Enscalator
           urls = CHANNELS.map { |c| "http://#{c}.release.core-os.net/amd64-usr" }
           mapping = nil
           urls.each do |u|
-            mapping = fetch_mapping(u, tag) unless mapping
+            mapping ||= fetch_mapping(u, tag)
           end
           mapping
         end
