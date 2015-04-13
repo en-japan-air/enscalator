@@ -1,0 +1,443 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://stable.release.core-os.net/amd64-usr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Location:
+      - http://stable.release.core-os.net/amd64-usr/index.html
+      Date:
+      - Sun, 12 Apr 2015 04:32:21 GMT
+      Expires:
+      - Sun, 12 Apr 2015 04:32:21 GMT
+      Cache-Control:
+      - private, max-age=0
+      Content-Length:
+      - '0'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Content-Type:
+      - text/html; charset=UTF-8
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 12 Apr 2015 04:32:05 GMT
+- request:
+    method: get
+    uri: http://stable.release.core-os.net/amd64-usr/index.html
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Sun, 12 Apr 2015 05:17:00 GMT
+      Date:
+      - Sun, 12 Apr 2015 04:17:00 GMT
+      Last-Modified:
+      - Tue, 17 Mar 2015 17:02:02 GMT
+      Etag:
+      - '"***REMOVED***"'
+      X-Goog-Generation:
+      - '1426611722488000'
+      X-Goog-Metageneration:
+      - '1'
+      X-Goog-Stored-Content-Encoding:
+      - identity
+      X-Goog-Stored-Content-Length:
+      - '933'
+      Content-Type:
+      - text/html; charset=utf-8
+      X-Goog-Hash:
+      - crc32c=jHK6eQ==
+      - md5=35+ELoSVEA3wCQ3Uv5P9ow==
+      X-Goog-Storage-Class:
+      - STANDARD
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '933'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Cache-Control:
+      - public, max-age=3600
+      Age:
+      - '921'
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: "<html>\n    <head>\n\t<title>stable.release.core-os.net/amd64-usr/</title>\n
+        \   </head>\n    <body>\n    <h1>stable.release.core-os.net/amd64-usr/</h1>\n
+        \   \n\t[dir] <a href=\"367.1.0/\">367.1.0/</a> </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"410.1.0/\">410.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"410.2.0/\">410.2.0/</a> </br>\n    \n\t[dir] <a href=\"444.4.0/\">444.4.0/</a>
+        </br>\n    \n\t[dir] <a href=\"444.5.0/\">444.5.0/</a> </br>\n    \n\t[dir]
+        <a href=\"494.3.0/\">494.3.0/</a> </br>\n    \n\t[dir] <a href=\"494.4.0/\">494.4.0/</a>
+        </br>\n    \n\t[dir] <a href=\"494.5.0/\">494.5.0/</a> </br>\n    \n\t[dir]
+        <a href=\"522.4.0/\">522.4.0/</a> </br>\n    \n\t[dir] <a href=\"522.5.0/\">522.5.0/</a>
+        </br>\n    \n\t[dir] <a href=\"522.6.0/\">522.6.0/</a> </br>\n    \n\t[dir]
+        <a href=\"557.2.0/\">557.2.0/</a> </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"current/\">current/</a> </br>\n    \n    \n\t\n
+        \   \n    </body>\n</html>\n"
+    http_version: 
+  recorded_at: Sun, 12 Apr 2015 04:32:06 GMT
+- request:
+    method: get
+    uri: http://stable.release.core-os.net/amd64-usr/607.0.0/coreos_production_ami_all.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Sun, 12 Apr 2015 05:17:01 GMT
+      Date:
+      - Sun, 12 Apr 2015 04:17:01 GMT
+      Last-Modified:
+      - Tue, 17 Mar 2015 16:56:18 GMT
+      Etag:
+      - '"***REMOVED***"'
+      X-Goog-Generation:
+      - '1426611378298000'
+      X-Goog-Metageneration:
+      - '1'
+      X-Goog-Stored-Content-Encoding:
+      - identity
+      X-Goog-Stored-Content-Length:
+      - '928'
+      Content-Type:
+      - application/octet-stream
+      X-Goog-Hash:
+      - crc32c=J5P0iA==
+      - md5=muzwKjRoDK3A+JWn7NwPoA==
+      X-Goog-Storage-Class:
+      - STANDARD
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '928'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Cache-Control:
+      - public, max-age=3600
+      Age:
+      - '920'
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "amis": [
+            {
+              "name": "eu-central-1",
+              "pv":   "ami-0c300d11",
+              "hvm":  "ami-0e300d13"
+            },
+            {
+              "name": "ap-northeast-1",
+              "pv":   "ami-b128dcb1",
+              "hvm":  "ami-af28dcaf"
+            },
+            {
+              "name": "sa-east-1",
+              "pv":   "ami-2154ec3c",
+              "hvm":  "ami-2354ec3e"
+            },
+            {
+              "name": "ap-southeast-2",
+              "pv":   "ami-bbb5c581",
+              "hvm":  "ami-b9b5c583"
+            },
+            {
+              "name": "ap-southeast-1",
+              "pv":   "ami-fa0b3aa8",
+              "hvm":  "ami-f80b3aaa"
+            },
+            {
+              "name": "us-east-1",
+              "pv":   "ami-343b195c",
+              "hvm":  "ami-323b195a"
+            },
+            {
+              "name": "us-west-2",
+              "pv":   "ami-0989a439",
+              "hvm":  "ami-0789a437"
+            },
+            {
+              "name": "us-west-1",
+              "pv":   "ami-83d533c7",
+              "hvm":  "ami-8dd533c9"
+            },
+            {
+              "name": "eu-west-1",
+              "pv":   "ami-57950a20",
+              "hvm":  "ami-55950a22"
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Sun, 12 Apr 2015 04:32:06 GMT
+- request:
+    method: get
+    uri: http://stable.release.core-os.net/amd64-usr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Location:
+      - http://stable.release.core-os.net/amd64-usr/index.html
+      Date:
+      - Sun, 12 Apr 2015 04:32:22 GMT
+      Expires:
+      - Sun, 12 Apr 2015 04:32:22 GMT
+      Cache-Control:
+      - private, max-age=0
+      Content-Length:
+      - '0'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Content-Type:
+      - text/html; charset=UTF-8
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sun, 12 Apr 2015 04:32:06 GMT
+- request:
+    method: get
+    uri: http://stable.release.core-os.net/amd64-usr/index.html
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Sun, 12 Apr 2015 05:17:00 GMT
+      Date:
+      - Sun, 12 Apr 2015 04:17:00 GMT
+      Last-Modified:
+      - Tue, 17 Mar 2015 17:02:02 GMT
+      Etag:
+      - '"***REMOVED***"'
+      X-Goog-Generation:
+      - '1426611722488000'
+      X-Goog-Metageneration:
+      - '1'
+      X-Goog-Stored-Content-Encoding:
+      - identity
+      X-Goog-Stored-Content-Length:
+      - '933'
+      Content-Type:
+      - text/html; charset=utf-8
+      X-Goog-Hash:
+      - crc32c=jHK6eQ==
+      - md5=35+ELoSVEA3wCQ3Uv5P9ow==
+      X-Goog-Storage-Class:
+      - STANDARD
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '933'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Cache-Control:
+      - public, max-age=3600
+      Age:
+      - '922'
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: "<html>\n    <head>\n\t<title>stable.release.core-os.net/amd64-usr/</title>\n
+        \   </head>\n    <body>\n    <h1>stable.release.core-os.net/amd64-usr/</h1>\n
+        \   \n\t[dir] <a href=\"367.1.0/\">367.1.0/</a> </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"410.1.0/\">410.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"410.2.0/\">410.2.0/</a> </br>\n    \n\t[dir] <a href=\"444.4.0/\">444.4.0/</a>
+        </br>\n    \n\t[dir] <a href=\"444.5.0/\">444.5.0/</a> </br>\n    \n\t[dir]
+        <a href=\"494.3.0/\">494.3.0/</a> </br>\n    \n\t[dir] <a href=\"494.4.0/\">494.4.0/</a>
+        </br>\n    \n\t[dir] <a href=\"494.5.0/\">494.5.0/</a> </br>\n    \n\t[dir]
+        <a href=\"522.4.0/\">522.4.0/</a> </br>\n    \n\t[dir] <a href=\"522.5.0/\">522.5.0/</a>
+        </br>\n    \n\t[dir] <a href=\"522.6.0/\">522.6.0/</a> </br>\n    \n\t[dir]
+        <a href=\"557.2.0/\">557.2.0/</a> </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"current/\">current/</a> </br>\n    \n    \n\t\n
+        \   \n    </body>\n</html>\n"
+    http_version: 
+  recorded_at: Sun, 12 Apr 2015 04:32:06 GMT
+- request:
+    method: get
+    uri: http://stable.release.core-os.net/amd64-usr/607.0.0/coreos_production_ami_all.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Sun, 12 Apr 2015 05:17:01 GMT
+      Date:
+      - Sun, 12 Apr 2015 04:17:01 GMT
+      Last-Modified:
+      - Tue, 17 Mar 2015 16:56:18 GMT
+      Etag:
+      - '"***REMOVED***"'
+      X-Goog-Generation:
+      - '1426611378298000'
+      X-Goog-Metageneration:
+      - '1'
+      X-Goog-Stored-Content-Encoding:
+      - identity
+      X-Goog-Stored-Content-Length:
+      - '928'
+      Content-Type:
+      - application/octet-stream
+      X-Goog-Hash:
+      - crc32c=J5P0iA==
+      - md5=muzwKjRoDK3A+JWn7NwPoA==
+      X-Goog-Storage-Class:
+      - STANDARD
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '928'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Cache-Control:
+      - public, max-age=3600
+      Age:
+      - '921'
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "amis": [
+            {
+              "name": "eu-central-1",
+              "pv":   "ami-0c300d11",
+              "hvm":  "ami-0e300d13"
+            },
+            {
+              "name": "ap-northeast-1",
+              "pv":   "ami-b128dcb1",
+              "hvm":  "ami-af28dcaf"
+            },
+            {
+              "name": "sa-east-1",
+              "pv":   "ami-2154ec3c",
+              "hvm":  "ami-2354ec3e"
+            },
+            {
+              "name": "ap-southeast-2",
+              "pv":   "ami-bbb5c581",
+              "hvm":  "ami-b9b5c583"
+            },
+            {
+              "name": "ap-southeast-1",
+              "pv":   "ami-fa0b3aa8",
+              "hvm":  "ami-f80b3aaa"
+            },
+            {
+              "name": "us-east-1",
+              "pv":   "ami-343b195c",
+              "hvm":  "ami-323b195a"
+            },
+            {
+              "name": "us-west-2",
+              "pv":   "ami-0989a439",
+              "hvm":  "ami-0789a437"
+            },
+            {
+              "name": "us-west-1",
+              "pv":   "ami-83d533c7",
+              "hvm":  "ami-8dd533c9"
+            },
+            {
+              "name": "eu-west-1",
+              "pv":   "ami-57950a20",
+              "hvm":  "ami-55950a22"
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Sun, 12 Apr 2015 04:32:06 GMT
+recorded_with: VCR 2.9.3

@@ -16,27 +16,32 @@ module Enscalator
 
         # CoreOS Release channels
         # @see https://coreos.com/releases
-        CHANNELS=[:stable, :beta, :alpha]
+        CHANNELS=[:alpha, :beta, :stable].freeze
 
-        # Get CoreOS mapping for specific version from specific channel
+        # Get CoreOS mapping for specific version from specific channel (stable, beta or alpha)
         #
         # @param channel [Symbol] channel identifier
         # @param tag [String] specific version release tag
         # @return [Hash] CoreOS mapping for specific version and channel
+        #  (if version tag is not given, returns the most latest version number)
         def get_channel_version(channel: :stable, tag: nil)
           raise ArgumentError, "channel can only be one of #{CHANNELS.to_s}" unless CHANNELS.include? channel
           base_url = "http://#{channel.to_s}.release.core-os.net/amd64-usr"
           fetch_mapping(base_url, tag)
         end
 
-        # Get CoreOS mapping for specific version regardless of its release channel (stable, beta or alpha)
+        # Get CoreOS mapping for specific version regardless of its release channel
         #
         # @param tag [String] version tag
         # @return [Hash] CoreOS mapping for specific version
-        #  (if tag is not given, returns most latest version number)
+        #  (if version tag is not given, returns the most latest version number)
         def get_specific_version(tag: nil)
-          base_url = 'http://storage.core-os.net/coreos/amd64-usr'
-          fetch_mapping(base_url, tag)
+          urls = CHANNELS.map { |c| "http://#{c}.release.core-os.net/amd64-usr" }
+          mapping = nil
+          urls.each do |u|
+            mapping ||= fetch_mapping(u, tag)
+          end
+          mapping
         end
 
         private
@@ -78,7 +83,7 @@ module Enscalator
           if coreos_mapping
             amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
             Hash[
-              amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
+                amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
             ].with_indifferent_access
           end
         end

@@ -1,0 +1,303 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: http://alpha.release.core-os.net/amd64-usr
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 301
+      message: Moved Permanently
+    headers:
+      Location:
+      - http://alpha.release.core-os.net/amd64-usr/index.html
+      Date:
+      - Sat, 11 Apr 2015 15:25:40 GMT
+      Expires:
+      - Sat, 11 Apr 2015 15:25:40 GMT
+      Cache-Control:
+      - private, max-age=0
+      Content-Length:
+      - '0'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Content-Type:
+      - text/html; charset=UTF-8
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: ''
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 15:25:23 GMT
+- request:
+    method: get
+    uri: http://alpha.release.core-os.net/amd64-usr/index.html
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Sat, 11 Apr 2015 16:25:39 GMT
+      Date:
+      - Sat, 11 Apr 2015 15:25:39 GMT
+      Last-Modified:
+      - Thu, 09 Apr 2015 17:07:30 GMT
+      Etag:
+      - '"***REMOVED***"'
+      X-Goog-Generation:
+      - '1428599250435000'
+      X-Goog-Metageneration:
+      - '1'
+      X-Goog-Stored-Content-Encoding:
+      - identity
+      X-Goog-Stored-Content-Length:
+      - '7131'
+      Content-Type:
+      - text/html; charset=utf-8
+      X-Goog-Hash:
+      - crc32c=h8wcHg==
+      - ***REMOVED***
+      X-Goog-Storage-Class:
+      - STANDARD
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '7131'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Cache-Control:
+      - public, max-age=3600
+      Age:
+      - '1'
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: "<html>\n    <head>\n\t<title>alpha.release.core-os.net/amd64-usr/</title>\n
+        \   </head>\n    <body>\n    <h1>alpha.release.core-os.net/amd64-usr/</h1>\n
+        \   \n\t[dir] <a href=\"197.0.0/\">197.0.0/</a> </br>\n    \n\t[dir] <a href=\"206.0.0/\">206.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"206.1.0/\">206.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"225.1.0/\">225.1.0/</a> </br>\n    \n\t[dir] <a href=\"225.2.0/\">225.2.0/</a>
+        </br>\n    \n\t[dir] <a href=\"226.0.0/\">226.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"226.1.0/\">226.1.0/</a> </br>\n    \n\t[dir] <a href=\"228.0.0/\">228.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"231.0.0/\">231.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"233.0.0/\">233.0.0/</a> </br>\n    \n\t[dir] <a href=\"236.0.0/\">236.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"246.1.0/\">246.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"247.0.0/\">247.0.0/</a> </br>\n    \n\t[dir] <a href=\"247.1.0/\">247.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"249.0.0/\">249.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"250.0.0/\">250.0.0/</a> </br>\n    \n\t[dir] <a href=\"251.0.0/\">251.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"253.0.0/\">253.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"254.0.0/\">254.0.0/</a> </br>\n    \n\t[dir] <a href=\"256.0.0/\">256.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"260.0.0/\">260.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"261.0.0/\">261.0.0/</a> </br>\n    \n\t[dir] <a href=\"262.0.0/\">262.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"264.0.0/\">264.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"265.0.0/\">265.0.0/</a> </br>\n    \n\t[dir] <a href=\"266.0.0/\">266.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"267.0.0/\">267.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"267.1.0/\">267.1.0/</a> </br>\n    \n\t[dir] <a href=\"268.0.0/\">268.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"268.1.0/\">268.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"270.0.0/\">270.0.0/</a> </br>\n    \n\t[dir] <a href=\"273.0.0/\">273.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"274.0.0/\">274.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"275.0.0/\">275.0.0/</a> </br>\n    \n\t[dir] <a href=\"278.0.0/\">278.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"279.0.0/\">279.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"280.0.0/\">280.0.0/</a> </br>\n    \n\t[dir] <a href=\"280.1.0/\">280.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"281.1.0/\">281.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"282.0.0/\">282.0.0/</a> </br>\n    \n\t[dir] <a href=\"284.0.0/\">284.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"285.0.0/\">285.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"286.0.0/\">286.0.0/</a> </br>\n    \n\t[dir] <a href=\"288.0.0/\">288.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"289.0.0/\">289.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"290.0.0/\">290.0.0/</a> </br>\n    \n\t[dir] <a href=\"291.0.0/\">291.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"292.0.0/\">292.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"295.0.0/\">295.0.0/</a> </br>\n    \n\t[dir] <a href=\"295.1.0/\">295.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"296.0.0/\">296.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"298.0.0/\">298.0.0/</a> </br>\n    \n\t[dir] <a href=\"308.0.1/\">308.0.1/</a>
+        </br>\n    \n\t[dir] <a href=\"308.1.0/\">308.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"310.0.0/\">310.0.0/</a> </br>\n    \n\t[dir] <a href=\"310.1.0/\">310.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"311.0.0/\">311.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"311.1.0/\">311.1.0/</a> </br>\n    \n\t[dir] <a href=\"312.0.0/\">312.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"315.0.0/\">315.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"317.0.0/\">317.0.0/</a> </br>\n    \n\t[dir] <a href=\"324.1.0/\">324.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"324.2.0/\">324.2.0/</a> </br>\n    \n\t[dir]
+        <a href=\"324.3.0/\">324.3.0/</a> </br>\n    \n\t[dir] <a href=\"324.4.0/\">324.4.0/</a>
+        </br>\n    \n\t[dir] <a href=\"324.5.0/\">324.5.0/</a> </br>\n    \n\t[dir]
+        <a href=\"333.0.0/\">333.0.0/</a> </br>\n    \n\t[dir] <a href=\"336.1.0/\">336.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"338.0.0/\">338.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"342.0.0/\">342.0.0/</a> </br>\n    \n\t[dir] <a href=\"342.1.0/\">342.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"343.0.0/\">343.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"346.0.0/\">346.0.0/</a> </br>\n    \n\t[dir] <a href=\"349.0.0/\">349.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"353.0.0/\">353.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"361.0.0/\">361.0.0/</a> </br>\n    \n\t[dir] <a href=\"362.0.0/\">362.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"367.0.0/\">367.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"367.1.0/\">367.1.0/</a> </br>\n    \n\t[dir] <a href=\"379.2.0/\">379.2.0/</a>
+        </br>\n    \n\t[dir] <a href=\"379.3.0/\">379.3.0/</a> </br>\n    \n\t[dir]
+        <a href=\"386.1.0/\">386.1.0/</a> </br>\n    \n\t[dir] <a href=\"388.0.0/\">388.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"394.0.0/\">394.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"399.0.0/\">399.0.0/</a> </br>\n    \n\t[dir] <a href=\"402.0.0/\">402.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"402.2.0/\">402.2.0/</a> </br>\n    \n\t[dir]
+        <a href=\"408.0.0/\">408.0.0/</a> </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"423.0.0/\">423.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"429.0.0/\">429.0.0/</a> </br>\n    \n\t[dir] <a href=\"431.0.0/\">431.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"435.0.0/\">435.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"438.0.0/\">438.0.0/</a> </br>\n    \n\t[dir] <a href=\"440.0.0/\">440.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"444.0.0/\">444.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"452.0.0/\">452.0.0/</a> </br>\n    \n\t[dir] <a href=\"457.0.0/\">457.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"459.0.0/\">459.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"469.0.0/\">469.0.0/</a> </br>\n    \n\t[dir] <a href=\"471.1.0/\">471.1.0/</a>
+        </br>\n    \n\t[dir] <a href=\"472.0.0/\">472.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"490.0.0/\">490.0.0/</a> </br>\n    \n\t[dir] <a href=\"493.0.0/\">493.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"494.0.0/\">494.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"505.1.0/\">505.1.0/</a> </br>\n    \n\t[dir] <a href=\"507.0.0/\">507.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"509.0.0/\">509.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"509.1.0/\">509.1.0/</a> </br>\n    \n\t[dir] <a href=\"522.0.0/\">522.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"522.1.0/\">522.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"522.2.0/\">522.2.0/</a> </br>\n    \n\t[dir] <a href=\"526.0.0/\">526.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"534.1.0/\">534.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"536.0.0/\">536.0.0/</a> </br>\n    \n\t[dir] <a href=\"540.0.0/\">540.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"547.0.0/\">547.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"549.0.0/\">549.0.0/</a> </br>\n    \n\t[dir] <a href=\"550.0.0/\">550.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"554.0.0/\">554.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"557.0.0/\">557.0.0/</a> </br>\n    \n\t[dir] <a href=\"561.0.0/\">561.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"571.0.0/\">571.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"575.0.0/\">575.0.0/</a> </br>\n    \n\t[dir] <a href=\"584.0.0/\">584.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"591.0.0/\">591.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"592.0.0/\">592.0.0/</a> </br>\n    \n\t[dir] <a href=\"593.0.0/\">593.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"598.0.0/\">598.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"604.0.0/\">604.0.0/</a> </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"612.0.0/\">612.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"612.1.0/\">612.1.0/</a> </br>\n    \n\t[dir] <a href=\"618.0.0/\">618.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"626.0.0/\">626.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"633.1.0/\">633.1.0/</a> </br>\n    \n\t[dir] <a href=\"640.0.0/\">640.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"647.0.0/\">647.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"current/\">current/</a> </br>\n    \n    \n\t\n    \n    </body>\n</html>\n"
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 15:25:23 GMT
+- request:
+    method: get
+    uri: http://alpha.release.core-os.net/amd64-usr/612.1.0/coreos_production_ami_all.json
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Expires:
+      - Sat, 11 Apr 2015 16:25:40 GMT
+      Date:
+      - Sat, 11 Apr 2015 15:25:40 GMT
+      Cache-Control:
+      - public, max-age=3600
+      Last-Modified:
+      - Fri, 06 Mar 2015 19:43:39 GMT
+      Etag:
+      - '"***REMOVED***"'
+      X-Goog-Generation:
+      - '1425671019561000'
+      X-Goog-Metageneration:
+      - '1'
+      X-Goog-Stored-Content-Encoding:
+      - identity
+      X-Goog-Stored-Content-Length:
+      - '928'
+      Content-Type:
+      - application/octet-stream
+      X-Goog-Hash:
+      - crc32c=XzX4wA==
+      - md5=SLNzIZECo9dyUqLasJTCQg==
+      X-Goog-Storage-Class:
+      - STANDARD
+      Accept-Ranges:
+      - bytes
+      Vary:
+      - Accept-Encoding
+      Content-Length:
+      - '928'
+      Server:
+      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      Alternate-Protocol:
+      - 80:quic,p=0.5
+    body:
+      encoding: UTF-8
+      string: |
+        {
+          "amis": [
+            {
+              "name": "eu-central-1",
+              "pv":   "ami-beac9ea3",
+              "hvm":  "ami-b8ac9ea5"
+            },
+            {
+              "name": "ap-northeast-1",
+              "pv":   "ami-e735dce7",
+              "hvm":  "ami-e935dce9"
+            },
+            {
+              "name": "sa-east-1",
+              "pv":   "ami-473a835a",
+              "hvm":  "ami-453a8358"
+            },
+            {
+              "name": "ap-southeast-2",
+              "pv":   "ami-07a4d53d",
+              "hvm":  "ami-05a4d53f"
+            },
+            {
+              "name": "ap-southeast-1",
+              "pv":   "ami-564a7c04",
+              "hvm":  "ami-544a7c06"
+            },
+            {
+              "name": "us-east-1",
+              "pv":   "ami-105d0778",
+              "hvm":  "ami-125d077a"
+            },
+            {
+              "name": "us-west-2",
+              "pv":   "ami-53cae963",
+              "hvm":  "ami-51cae961"
+            },
+            {
+              "name": "us-west-1",
+              "pv":   "ami-235db967",
+              "hvm":  "ami-2d5db969"
+            },
+            {
+              "name": "eu-west-1",
+              "pv":   "ami-2756c550",
+              "hvm":  "ami-2556c552"
+            }
+          ]
+        }
+    http_version: 
+  recorded_at: Sat, 11 Apr 2015 15:25:24 GMT
+recorded_with: VCR 2.9.3
