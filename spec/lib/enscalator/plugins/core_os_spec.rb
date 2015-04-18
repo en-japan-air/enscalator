@@ -13,7 +13,7 @@ describe 'Enscalator::Plugins::CoreOS' do
         end
       end
       coreos_template = CoreOSTestTemplate.new
-      mapping_under_test = coreos_template.tpl
+      mapping_under_test = coreos_template.instance_variable_get(:@dict)[:Mappings]['AWSCoreOSAMI']
       assert_mapping mapping_under_test
     end
   end

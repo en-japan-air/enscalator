@@ -66,12 +66,12 @@ module Enscalator
       # @param instance_class [String] instance class (type)
       # @param allocate_public_ip [Boolean] automatically allocate public ip address
       def ubuntu_init(instance_name,
-                      storage: 'ebs',
-                      arch: 'amd64',
+                      storage: :'ebs',
+                      arch: :amd64,
                       instance_class: 'm1.medium',
                       allocate_public_ip: false)
-        @ubuntu_mapping ||=
-            mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: amd64)
+
+        mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: arch)
 
         parameter_keyname "Ubuntu#{instance_name}"
 

@@ -2,46 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://stable.release.core-os.net/amd64-usr
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Location:
-      - http://stable.release.core-os.net/amd64-usr/index.html
-      Date:
-      - Sat, 18 Apr 2015 03:50:49 GMT
-      Expires:
-      - Sat, 18 Apr 2015 03:50:49 GMT
-      Cache-Control:
-      - private, max-age=0
-      Content-Length:
-      - '0'
-      Server:
-      - UploadServer ("Built on Apr 9 2015 13:51:25 (1428612685)")
-      Content-Type:
-      - text/html; charset=UTF-8
-      Alternate-Protocol:
-      - 80:quic,p=1
-    body:
-      encoding: UTF-8
-      string: ''
-    http_version: 
-  recorded_at: Sat, 18 Apr 2015 03:50:27 GMT
-- request:
-    method: get
-    uri: http://stable.release.core-os.net/amd64-usr/index.html
+    uri: https://cloud-images.ubuntu.com/query/trusty/server/released.current.txt
     body:
       encoding: US-ASCII
       string: ''
@@ -57,61 +18,30 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - Sat, 18 Apr 2015 04:50:49 GMT
       Date:
-      - Sat, 18 Apr 2015 03:50:49 GMT
-      Cache-Control:
-      - public, max-age=3600
+      - Sat, 18 Apr 2015 11:28:05 GMT
+      Server:
+      - Apache/2.2.22 (Ubuntu)
       Last-Modified:
-      - Tue, 14 Apr 2015 19:05:03 GMT
+      - Fri, 17 Apr 2015 14:00:34 GMT
       Etag:
-      - '"***REMOVED***"'
-      X-Goog-Generation:
-      - '1429038303570000'
-      X-Goog-Metageneration:
-      - '1'
-      X-Goog-Stored-Content-Encoding:
-      - identity
-      X-Goog-Stored-Content-Length:
-      - '983'
-      Content-Type:
-      - text/html; charset=utf-8
-      X-Goog-Hash:
-      - crc32c=Dw99zg==
-      - md5=x6J/3s/TIvKGN2IxoGd7jQ==
-      X-Goog-Storage-Class:
-      - STANDARD
+      - '"14e1bdd-25dd-513ec01070480"'
       Accept-Ranges:
       - bytes
       Vary:
       - Accept-Encoding
       Content-Length:
-      - '983'
-      Server:
-      - UploadServer ("Built on Apr 9 2015 13:51:25 (1428612685)")
-      Alternate-Protocol:
-      - 80:quic,p=1
+      - '1222'
+      Content-Type:
+      - text/plain
     body:
-      encoding: UTF-8
-      string: "<html>\n    <head>\n\t<title>stable.release.core-os.net/amd64-usr/</title>\n
-        \   </head>\n    <body>\n    <h1>stable.release.core-os.net/amd64-usr/</h1>\n
-        \   \n\t[dir] <a href=\"367.1.0/\">367.1.0/</a> </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a>
-        </br>\n    \n\t[dir] <a href=\"410.1.0/\">410.1.0/</a> </br>\n    \n\t[dir]
-        <a href=\"410.2.0/\">410.2.0/</a> </br>\n    \n\t[dir] <a href=\"444.4.0/\">444.4.0/</a>
-        </br>\n    \n\t[dir] <a href=\"444.5.0/\">444.5.0/</a> </br>\n    \n\t[dir]
-        <a href=\"494.3.0/\">494.3.0/</a> </br>\n    \n\t[dir] <a href=\"494.4.0/\">494.4.0/</a>
-        </br>\n    \n\t[dir] <a href=\"494.5.0/\">494.5.0/</a> </br>\n    \n\t[dir]
-        <a href=\"522.4.0/\">522.4.0/</a> </br>\n    \n\t[dir] <a href=\"522.5.0/\">522.5.0/</a>
-        </br>\n    \n\t[dir] <a href=\"522.6.0/\">522.6.0/</a> </br>\n    \n\t[dir]
-        <a href=\"557.2.0/\">557.2.0/</a> </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a>
-        </br>\n    \n\t[dir] <a href=\"633.1.0/\">633.1.0/</a> </br>\n    \n\t[dir]
-        <a href=\"current/\">current/</a> </br>\n    \n    \n\t\n    \n    </body>\n</html>\n"
+      encoding: ASCII-8BIT
+      string: "trusty\tserver\trelease\t20150417\tebs\tamd64\tap-northeast-1\tami-c011d4c0\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-northeast-1\tami-f211d4f2\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-northeast-1\tami-fc11d4fc\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-northeast-1\tami-5c11d45c\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-northeast-1\tami-ac11d4ac\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tap-northeast-1\tami-a811d4a8\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-northeast-1\tami-b411d4b4\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tap-northeast-1\tami-b211d4b2\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-northeast-1\tami-ba11d4ba\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tap-northeast-1\tami-b811d4b8\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-northeast-1\tami-5c14d15c\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tap-northeast-1\tami-9c09cc9c\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-1\tami-76546924\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-1\tami-74546926\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-1\tami-7854692a\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-1\tami-905568c2\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-1\tami-b05568e2\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tap-southeast-1\tami-8c5568de\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-1\tami-aa5568f8\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tap-southeast-1\tami-b45568e6\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-1\tami-4c54691e\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tap-southeast-1\tami-5a546908\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-1\tami-2a5a6778\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tap-southeast-1\tami-ec5865be\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-2\tami-cd611cf7\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-2\tami-c3611cf9\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-2\tami-c5611cff\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-2\tami-9f611ca5\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-2\tami-d3611ce9\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tap-southeast-2\tami-df611ce5\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-2\tami-d5611cef\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tap-southeast-2\tami-d1611ceb\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-2\tami-c9611cf3\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tap-southeast-2\tami-cb611cf1\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-2\tami-b5661b8f\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tap-southeast-2\tami-a3671a99\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-central-1\tami-00dae61d\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-central-1\tami-02dae61f\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-central-1\tami-3cdae621\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-central-1\tami-74d9e569\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-central-1\tami-0edae613\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\teu-central-1\tami-0cdae611\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-central-1\tami-0adae617\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\teu-central-1\tami-08dae615\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-central-1\tami-06dae61b\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\teu-central-1\tami-04dae619\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-central-1\tami-c2d8e4df\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\teu-central-1\tami-34d8e429\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-west-1\tami-2396f654\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-west-1\tami-2f96f658\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-west-1\tami-2d96f65a\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-west-1\tami-cd91f1ba\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-west-1\tami-3196f646\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\teu-west-1\tami-3396f644\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-west-1\tami-3b96f64c\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\teu-west-1\tami-3d96f64a\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-west-1\tami-2596f652\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\teu-west-1\tami-3996f64e\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-west-1\tami-b98cecce\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\teu-west-1\tami-ed88e89a\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tsa-east-1\tami-75b23768\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tsa-east-1\tami-77b2376a\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tsa-east-1\tami-71b2376c\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tsa-east-1\tami-0db23710\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tsa-east-1\tami-41b2375c\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tsa-east-1\tami-47b2375a\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tsa-east-1\tami-7db23760\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tsa-east-1\tami-43b2375e\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tsa-east-1\tami-79b23764\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tsa-east-1\tami-7fb23762\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tsa-east-1\tami-8db33690\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tsa-east-1\tami-e5b035f8\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-east-1\tami-f63b3e9e\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-east-1\tami-ca3b3ea2\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-east-1\tami-cc3b3ea4\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-east-1\tami-823f3aea\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-east-1\tami-e63b3e8e\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tus-east-1\tami-e43b3e8c\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-east-1\tami-fe3b3e96\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tus-east-1\tami-f83b3e90\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-east-1\tami-f43b3e9c\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tus-east-1\tami-f23b3e9a\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-east-1\tami-3234315a\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tus-east-1\tami-e22d288a\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-1\tami-057f9d41\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-1\tami-077f9d43\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-1\tami-017f9d45\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-1\tami-eb7e9caf\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-1\tami-717f9d35\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tus-west-1\tami-757f9d31\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-1\tami-7d7f9d39\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tus-west-1\tami-737f9d37\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-1\tami-7b7f9d3f\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tus-west-1\tami-797f9d3d\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-1\tami-47799b03\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tus-west-1\tami-1b7b995f\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-2\tami-51526761\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-2\tami-53526763\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-2\tami-55526765\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-2\tami-6d53665d\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-2\tami-67526757\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tus-west-2\tami-65526755\taki-f08f11c0\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-2\tami-6b52675b\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tus-west-2\tami-69526759\taki-f08f11c0\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-2\tami-6f52675f\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tus-west-2\tami-6d52675d\taki-f08f11c0\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-2\tami-57516467\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tus-west-2\tami-915560a1\taki-f08f11c0\t\tparavirtual\n"
     http_version: 
-  recorded_at: Sat, 18 Apr 2015 03:50:28 GMT
+  recorded_at: Sat, 18 Apr 2015 11:27:45 GMT
 - request:
     method: get
-    uri: http://stable.release.core-os.net/amd64-usr/633.1.0/coreos_production_ami_all.json
+    uri: https://cloud-images.ubuntu.com/query/trusty/server/released.current.txt
     body:
       encoding: US-ASCII
       string: ''
@@ -127,313 +57,25 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - Sat, 18 Apr 2015 04:50:53 GMT
       Date:
-      - Sat, 18 Apr 2015 03:50:53 GMT
-      Cache-Control:
-      - public, max-age=3600
+      - Sat, 18 Apr 2015 11:28:06 GMT
+      Server:
+      - Apache/2.2.22 (Ubuntu)
       Last-Modified:
-      - Tue, 14 Apr 2015 19:01:12 GMT
+      - Fri, 17 Apr 2015 14:00:34 GMT
       Etag:
-      - '"***REMOVED***"'
-      X-Goog-Generation:
-      - '1429038072679000'
-      X-Goog-Metageneration:
-      - '1'
-      X-Goog-Stored-Content-Encoding:
-      - identity
-      X-Goog-Stored-Content-Length:
-      - '928'
-      Content-Type:
-      - application/octet-stream
-      X-Goog-Hash:
-      - crc32c=peelIA==
-      - ***REMOVED***
-      X-Goog-Storage-Class:
-      - STANDARD
+      - '"14e1bdd-25dd-513ec01070480"'
       Accept-Ranges:
       - bytes
       Vary:
       - Accept-Encoding
       Content-Length:
-      - '928'
-      Server:
-      - UploadServer ("Built on Apr 9 2015 13:51:25 (1428612685)")
-      Alternate-Protocol:
-      - 80:quic,p=1
-    body:
-      encoding: UTF-8
-      string: |
-        {
-          "amis": [
-            {
-              "name": "eu-central-1",
-              "pv":   "ami-8c003c91",
-              "hvm":  "ami-92003c8f"
-            },
-            {
-              "name": "ap-northeast-1",
-              "pv":   "ami-9eb9439e",
-              "hvm":  "ami-9cb9439c"
-            },
-            {
-              "name": "sa-east-1",
-              "pv":   "ami-9be66386",
-              "hvm":  "ami-99e66384"
-            },
-            {
-              "name": "ap-southeast-2",
-              "pv":   "ami-d53845ef",
-              "hvm":  "ami-cb3845f1"
-            },
-            {
-              "name": "ap-southeast-1",
-              "pv":   "ami-a2cefcf0",
-              "hvm":  "ami-a0cefcf2"
-            },
-            {
-              "name": "us-east-1",
-              "pv":   "ami-d6033bbe",
-              "hvm":  "ami-d2033bba"
-            },
-            {
-              "name": "us-west-2",
-              "pv":   "ami-39280209",
-              "hvm":  "ami-37280207"
-            },
-            {
-              "name": "us-west-1",
-              "pv":   "ami-4df91b09",
-              "hvm":  "ami-43f91b07"
-            },
-            {
-              "name": "eu-west-1",
-              "pv":   "ami-2f422358",
-              "hvm":  "ami-21422356"
-            }
-          ]
-        }
-    http_version: 
-  recorded_at: Sat, 18 Apr 2015 03:50:32 GMT
-- request:
-    method: get
-    uri: http://stable.release.core-os.net/amd64-usr
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 301
-      message: Moved Permanently
-    headers:
-      Location:
-      - http://stable.release.core-os.net/amd64-usr/index.html
-      Date:
-      - Sat, 18 Apr 2015 03:50:54 GMT
-      Expires:
-      - Sat, 18 Apr 2015 03:50:54 GMT
-      Cache-Control:
-      - private, max-age=0
-      Content-Length:
-      - '0'
-      Server:
-      - UploadServer ("Built on Apr 9 2015 13:51:25 (1428612685)")
+      - '1222'
       Content-Type:
-      - text/html; charset=UTF-8
-      Alternate-Protocol:
-      - 80:quic,p=1
+      - text/plain
     body:
-      encoding: UTF-8
-      string: ''
+      encoding: ASCII-8BIT
+      string: "trusty\tserver\trelease\t20150417\tebs\tamd64\tap-northeast-1\tami-c011d4c0\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-northeast-1\tami-f211d4f2\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-northeast-1\tami-fc11d4fc\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-northeast-1\tami-5c11d45c\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-northeast-1\tami-ac11d4ac\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tap-northeast-1\tami-a811d4a8\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-northeast-1\tami-b411d4b4\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tap-northeast-1\tami-b211d4b2\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-northeast-1\tami-ba11d4ba\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tap-northeast-1\tami-b811d4b8\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-northeast-1\tami-5c14d15c\taki-176bf516\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tap-northeast-1\tami-9c09cc9c\taki-136bf512\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-1\tami-76546924\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-1\tami-74546926\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-1\tami-7854692a\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-1\tami-905568c2\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-1\tami-b05568e2\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tap-southeast-1\tami-8c5568de\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-1\tami-aa5568f8\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tap-southeast-1\tami-b45568e6\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-1\tami-4c54691e\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tap-southeast-1\tami-5a546908\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-1\tami-2a5a6778\taki-503e7402\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tap-southeast-1\tami-ec5865be\taki-ae3973fc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-2\tami-cd611cf7\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-2\tami-c3611cf9\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-2\tami-c5611cff\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-2\tami-9f611ca5\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tap-southeast-2\tami-d3611ce9\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tap-southeast-2\tami-df611ce5\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tap-southeast-2\tami-d5611cef\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tap-southeast-2\tami-d1611ceb\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tap-southeast-2\tami-c9611cf3\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tap-southeast-2\tami-cb611cf1\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tap-southeast-2\tami-b5661b8f\taki-c362fff9\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tap-southeast-2\tami-a3671a99\taki-cd62fff7\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-central-1\tami-00dae61d\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-central-1\tami-02dae61f\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-central-1\tami-3cdae621\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-central-1\tami-74d9e569\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-central-1\tami-0edae613\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\teu-central-1\tami-0cdae611\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-central-1\tami-0adae617\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\teu-central-1\tami-08dae615\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-central-1\tami-06dae61b\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\teu-central-1\tami-04dae619\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-central-1\tami-c2d8e4df\taki-184c7a05\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\teu-central-1\tami-34d8e429\taki-3e4c7a23\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-west-1\tami-2396f654\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-west-1\tami-2f96f658\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-west-1\tami-2d96f65a\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-west-1\tami-cd91f1ba\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\teu-west-1\tami-3196f646\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\teu-west-1\tami-3396f644\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\teu-west-1\tami-3b96f64c\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\teu-west-1\tami-3d96f64a\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\teu-west-1\tami-2596f652\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\teu-west-1\tami-3996f64e\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\teu-west-1\tami-b98cecce\taki-52a34525\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\teu-west-1\tami-ed88e89a\taki-68a3451f\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tsa-east-1\tami-75b23768\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tsa-east-1\tami-77b2376a\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tsa-east-1\tami-71b2376c\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tsa-east-1\tami-0db23710\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tsa-east-1\tami-41b2375c\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tsa-east-1\tami-47b2375a\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tsa-east-1\tami-7db23760\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tsa-east-1\tami-43b2375e\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tsa-east-1\tami-79b23764\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tsa-east-1\tami-7fb23762\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tsa-east-1\tami-8db33690\taki-5553f448\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tsa-east-1\tami-e5b035f8\taki-5b53f446\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-east-1\tami-f63b3e9e\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-east-1\tami-ca3b3ea2\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-east-1\tami-cc3b3ea4\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-east-1\tami-823f3aea\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-east-1\tami-e63b3e8e\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tus-east-1\tami-e43b3e8c\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-east-1\tami-fe3b3e96\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tus-east-1\tami-f83b3e90\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-east-1\tami-f43b3e9c\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tus-east-1\tami-f23b3e9a\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-east-1\tami-3234315a\taki-919dcaf8\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tus-east-1\tami-e22d288a\taki-8f9dcae6\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-1\tami-057f9d41\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-1\tami-077f9d43\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-1\tami-017f9d45\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-1\tami-eb7e9caf\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-1\tami-717f9d35\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tus-west-1\tami-757f9d31\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-1\tami-7d7f9d39\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tus-west-1\tami-737f9d37\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-1\tami-7b7f9d3f\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tus-west-1\tami-797f9d3d\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-1\tami-47799b03\taki-880531cd\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tus-west-1\tami-1b7b995f\taki-8e0531cb\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-2\tami-51526761\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-2\tami-53526763\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-2\tami-55526765\t\t\thvm\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-2\tami-6d53665d\t\t\thvm\ntrusty\tserver\trelease\t20150417\tebs\tamd64\tus-west-2\tami-67526757\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs\ti386\tus-west-2\tami-65526755\taki-f08f11c0\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\tamd64\tus-west-2\tami-6b52675b\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-io1\ti386\tus-west-2\tami-69526759\taki-f08f11c0\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\tamd64\tus-west-2\tami-6f52675f\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tebs-ssd\ti386\tus-west-2\tami-6d52675d\taki-f08f11c0\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\tamd64\tus-west-2\tami-57516467\taki-fc8f11cc\t\tparavirtual\ntrusty\tserver\trelease\t20150417\tinstance-store\ti386\tus-west-2\tami-915560a1\taki-f08f11c0\t\tparavirtual\n"
     http_version: 
-  recorded_at: Sat, 18 Apr 2015 03:50:33 GMT
-- request:
-    method: get
-    uri: http://stable.release.core-os.net/amd64-usr/index.html
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Expires:
-      - Sat, 18 Apr 2015 04:50:49 GMT
-      Date:
-      - Sat, 18 Apr 2015 03:50:49 GMT
-      Last-Modified:
-      - Tue, 14 Apr 2015 19:05:03 GMT
-      Etag:
-      - '"***REMOVED***"'
-      X-Goog-Generation:
-      - '1429038303570000'
-      X-Goog-Metageneration:
-      - '1'
-      X-Goog-Stored-Content-Encoding:
-      - identity
-      X-Goog-Stored-Content-Length:
-      - '983'
-      Content-Type:
-      - text/html; charset=utf-8
-      X-Goog-Hash:
-      - crc32c=Dw99zg==
-      - md5=x6J/3s/TIvKGN2IxoGd7jQ==
-      X-Goog-Storage-Class:
-      - STANDARD
-      Accept-Ranges:
-      - bytes
-      Vary:
-      - Accept-Encoding
-      Content-Length:
-      - '983'
-      Server:
-      - UploadServer ("Built on Apr 9 2015 13:51:25 (1428612685)")
-      Cache-Control:
-      - public, max-age=3600
-      Age:
-      - '6'
-      Alternate-Protocol:
-      - 80:quic,p=1
-    body:
-      encoding: UTF-8
-      string: "<html>\n    <head>\n\t<title>stable.release.core-os.net/amd64-usr/</title>\n
-        \   </head>\n    <body>\n    <h1>stable.release.core-os.net/amd64-usr/</h1>\n
-        \   \n\t[dir] <a href=\"367.1.0/\">367.1.0/</a> </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a>
-        </br>\n    \n\t[dir] <a href=\"410.1.0/\">410.1.0/</a> </br>\n    \n\t[dir]
-        <a href=\"410.2.0/\">410.2.0/</a> </br>\n    \n\t[dir] <a href=\"444.4.0/\">444.4.0/</a>
-        </br>\n    \n\t[dir] <a href=\"444.5.0/\">444.5.0/</a> </br>\n    \n\t[dir]
-        <a href=\"494.3.0/\">494.3.0/</a> </br>\n    \n\t[dir] <a href=\"494.4.0/\">494.4.0/</a>
-        </br>\n    \n\t[dir] <a href=\"494.5.0/\">494.5.0/</a> </br>\n    \n\t[dir]
-        <a href=\"522.4.0/\">522.4.0/</a> </br>\n    \n\t[dir] <a href=\"522.5.0/\">522.5.0/</a>
-        </br>\n    \n\t[dir] <a href=\"522.6.0/\">522.6.0/</a> </br>\n    \n\t[dir]
-        <a href=\"557.2.0/\">557.2.0/</a> </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a>
-        </br>\n    \n\t[dir] <a href=\"633.1.0/\">633.1.0/</a> </br>\n    \n\t[dir]
-        <a href=\"current/\">current/</a> </br>\n    \n    \n\t\n    \n    </body>\n</html>\n"
-    http_version: 
-  recorded_at: Sat, 18 Apr 2015 03:50:33 GMT
-- request:
-    method: get
-    uri: http://stable.release.core-os.net/amd64-usr/633.1.0/coreos_production_ami_all.json
-    body:
-      encoding: US-ASCII
-      string: ''
-    headers:
-      Accept-Encoding:
-      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
-      Accept:
-      - "*/*"
-      User-Agent:
-      - Ruby
-  response:
-    status:
-      code: 200
-      message: OK
-    headers:
-      Expires:
-      - Sat, 18 Apr 2015 04:50:53 GMT
-      Date:
-      - Sat, 18 Apr 2015 03:50:53 GMT
-      Last-Modified:
-      - Tue, 14 Apr 2015 19:01:12 GMT
-      Etag:
-      - '"***REMOVED***"'
-      X-Goog-Generation:
-      - '1429038072679000'
-      X-Goog-Metageneration:
-      - '1'
-      X-Goog-Stored-Content-Encoding:
-      - identity
-      X-Goog-Stored-Content-Length:
-      - '928'
-      Content-Type:
-      - application/octet-stream
-      X-Goog-Hash:
-      - crc32c=peelIA==
-      - ***REMOVED***
-      X-Goog-Storage-Class:
-      - STANDARD
-      Accept-Ranges:
-      - bytes
-      Vary:
-      - Accept-Encoding
-      Content-Length:
-      - '928'
-      Server:
-      - UploadServer ("Built on Apr 9 2015 13:51:25 (1428612685)")
-      Cache-Control:
-      - public, max-age=3600
-      Age:
-      - '2'
-      Alternate-Protocol:
-      - 80:quic,p=1
-    body:
-      encoding: UTF-8
-      string: |
-        {
-          "amis": [
-            {
-              "name": "eu-central-1",
-              "pv":   "ami-8c003c91",
-              "hvm":  "ami-92003c8f"
-            },
-            {
-              "name": "ap-northeast-1",
-              "pv":   "ami-9eb9439e",
-              "hvm":  "ami-9cb9439c"
-            },
-            {
-              "name": "sa-east-1",
-              "pv":   "ami-9be66386",
-              "hvm":  "ami-99e66384"
-            },
-            {
-              "name": "ap-southeast-2",
-              "pv":   "ami-d53845ef",
-              "hvm":  "ami-cb3845f1"
-            },
-            {
-              "name": "ap-southeast-1",
-              "pv":   "ami-a2cefcf0",
-              "hvm":  "ami-a0cefcf2"
-            },
-            {
-              "name": "us-east-1",
-              "pv":   "ami-d6033bbe",
-              "hvm":  "ami-d2033bba"
-            },
-            {
-              "name": "us-west-2",
-              "pv":   "ami-39280209",
-              "hvm":  "ami-37280207"
-            },
-            {
-              "name": "us-west-1",
-              "pv":   "ami-4df91b09",
-              "hvm":  "ami-43f91b07"
-            },
-            {
-              "name": "eu-west-1",
-              "pv":   "ami-2f422358",
-              "hvm":  "ami-21422356"
-            }
-          ]
-        }
-    http_version: 
-  recorded_at: Sat, 18 Apr 2015 03:50:33 GMT
+  recorded_at: Sat, 18 Apr 2015 11:27:46 GMT
 recorded_with: VCR 2.9.3
