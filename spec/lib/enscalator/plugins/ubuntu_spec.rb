@@ -11,8 +11,13 @@ describe 'Enscalator::Plugins::Ubuntu' do
         end
       end
       ubuntu_template = UbuntuTestTemplate.new
-      mapping_under_test = ubuntu_template.instance_variable_get(:@dict)[:Mappings]['AWSUbuntuAMI']
+      dict = ubuntu_template.instance_variable_get(:@dict)
+
+      mapping_under_test = dict[:Mappings]['AWSUbuntuAMI']
       assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.values
+
+      resource_under_test = dict[:Resources]
+      expect(resource_under_test.keys).to include('Ubuntutest_server')
     end
   end
 
