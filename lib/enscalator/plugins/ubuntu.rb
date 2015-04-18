@@ -44,7 +44,8 @@ module Enscalator
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
           raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
           begin
-            body = open("https://cloud-images.ubuntu.com/query/#{release}/server/released.current.txt") { |f| f.read }
+            version = RELEASE.keys.include?(release) ? release : RELEASE.key(release)
+            body = open("https://cloud-images.ubuntu.com/query/#{version}/server/released.current.txt") { |f| f.read }
             images = body.split("\n").map { |m| m.squeeze("\t").split("\t").reject { |r| r.include? 'aki' } }
                          .map { |l| Struct::Image.new(*l) }
 

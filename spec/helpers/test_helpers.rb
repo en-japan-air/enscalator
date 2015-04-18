@@ -8,10 +8,10 @@ module TestHelpers
       :pv => 'paravirtual'
   }
 
-  def assert_mapping(mapping, keys: true)
+  def assert_mapping(mapping, fields: [])
     expect(mapping.keys).to include(*AWS_REGIONS)
     mapping.values.each do |v|
-      expected = keys ? AWS_VIRTUALIZATION.keys : AWS_VIRTUALIZATION.values
+      expected = fields && fields.empty? ? AWS_VIRTUALIZATION.keys : fields
       expect(v).to include(*expected)
     end
     mapping.values.map(&:values).flatten.each do |ami|

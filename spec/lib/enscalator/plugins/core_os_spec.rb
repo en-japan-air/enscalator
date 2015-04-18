@@ -81,6 +81,10 @@ describe 'Enscalator::Plugins::CoreOS' do
     end
   end
 
+  it 'should raise exception when channel parameter is not valid' do
+    expect { Enscalator::Plugins::CoreOS.get_channel_version(channel: :unstable) }.to raise_exception ArgumentError
+  end
+
 end
 
 # Tests for private methods in Enscalator::Plugins::CoreOS eigenclass
@@ -120,6 +124,11 @@ describe 'Enscalator::Plugins::CoreOS.private_methods' do
       expect(mapping).to include('eu-west-1' => {'pv' => 'ami-57950a20', 'hvm' => 'ami-55950a22'})
       expect(mapping).not_to include('aaa' => {'bbb' => 'ami-123', 'ccc' => 'ami-456'})
     end
+  end
+
+  it 'should raise exception when base_url parameter is not valid' do
+    expect { Enscalator::Plugins::CoreOS.send(:fetch_mapping, '', nil) }.to raise_exception ArgumentError
+    expect { Enscalator::Plugins::CoreOS.send(:fetch_mapping, nil, nil) }.to raise_exception ArgumentError
   end
 
   it 'should parse html from stable channel and return a list of Semantic::Version' do
