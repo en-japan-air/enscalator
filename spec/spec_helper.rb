@@ -1,8 +1,13 @@
+# Coveralls
 require 'coveralls'
 Coveralls.wear!
 
 require 'enscalator'
+
+# Debugging
 require 'pry'
+
+# Recording and mocking web requests
 require 'vcr'
 require 'webmock/rspec'
 
@@ -12,3 +17,6 @@ VCR.configure do |c|
   c.configure_rspec_metadata!
 end
 
+# Methods common for multiple tests
+require 'helpers/test_helpers'
+include TestHelpers

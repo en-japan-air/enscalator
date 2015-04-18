@@ -1,22 +1,8 @@
 require 'spec_helper'
 require 'semantic'
 
-def assert_mapping(mapping, regions)
-  expect(mapping.keys).to include(*regions)
-  mapping.values.each do |v|
-    expect(v).to include(*[:hvm, :pv])
-  end
-  mapping.values.map(&:values).flatten.each do |ami|
-    expect(ami).to match /ami[-][a-z0-9]{8}/
-  end
-end
-
 # Tests for public interfaces
 describe 'Enscalator::Plugins::CoreOS' do
-
-  regions = %w{eu-central-1 ap-northeast-1 sa-east-1
-               ap-southeast-2 ap-southeast-1 us-east-1
-               us-west-2 us-west-1 eu-west-1}
 
   it 'should create mapping template for CoreOS' do
     VCR.use_cassette 'coreos_init_mapping_in_template' do
@@ -28,70 +14,70 @@ describe 'Enscalator::Plugins::CoreOS' do
       end
       coreos_template = CoreOSTestTemplate.new
       mapping_under_test = coreos_template.tpl
-      assert_mapping mapping_under_test, regions
+      assert_mapping mapping_under_test
     end
   end
 
   it 'should return ami mapping for CoreOS latest version in alpha channel' do
     VCR.use_cassette 'coreos_latest_from_alpha_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :alpha)
-      assert_mapping mapping, regions
+      assert_mapping mapping
     end
   end
 
   it 'should return ami mapping for CoreOS 333.0.0 version in alpha channel' do
     VCR.use_cassette 'coreos_333_0_0_from_alpha_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :alpha)
-      assert_mapping mapping, regions
+      assert_mapping mapping
     end
   end
 
   it 'should return ami mapping for CoreOS latest version in beta channel' do
     VCR.use_cassette 'coreos_latest_from_beta_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
-      assert_mapping mapping, regions
+      assert_mapping mapping
     end
   end
 
   it 'should return ami mapping for CoreOS 444.4.0 version in beta channel' do
     VCR.use_cassette 'coreos_444_4_0_from_beta_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
-      assert_mapping mapping, regions
+      assert_mapping mapping
     end
   end
 
   it 'should return ami mapping for CoreOS latest version in stable channel' do
     VCR.use_cassette 'coreos_latest_from_stable_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
-      assert_mapping mapping, regions
+      assert_mapping mapping
     end
   end
 
   it 'should return ami mapping for CoreOS 522.4.0 version in stable channel' do
     VCR.use_cassette 'coreos_522_4_0_from_stable_channel' do
       mapping = Enscalator::Plugins::CoreOS.get_channel_version(channel: :beta)
-      assert_mapping mapping, regions
+      assert_mapping mapping
     end
   end
 
   it 'should return ami mapping for CoreOS specific version (626.0.0) regardless of channel' do
     VCR.use_cassette 'coreos_specific_version_626_0_0' do
       mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '626.0.0')
-      assert_mapping mapping, regions # specific version only available in alpha channel
+      assert_mapping mapping # specific version only available in alpha channel
     end
   end
 
   it 'should return ami mapping for CoreOS specific version (612.1.0) regardless of channel' do
     VCR.use_cassette 'coreos_specific_version_612_1_0' do
       mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '612.1.0')
-      assert_mapping mapping, regions # specific version only available in beta channel
+      assert_mapping mapping # specific version only available in beta channel
     end
   end
 
   it 'should return ami mapping for CoreOS specific version (607.0.0) regardless of channel' do
     VCR.use_cassette 'coreos_specific_version_607_0_0' do
       mapping = Enscalator::Plugins::CoreOS.get_specific_version(tag: '607.0.0')
-      assert_mapping mapping, regions # specific version only available in stable channel
+      assert_mapping mapping # specific version only available in stable channel
     end
   end
 
