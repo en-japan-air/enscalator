@@ -76,7 +76,7 @@ module Enscalator
                :Value => get_att('LoadBalancer', 'DNSName')
 
         post_run do
-          cfn = cfn_client(region)
+          cfn = cfn_resource(cfn_client(region))
           stack = wait_stack(cfn, stack_name)
           elb_name = get_resource(stack, 'LoadBalancerDnsName')
           upsert_dns_record(

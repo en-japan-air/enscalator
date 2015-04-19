@@ -6,6 +6,16 @@ module Enscalator
     # RethinkDB appliance
     class RethinkDB
 
+      class << self
+        OWNER_ID = '679593333241'
+
+        def get_mapping
+        end
+
+        # client = Aws::EC2::Client.new(region: 'us-east-1')
+        # client.describe_images(dry_run: false, owners: ['679593333241'], filters: [{:name => 'description', :values => ['RethinkDB']}])
+      end
+
       # Mapping for Rethinkdb x64 images
       def self.mapping_amd64
         {

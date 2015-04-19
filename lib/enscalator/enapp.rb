@@ -76,7 +76,7 @@ module Enscalator
     # @param stack_name [String] name of the cloudformation stack
     # @param region [String] valid Amazon AWS region
     def pre_setup(stack_name: 'enjapan-vpc', region: 'us-east-1')
-      cfn = cfn_client(region)
+      cfn = cfn_resource(cfn_client(region))
       stack = cfn.stack(stack_name)
       vpc_id = get_resource(stack, 'VpcId')
       vpc_private_security_group = get_resource(stack, 'PrivateSecurityGroup')

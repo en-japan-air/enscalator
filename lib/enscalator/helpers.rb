@@ -19,7 +19,7 @@ module Enscalator
       def initialize(cmd)
         # standard input is not used
         Open3.popen3(cmd) do |_stdin, stdout, stderr, thread|
-          { :out => stdout, :err => stderr }.each do |key, stream|
+          {:out => stdout, :err => stderr}.each do |key, stream|
             Thread.new do
               until (line = stream.gets).nil? do
                 # yield the block depending on the stream
@@ -54,11 +54,32 @@ module Enscalator
     # Cloudformation client
     #
     # @param region [String] Region in Amazon AWS
-    # @return [Aws::CloudFormation::Resource]
+    # @raise [ArgumentError] when region is not given
+    # @return [Aws::CloudFormation::Client]
     def cfn_client(region)
-      raise RuntimeError, 'Unable to proceed without region' if region && region.empty?
-      client = Aws::CloudFormation::Client.new(region: region)
+      raise ArgumentError, 'Unable to proceed without region' if region.nil? || region.empty?
+      Aws::CloudFormation::Client.new(region: region)
+    end
+
+    # Cloudformation resource
+    #
+    # @param client [Aws::CloudFormation::Client] instance of AWS Cloudformation client
+    # @raise [ArgumentError] when client is not provided or its not expected class type
+    # @return [Aws::CloudFormation::Resource]
+    def cfn_resource(client)
+      raise ArgumentError, 'must be instance of Aws::CloudFormation::Client' if client.nil? ||
+          client.class != Aws::CloudFormation::Client
       Aws::CloudFormation::Resource.new(client: client)
+    end
+
+    # EC2 client
+    #
+    # @param region [String] Region in Amazon AWS
+    # @raise [ArgumentError] when region is not given
+    # @return [Aws::EC2::Client]
+    def ec2_client(region)
+      raise ArgumentError, 'Unable to proceed without region' if region.nil? || region.empty?
+      Aws::EC2::Client.new(region: region)
     end
 
     # Wait until stack gets created
@@ -127,8 +148,8 @@ module Enscalator
     # @param keys [Array] list of keys
     def generate_parameters(stack, keys)
       keys.map do |k|
-        v = get_resource(stack,k)
-        { :parameter_key => k, :parameter_value => v }
+        v = get_resource(stack, k)
+        {:parameter_key => k, :parameter_value => v}
       end
     end
 
@@ -143,13 +164,13 @@ module Enscalator
     # @param append_args [String] append arguments
     # @deprecated this method is no longer used
     def cfn_call_script(region,
-                    dependent_stack_name,
-                    script_path,
-                    keys,
-                    prepend_args: '',
-                    append_args: '')
+                        dependent_stack_name,
+                        script_path,
+                        keys,
+                        prepend_args: '',
+                        append_args: '')
 
-      cfn = cfn_client(region)
+      cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
       args = get_resources(stack, keys).join(' ')
       cmd = [script_path, prepend_args, args, append_args]
@@ -173,27 +194,27 @@ module Enscalator
     # @return [Aws::CloudFormation::Resource]
     # @deprecated this method is no longer used
     def cfn_create_stack(region,
-                     dependent_stack_name,
-                     template,
-                     stack_name,
-                     keys: [],
-                     extra_parameters:[])
+                         dependent_stack_name,
+                         template,
+                         stack_name,
+                         keys: [],
+                         extra_parameters: [])
 
-      cfn = cfn_client(region)
+      cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
 
       extra_parameters_cleaned = extra_parameters.map do |x|
         if x.has_key? 'ParameterKey'
-          { :parameter_key => x['ParameterKey'], :parameter_value => x['ParameterValue']}
+          {:parameter_key => x['ParameterKey'], :parameter_value => x['ParameterValue']}
         else
           x
         end
       end
 
       options = {
-        :stack_name => stack_name,
-        :template_body => template,
-        :parameters => generate_parameters(stack, keys) + extra_parameters_cleaned
+          :stack_name => stack_name,
+          :template_body => template,
+          :parameters => generate_parameters(stack, keys) + extra_parameters_cleaned
       }
 
       cfn.create_stack(options)
