@@ -46,14 +46,19 @@ module Enscalator
           begin
             version = RELEASE.keys.include?(release) ? release : RELEASE.key(release)
             body = open("https://cloud-images.ubuntu.com/query/#{version}/server/released.current.txt") { |f| f.read }
-            images = body.split("\n").map { |m| m.squeeze("\t").split("\t").reject { |r| r.include? 'aki' } }
-                         .map { |l| Struct::Image.new(*l) }
-
-            images.select { |r| r.root_storage == storage.to_s && r.arch == arch.to_s }
-                .map { |i| {i.region => {i.virtualization => i.ami}} }
-                .flat_map(&:entries).group_by(&:first).map { |k, v| Hash[k, v.map(&:last)] }
-                .map { |m| Hash[m.map { |k, v| [k, v.reduce(:merge)] }] }
-                .reduce(Hash.new, :merge).with_indifferent_access
+            body.split("\n").map { |m| m.squeeze("\t").split("\t").reject { |r| r.include? 'aki' } }
+                .map { |l| Struct::Image.new(*l) }
+                .select(&->(r) { r.root_storage == storage.to_s && r.arch == arch.to_s })
+                .group_by(&:region)
+                .map(&->(k, v) {
+                       [
+                           k,
+                           v.map(&->(i) { [i.virtualization, i.ami] }).to_h
+                       ]
+                     }
+                )
+                .to_h
+                .with_indifferent_access
           end
         end
 
