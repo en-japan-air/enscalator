@@ -41,8 +41,22 @@ describe 'Enscalator::Helpers' do
   end
 
   it 'should raise exception when region is not provided for ec2 client' do
-    expect { test_fixture.ec2_client('')}.to raise_exception ArgumentError
-    expect { test_fixture.ec2_client(nil)}.to raise_exception ArgumentError
+    expect { test_fixture.ec2_client('') }.to raise_exception ArgumentError
+    expect { test_fixture.ec2_client(nil) }.to raise_exception ArgumentError
+  end
+
+  it 'should find amis using ec2 client and default parameters' do
+    VCR.use_cassette 'aws_sdk_ec2_client_find_ami' do
+      client = test_fixture.ec2_client('us-east-1')
+      images = test_fixture.find_ami(client)[:images]
+      assert_ami(images.sample.image_id)
+    end
+  end
+
+  it 'should raise exception when trying to find ami providing not valid ec2 client' do
+    expect { test_fixture.find_ami(nil) }.to raise_exception ArgumentError
+    expect { test_fixture.find_ami('') }.to raise_exception ArgumentError
+    expect { test_fixture.find_ami(test_fixture.cfn_client('us-east-1')) }.to raise_exception ArgumentError
   end
 
 end

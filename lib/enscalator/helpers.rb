@@ -82,6 +82,22 @@ module Enscalator
       Aws::EC2::Client.new(region: region)
     end
 
+
+    # Find ami images registered
+    #
+    # @param client [Aws::EC2::Client] instance of AWS EC2 client
+    # @raise [ArgumentError] when client is not provided or its not expected class type
+    # @returns [Hash] images satisfying query conditions
+    def find_ami(client, owners: ['self'], filters: nil)
+      raise ArgumentError, 'must be instance of Aws::EC2::Client' if client.nil? ||
+          client.class != Aws::EC2::Client
+      query = {}
+      query[:dry_run] = false
+      query[:owners] = owners if !owners.nil? && owners.class == Array && !owners.empty?
+      query[:filters] = filters if !filters.nil? && filters.class == Array && !filters.empty?
+      client.describe_images(query)
+    end
+
     # Wait until stack gets created
     #
     # @param cfn [Aws::CloudFormation::Resource] accessor for cloudformation resource

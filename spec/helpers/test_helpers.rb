@@ -15,7 +15,11 @@ module TestHelpers
       expect(v).to include(*expected)
     end
     mapping.values.map(&:values).flatten.each do |ami|
-      expect(ami).to match /ami[-][a-z0-9]{8}/
+      assert_ami(ami)
     end
+  end
+
+  def assert_ami(str)
+    expect(str).to match /ami[-][a-z0-9]{8}/
   end
 end
