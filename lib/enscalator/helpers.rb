@@ -57,7 +57,7 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     # @return [Aws::CloudFormation::Client]
     def cfn_client(region)
-      raise ArgumentError, 'Unable to proceed without region' if region.nil? || region.empty?
+      raise ArgumentError, 'Unable to proceed without region' if region.blank?
       Aws::CloudFormation::Client.new(region: region)
     end
 
@@ -67,8 +67,8 @@ module Enscalator
     # @raise [ArgumentError] when client is not provided or its not expected class type
     # @return [Aws::CloudFormation::Resource]
     def cfn_resource(client)
-      raise ArgumentError, 'must be instance of Aws::CloudFormation::Client' if client.nil? ||
-          client.class != Aws::CloudFormation::Client
+      raise ArgumentError, 'must be instance of Aws::CloudFormation::Client' if client.blank? ||
+          !client.kind_of?(Aws::CloudFormation::Client)
       Aws::CloudFormation::Resource.new(client: client)
     end
 
@@ -78,7 +78,7 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     # @return [Aws::EC2::Client]
     def ec2_client(region)
-      raise ArgumentError, 'Unable to proceed without region' if region.nil? || region.empty?
+      raise ArgumentError, 'Unable to proceed without region' if region.blank?
       Aws::EC2::Client.new(region: region)
     end
 
@@ -89,12 +89,11 @@ module Enscalator
     # @raise [ArgumentError] when client is not provided or its not expected class type
     # @returns [Hash] images satisfying query conditions
     def find_ami(client, owners: ['self'], filters: nil)
-      raise ArgumentError, 'must be instance of Aws::EC2::Client' if client.nil? ||
-          client.class != Aws::EC2::Client
+      raise ArgumentError, 'must be instance of Aws::EC2::Client' if client.blank? || !client.kind_of?(Aws::EC2::Client)
       query = {}
       query[:dry_run] = false
-      query[:owners] = owners if !owners.nil? && owners.class == Array && !owners.empty?
-      query[:filters] = filters if !filters.nil? && filters.class == Array && !filters.empty?
+      query[:owners] = owners if owners.kind_of?(Array) && owners.any?
+      query[:filters] = filters if filters.kind_of?(Array) && filters.any?
       client.describe_images(query)
     end
 
