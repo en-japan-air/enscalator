@@ -10,6 +10,7 @@ module Enscalator
 
     include Enscalator::Helpers
 
+    # Mapping for subnet index start values
     START_IP_IDX_MAPPING = {
       auth_service: 16,
       cc_landing_page_generator: 20,

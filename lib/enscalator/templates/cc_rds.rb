@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Enscalator
 
   # namespace for template collection

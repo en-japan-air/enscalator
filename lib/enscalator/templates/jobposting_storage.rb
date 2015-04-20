@@ -1,3 +1,5 @@
+# encoding: UTF-8
+
 module Enscalator
 
   # Namespace for cloudformation templates
