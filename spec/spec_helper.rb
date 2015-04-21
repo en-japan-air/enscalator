@@ -18,14 +18,26 @@ require 'vcr'
 require 'webmock/rspec'
 
 # Configuration for CI servers
-credentials = begin
-  Aws::SharedCredentials.new(profile_name: 'default')
-rescue
-  require 'yaml'
-  profile = YAML.load_file('spec/assets/aws/credentials.yml')[:default]
-  Aws.config[:credentials] = Aws::Credentials.new(profile[:aws_access_key_id],
-                                                  profile[:aws_secret_access_key])
-end
+credentials =
+  if ENV['CI'].eql?('true') || ENV['TRAVIS'].eql?('true')
+    profile = YAML.load_file('spec/assets/aws/credentials.yml')[:default]
+    creds = Aws::Credentials.new(profile[:aws_access_key_id],
+                                 profile[:aws_secret_access_key],
+                                 profile[:session_token])
+    stub = Class.new {
+      define_method :initialize do |config|
+        instance_variable_set('@config', config)
+      end
+      define_method :resolve do
+        creds
+      end
+    }
+    Aws.send(:remove_const, :CredentialProviderChain.to_s) if Aws.const_defined? :CredentialProviderChain
+    Aws.const_set(:CredentialProviderChain, stub)
+    creds
+  else
+    Aws::SharedCredentials.new
+  end
 
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/cassettes'

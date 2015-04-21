@@ -89,7 +89,7 @@ module Enscalator
                   vpc_private_route_tables
     end
 
-    alias_method :magic_setup, :pre_setup
+    alias magic_setup pre_setup
 
     # Setup VPC configuration which is required in order to create stack
     #
