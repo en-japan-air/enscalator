@@ -4,8 +4,8 @@ module TestHelpers
                 ap-southeast-1 us-east-1 us-west-2 us-west-1 eu-west-1}
 
   AWS_VIRTUALIZATION = {
-      :hvm => 'hvm',
-      :pv => 'paravirtual'
+    :hvm => 'hvm',
+    :pv => 'paravirtual'
   }
 
   def assert_mapping(mapping, fields: [])

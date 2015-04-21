@@ -29,46 +29,46 @@ module Enscalator
 
         resource 'LoadBalancer', :Type => 'AWS::ElasticLoadBalancing::LoadBalancer',
                  :Properties => {
-                     :LoadBalancerName => elb_name,
-                     :Listeners => [
-                         {
-                             :LoadBalancerPort => '80',
-                             :InstancePort => ref('WebServerPort'),
-                             :Protocol => 'HTTP',
-                         },
-                     ],
-                     :HealthCheck => {
-                         :Target => join('', 'HTTP:', ref_web_server_port, '/'),
-                         :HealthyThreshold => '3',
-                         :UnhealthyThreshold => '5',
-                         :Interval => '30',
-                         :Timeout => '5',
+                   :LoadBalancerName => elb_name,
+                   :Listeners => [
+                     {
+                       :LoadBalancerPort => '80',
+                       :InstancePort => ref('WebServerPort'),
+                       :Protocol => 'HTTP',
                      },
-                     :Scheme => 'internal',
-                     :SecurityGroups => [ ref_application_security_group ],
-                     :Subnets => [
-                         ref_resource_subnet_a,
-                         ref_resource_subnet_c
-                     ],
-                     :Tags => [
-                         {
-                             :Key => 'Name',
-                             :Value => elb_name
-                         },
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name
-                         },
-                         { :Key => 'Network', :Value => 'Private' },
-                     ],
+                   ],
+                   :HealthCheck => {
+                     :Target => join('', 'HTTP:', ref_web_server_port, '/'),
+                     :HealthyThreshold => '3',
+                     :UnhealthyThreshold => '5',
+                     :Interval => '30',
+                     :Timeout => '5',
+                   },
+                   :Scheme => 'internal',
+                   :SecurityGroups => [ref_application_security_group],
+                   :Subnets => [
+                     ref_resource_subnet_a,
+                     ref_resource_subnet_c
+                   ],
+                   :Tags => [
+                     {
+                       :Key => 'Name',
+                       :Value => elb_name
+                     },
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name
+                     },
+                     {:Key => 'Network', :Value => 'Private'},
+                   ],
                  }
 
         resource 'WebServerPortSecurityGroupId', :Type => 'AWS::EC2::SecurityGroupIngress',
                  :Properties => {
-                     :IpProtocol => 'tcp',
-                     :FromPort => ref('WebServerPort'),
-                     :ToPort => ref('WebServerPort'),
-                     :GroupId => get_att('ApplicationSecurityGroup', 'GroupId')
+                   :IpProtocol => 'tcp',
+                   :FromPort => ref('WebServerPort'),
+                   :ToPort => ref('WebServerPort'),
+                   :GroupId => get_att('ApplicationSecurityGroup', 'GroupId')
                  }
 
         output 'LoadBalancerDnsName',
@@ -80,9 +80,9 @@ module Enscalator
           stack = wait_stack(cfn, stack_name)
           elb_name = get_resource(stack, 'LoadBalancerDnsName')
           upsert_dns_record(
-              zone_name: zone_name,
-              record_name: "elb.#{stack_name}.#{zone_name}",
-              type: 'CNAME', values: [elb_name]
+            zone_name: zone_name,
+            record_name: "elb.#{stack_name}.#{zone_name}",
+            type: 'CNAME', values: [elb_name]
           )
         end
       end

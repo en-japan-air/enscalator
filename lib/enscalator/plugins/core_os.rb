@@ -83,7 +83,7 @@ module Enscalator
           if coreos_mapping
             amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
             Hash[
-                amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
+              amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
             ].with_indifferent_access
           end
         end

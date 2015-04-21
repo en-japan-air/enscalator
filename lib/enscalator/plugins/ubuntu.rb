@@ -18,13 +18,13 @@ module Enscalator
 
         # Supported Ubuntu releases
         RELEASE={
-            :vivid => '15.04',
-            :utopic => '14.10',
-            :trusty => '14.04',
-            :saucy => '13.10',
-            :raring => '13.04',
-            :quantal => '12.10',
-            :precise => '12.04'
+          :vivid => '15.04',
+          :utopic => '14.10',
+          :trusty => '14.04',
+          :saucy => '13.10',
+          :raring => '13.04',
+          :quantal => '12.10',
+          :precise => '12.04'
         }
 
         # Structure to hold parsed record
@@ -47,18 +47,18 @@ module Enscalator
             version = RELEASE.keys.include?(release) ? release : RELEASE.key(release)
             body = open("https://cloud-images.ubuntu.com/query/#{version}/server/released.current.txt") { |f| f.read }
             body.split("\n").map { |m| m.squeeze("\t").split("\t").reject { |r| r.include? 'aki' } }
-                .map { |l| Struct::Image.new(*l) }
-                .select(&->(r) { r.root_storage == storage.to_s && r.arch == arch.to_s })
-                .group_by(&:region)
-                .map(&->(k, v) {
-                       [
-                           k,
-                           v.map(&->(i) { [i.virtualization, i.ami] }).to_h
-                       ]
-                     }
-                )
-                .to_h
-                .with_indifferent_access
+              .map { |l| Struct::Image.new(*l) }
+              .select(&->(r) { r.root_storage == storage.to_s && r.arch == arch.to_s })
+              .group_by(&:region)
+              .map(&->(k, v) {
+                     [
+                       k,
+                       v.map(&->(i) { [i.virtualization, i.ami] }).to_h
+                     ]
+                   }
+              )
+              .to_h
+              .with_indifferent_access
           end
         end
 
@@ -98,14 +98,14 @@ module Enscalator
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: {
-                         :KeyName => ref("Ubuntu#{instance_name}KeyName"),
-                         :InstanceType => ref("Ubuntu#{instance_name}InstanceClass")
+                       :KeyName => ref("Ubuntu#{instance_name}KeyName"),
+                       :InstanceType => ref("Ubuntu#{instance_name}InstanceClass")
                      }
 
         resource "Ubuntu#{instance_name}PublicIpAddress",
                  :Type => 'AWS::EC2::EIP',
                  :Properties => {
-                     :InstanceId => ref("Ubuntu#{instance_name}")
+                   :InstanceId => ref("Ubuntu#{instance_name}")
                  } if allocate_public_ip
       end
 

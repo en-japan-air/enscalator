@@ -68,7 +68,7 @@ module Enscalator
     # @return [Aws::CloudFormation::Resource]
     def cfn_resource(client)
       raise ArgumentError, 'must be instance of Aws::CloudFormation::Client' if client.blank? ||
-          !client.kind_of?(Aws::CloudFormation::Client)
+        !client.kind_of?(Aws::CloudFormation::Client)
       Aws::CloudFormation::Resource.new(client: client)
     end
 
@@ -227,9 +227,9 @@ module Enscalator
       end
 
       options = {
-          :stack_name => stack_name,
-          :template_body => template,
-          :parameters => generate_parameters(stack, keys) + extra_parameters_cleaned
+        :stack_name => stack_name,
+        :template_body => template,
+        :parameters => generate_parameters(stack, keys) + extra_parameters_cleaned
       }
 
       cfn.create_stack(options)

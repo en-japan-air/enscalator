@@ -167,18 +167,18 @@ describe 'Enscalator::Plugins::CoreOS.private_methods' do
 
   it 'should parse CoreOS ami mapping and return it in valid format' do
     testMapping = {
-        :amis => [
-            {
-                :name => 'aws-region-1',
-                :pv => 'ami-pv123abc',
-                :hvm => 'ami-hvm123ab'
-            },
-            {
-                :name => 'aws-region-2',
-                :pv => 'ami-pv333abc',
-                :hvm => 'ami-hvm222ab'
-            }
-        ]
+      :amis => [
+        {
+          :name => 'aws-region-1',
+          :pv => 'ami-pv123abc',
+          :hvm => 'ami-hvm123ab'
+        },
+        {
+          :name => 'aws-region-2',
+          :pv => 'ami-pv333abc',
+          :hvm => 'ami-hvm222ab'
+        }
+      ]
     }.with_indifferent_access
 
     resMapping = Enscalator::Plugins::CoreOS.send(:parse_raw_mapping, testMapping)
