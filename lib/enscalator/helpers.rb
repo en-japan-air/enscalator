@@ -42,6 +42,7 @@ module Enscalator
     # @param cmd [Array] command array to be executed
     # @return [String] produced output from executed command
     def run_cmd(cmd)
+      # use contracts to get rid of exceptions: https://github.com/egonSchiele/contracts.ruby
       raise ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
       raise ArgumentError, 'Argument cannot be empty' if cmd.empty?
       command = cmd.join(' ')

@@ -21,11 +21,9 @@ describe 'Enscalator::Asserts' do
   end
 
   it 'should create valid cloudformation resource accessor' do
-    VCR.use_cassette 'aws_sdk_cf_client_resource' do
-      client = test_fixture.cfn_client('us-east-1')
-      resource = test_fixture.cfn_resource(client)
-      expect(resource.class).to be Aws::CloudFormation::Resource
-    end
+    client = test_fixture.cfn_client('us-east-1')
+    resource = test_fixture.cfn_resource(client)
+    expect(resource.class).to be Aws::CloudFormation::Resource
   end
 
   it 'should raise exception when resource accessor is used without valid client' do
@@ -46,7 +44,7 @@ describe 'Enscalator::Asserts' do
   end
 
   it 'should find amis using ec2 client and default parameters' do
-    VCR.use_cassette 'aws_sdk_ec2_client_find_ami' do
+    VCR.use_cassette 'aws_sdk_ec2_client_find_ami', :tag => :aws_credentials do
       client = test_fixture.ec2_client('us-east-1')
       images = test_fixture.find_ami(client).images
       assert_ami(images.sample.image_id)

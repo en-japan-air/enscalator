@@ -4,8 +4,4 @@ cache: bundler
 rvm:
   - 2.2.1
 
-before_install:
-  - 'mkdir $HOME/.aws'
-  - 'cp $TRAVIS_BUILD_DIR/spec/assets/aws/credentials $HOME/.aws/credentials'
-
 script: 'bundle exec rake test'
