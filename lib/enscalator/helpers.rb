@@ -57,7 +57,8 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     # @return [Aws::CloudFormation::Client]
     def cfn_client(region)
-      raise ArgumentError, 'Unable to proceed without region' if region.blank?
+      raise ArgumentError,
+            'Unable to proceed without region' if region.blank?
       Aws::CloudFormation::Client.new(region: region)
     end
 
@@ -67,8 +68,8 @@ module Enscalator
     # @raise [ArgumentError] when client is not provided or its not expected class type
     # @return [Aws::CloudFormation::Resource]
     def cfn_resource(client)
-      raise ArgumentError, 'must be instance of Aws::CloudFormation::Client' if client.blank? ||
-        !client.kind_of?(Aws::CloudFormation::Client)
+      raise ArgumentError,
+            'must be instance of Aws::CloudFormation::Client' unless client.instance_of?(Aws::CloudFormation::Client)
       Aws::CloudFormation::Resource.new(client: client)
     end
 
@@ -78,7 +79,8 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     # @return [Aws::EC2::Client]
     def ec2_client(region)
-      raise ArgumentError, 'Unable to proceed without region' if region.blank?
+      raise ArgumentError,
+            'Unable to proceed without region' if region.blank?
       Aws::EC2::Client.new(region: region)
     end
 
@@ -89,7 +91,8 @@ module Enscalator
     # @raise [ArgumentError] when client is not provided or its not expected class type
     # @returns [Hash] images satisfying query conditions
     def find_ami(client, owners: ['self'], filters: nil)
-      raise ArgumentError, 'must be instance of Aws::EC2::Client' if client.blank? || !client.kind_of?(Aws::EC2::Client)
+      raise ArgumentError,
+            'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
       query = {}
       query[:dry_run] = false
       query[:owners] = owners if owners.kind_of?(Array) && owners.any?
@@ -241,14 +244,14 @@ module Enscalator
     # @param region [String] aws region
     # @param force_create [Boolean] force to create a new ssh key
     def create_ssh_key(key_name, region, force_create: false)
-      ec2_client = Aws::EC2::Client.new(region: region)
+      client = ec2_client(region)
 
-      if !ec2_client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
+      if !client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
         # delete existed ssh key
-        ec2_client.delete_key_pair(key_name: key_name)
+        client.delete_key_pair(key_name: key_name)
 
         # create a new ssh key
-        key_pair = ec2_client.create_key_pair(key_name: key_name)
+        key_pair = client.create_key_pair(key_name: key_name)
         STDERR.puts "Created new ssh key with fingerprint: #{key_pair.key_fingerprint}"
 
         # save private key for current user
