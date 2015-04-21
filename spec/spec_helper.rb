@@ -24,5 +24,5 @@ VCR.configure do |c|
 end
 
 # Methods common for multiple tests
-require 'helpers/test_helpers'
-include TestHelpers
+require_relative 'helpers/asserts'
+include Helpers::Asserts

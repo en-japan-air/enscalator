@@ -275,5 +275,5 @@ module Enscalator
       File.read(user_data_path)
     end
 
-  end # module Helpers
+  end # module Asserts
 end # module Enscalator
