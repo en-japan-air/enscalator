@@ -19,7 +19,7 @@ module Enscalator
       def initialize(cmd)
         # standard input is not used
         Open3.popen3(cmd) do |_stdin, stdout, stderr, thread|
-          { :out => stdout, :err => stderr }.each do |key, stream|
+          {:out => stdout, :err => stderr}.each do |key, stream|
             Thread.new do
               until (line = stream.gets).nil? do
                 # yield the block depending on the stream
@@ -42,6 +42,7 @@ module Enscalator
     # @param cmd [Array] command array to be executed
     # @return [String] produced output from executed command
     def run_cmd(cmd)
+      # use contracts to get rid of exceptions: https://github.com/egonSchiele/contracts.ruby
       raise ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
       raise ArgumentError, 'Argument cannot be empty' if cmd.empty?
       command = cmd.join(' ')
@@ -54,11 +55,50 @@ module Enscalator
     # Cloudformation client
     #
     # @param region [String] Region in Amazon AWS
-    # @return [Aws::CloudFormation::Resource]
+    # @raise [ArgumentError] when region is not given
+    # @return [Aws::CloudFormation::Client]
     def cfn_client(region)
-      raise RuntimeError, 'Unable to proceed without region' if region && region.empty?
-      client = Aws::CloudFormation::Client.new(region: region)
+      raise ArgumentError,
+            'Unable to proceed without region' if region.blank?
+      Aws::CloudFormation::Client.new(region: region)
+    end
+
+    # Cloudformation resource
+    #
+    # @param client [Aws::CloudFormation::Client] instance of AWS Cloudformation client
+    # @raise [ArgumentError] when client is not provided or its not expected class type
+    # @return [Aws::CloudFormation::Resource]
+    def cfn_resource(client)
+      raise ArgumentError,
+            'must be instance of Aws::CloudFormation::Client' unless client.instance_of?(Aws::CloudFormation::Client)
       Aws::CloudFormation::Resource.new(client: client)
+    end
+
+    # EC2 client
+    #
+    # @param region [String] Region in Amazon AWS
+    # @raise [ArgumentError] when region is not given
+    # @return [Aws::EC2::Client]
+    def ec2_client(region)
+      raise ArgumentError,
+            'Unable to proceed without region' if region.blank?
+      Aws::EC2::Client.new(region: region)
+    end
+
+
+    # Find ami images registered
+    #
+    # @param client [Aws::EC2::Client] instance of AWS EC2 client
+    # @raise [ArgumentError] when client is not provided or its not expected class type
+    # @returns [Hash] images satisfying query conditions
+    def find_ami(client, owners: ['self'], filters: nil)
+      raise ArgumentError,
+            'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
+      query = {}
+      query[:dry_run] = false
+      query[:owners] = owners if owners.kind_of?(Array) && owners.any?
+      query[:filters] = filters if filters.kind_of?(Array) && filters.any?
+      client.describe_images(query)
     end
 
     # Wait until stack gets created
@@ -127,8 +167,8 @@ module Enscalator
     # @param keys [Array] list of keys
     def generate_parameters(stack, keys)
       keys.map do |k|
-        v = get_resource(stack,k)
-        { :parameter_key => k, :parameter_value => v }
+        v = get_resource(stack, k)
+        {:parameter_key => k, :parameter_value => v}
       end
     end
 
@@ -143,13 +183,13 @@ module Enscalator
     # @param append_args [String] append arguments
     # @deprecated this method is no longer used
     def cfn_call_script(region,
-                    dependent_stack_name,
-                    script_path,
-                    keys,
-                    prepend_args: '',
-                    append_args: '')
+                        dependent_stack_name,
+                        script_path,
+                        keys,
+                        prepend_args: '',
+                        append_args: '')
 
-      cfn = cfn_client(region)
+      cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
       args = get_resources(stack, keys).join(' ')
       cmd = [script_path, prepend_args, args, append_args]
@@ -173,18 +213,18 @@ module Enscalator
     # @return [Aws::CloudFormation::Resource]
     # @deprecated this method is no longer used
     def cfn_create_stack(region,
-                     dependent_stack_name,
-                     template,
-                     stack_name,
-                     keys: [],
-                     extra_parameters:[])
+                         dependent_stack_name,
+                         template,
+                         stack_name,
+                         keys: [],
+                         extra_parameters: [])
 
-      cfn = cfn_client(region)
+      cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
 
       extra_parameters_cleaned = extra_parameters.map do |x|
         if x.has_key? 'ParameterKey'
-          { :parameter_key => x['ParameterKey'], :parameter_value => x['ParameterValue']}
+          {:parameter_key => x['ParameterKey'], :parameter_value => x['ParameterValue']}
         else
           x
         end
@@ -205,14 +245,14 @@ module Enscalator
     # @param region [String] aws region
     # @param force_create [Boolean] force to create a new ssh key
     def create_ssh_key(key_name, region, force_create: false)
-      ec2_client = Aws::EC2::Client.new(region: region)
+      client = ec2_client(region)
 
-      if !ec2_client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
+      if !client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
         # delete existed ssh key
-        ec2_client.delete_key_pair(key_name: key_name)
+        client.delete_key_pair(key_name: key_name)
 
         # create a new ssh key
-        key_pair = ec2_client.create_key_pair(key_name: key_name)
+        key_pair = client.create_key_pair(key_name: key_name)
         STDERR.puts "Created new ssh key with fingerprint: #{key_pair.key_fingerprint}"
 
         # save private key for current user
@@ -236,5 +276,5 @@ module Enscalator
       File.read(user_data_path)
     end
 
-  end # module Helpers
+  end # module Asserts
 end # module Enscalator
