@@ -18,10 +18,11 @@ module Enscalator
     # @param zone_name [String] zone name
     def get_dns_records(zone_name: nil)
       client = route53_client
-      zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
+      zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
       records = client.list_resource_record_sets(hosted_zone_id: zone.id)
       records.values.flatten.map { |x|
-        { name: x.name,
+        {
+          name: x.name,
           type: x.type,
           records: x.resource_records.map(&:value)
         } if x.is_a?(Aws::Structure)
@@ -41,18 +42,18 @@ module Enscalator
                           values: [],
                           ttl: 300)
       client = route53_client
-      zone = client.list_hosted_zones[:hosted_zones].select{|x| x.name == zone_name}.first
+      zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
       client.change_resource_record_sets(
         hosted_zone_id: zone.id,
         change_batch: {
           comment: "dns record for #{record_name}",
           changes: [
-            { 
+            {
               action: "UPSERT",
               resource_record_set: {
                 name: record_name,
                 type: type,
-                resource_records: values.map{|x| {value: x}},
+                resource_records: values.map { |x| {value: x} },
                 ttl: ttl
               }
             }

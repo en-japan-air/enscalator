@@ -52,7 +52,7 @@ module Enscalator
         # @param tag [String] specific version release tag
         # @return [Hash] CoreOS mapping
         def fetch_mapping(base_url, tag)
-          raise ArgumentError, 'url cannot be empty' if base_url && base_url.empty?
+          raise ArgumentError, 'url cannot be empty or nil' if base_url.blank?
           versions = fetch_versions(base_url)
           version = if tag && !tag.empty?
                       versions.select { |v| v == Semantic::Version.new(tag) }.first.to_s
@@ -83,7 +83,7 @@ module Enscalator
           if coreos_mapping
             amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
             Hash[
-                amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
+              amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
             ].with_indifferent_access
           end
         end

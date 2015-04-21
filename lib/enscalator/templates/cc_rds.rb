@@ -25,9 +25,8 @@ module Enscalator
                           instance_class: 'db.m3.large')
 
         post_run do
-          region = @options[:region]
           stack_name = @options[:stack_name]
-          cfn = cfn_client(@options[:region])
+          cfn = cfn_resource(cfn_client(@options[:region]))
 
           stack = wait_stack(cfn, stack_name)
           host = get_resource(stack, 'RDSEndpointAddress')
