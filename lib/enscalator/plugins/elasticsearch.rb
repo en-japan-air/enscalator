@@ -15,7 +15,8 @@ module Enscalator
       # @param instance_class [String] instance class (type)
       def elasticsearch_init(db_name,
                              allocated_storage: 5,
-                             instance_class: 't2.medium')
+                             instance_class: 't2.medium',
+                             properties: {})
         # static mapping
         mapping 'AWSElasticsearchAMI', {
                                        :'us-east-1' => {:amd64 => 'ami-041c4e6c'},
@@ -40,14 +41,16 @@ module Enscalator
                                  default: instance_class,
                                  allowed_values: %w(t2.micro t2.small t2.medium m3.medium m3.large m3.xlarge m3.2xlarge)
 
+        properties[:KeyName] = ref("Elasticsearch#{db_name}KeyName")
+        properties[:InstanceType] = ref("Elasticsearch#{db_name}InstanceClass")
+
         instance_vpc("Elasticsearch#{db_name}",
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), 'amd64'),
                      ref_resource_subnet_a,
                      [ref_private_security_group, ref_resource_security_group],
-                     dependsOn: [], properties: {
-            :KeyName => ref("Elasticsearch#{db_name}KeyName"),
-            :InstanceType => ref("Elasticsearch#{db_name}InstanceClass")
-          })
+                     dependsOn: [],
+                     properties: properties
+                     )
       end
     end # module Elasticsearch
   end # module Plugins
