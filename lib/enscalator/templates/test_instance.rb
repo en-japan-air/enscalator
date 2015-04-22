@@ -36,13 +36,19 @@ module Enscalator
                   :Type => 'String'
 
         ubuntu_init @instance_name,
-                    storage_kind: 'ebs',
-                    virtualization: 'paravirtual',
+                    storage_kind: :'instance-store',
+                    virtualization: :hvm,
                     allocate_public_ip: true
 
         elb_init @options[:stack_name],
                  @options[:region]
 
+        # Provide public ip for instance
+        resource "Ubuntu#{@instance_name}PublicIpAddress",
+                 :Type => 'AWS::EC2::EIP',
+                 :Properties => {
+                   :InstanceId => ref("Ubuntu#{@instance_name}")
+                 }
       end
     end
   end
