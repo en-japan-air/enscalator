@@ -2,7 +2,6 @@
 
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # Elasticsearch related configuration

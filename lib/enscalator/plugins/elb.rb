@@ -1,6 +1,5 @@
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # Internet facing ELB instance

@@ -1,6 +1,5 @@
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # Amazon RDS instance

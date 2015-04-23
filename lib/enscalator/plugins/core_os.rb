@@ -6,7 +6,6 @@ require 'semantic'
 
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # CoreOS appliance

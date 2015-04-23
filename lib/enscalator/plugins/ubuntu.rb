@@ -2,7 +2,6 @@ require 'open-uri'
 
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # Ubuntu appliance
