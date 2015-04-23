@@ -17,17 +17,18 @@ module Enscalator
                              instance_class: 't2.medium',
                              properties: {})
         # static mapping
-        mapping 'AWSElasticsearchAMI', {
-                                       :'us-east-1' => {:amd64 => 'ami-041c4e6c'},
-                                       :'us-west-2' => {:amd64 => 'ami-315c7d01'},
-                                       :'us-west-1' => {:amd64 => 'ami-f726c3b3'},
-                                       :'eu-west-1' => {:amd64 => 'ami-b51d8ac2'},
-                                       :'ap-southeast-1' => {:amd64 => 'ami-62645330'},
-                                       :'ap-southeast-2' => {:amd64 => 'ami-6b9deb51'},
-                                       :'ap-northeast-1' => {:amd64 => 'ami-a952b0a9'},
-                                       :'sa-east-1' => {:amd64 => 'ami-e9259bf4'},
-                                       :Security => {:amd64 => 'Group'},
-                                     }
+        mapping 'AWSElasticsearchAMI',
+                {
+                  :'us-east-1' => {:amd64 => 'ami-041c4e6c'},
+                  :'us-west-2' => {:amd64 => 'ami-315c7d01'},
+                  :'us-west-1' => {:amd64 => 'ami-f726c3b3'},
+                  :'eu-west-1' => {:amd64 => 'ami-b51d8ac2'},
+                  :'ap-southeast-1' => {:amd64 => 'ami-62645330'},
+                  :'ap-southeast-2' => {:amd64 => 'ami-6b9deb51'},
+                  :'ap-northeast-1' => {:amd64 => 'ami-a952b0a9'},
+                  :'sa-east-1' => {:amd64 => 'ami-e9259bf4'},
+                  :Security => {:amd64 => 'Group'},
+                }
 
         parameter_keyname "Elasticsearch#{db_name}"
 
@@ -49,7 +50,7 @@ module Enscalator
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: properties
-                     )
+        )
       end
     end # module Elasticsearch
   end # module Plugins
