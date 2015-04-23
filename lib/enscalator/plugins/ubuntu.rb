@@ -70,7 +70,6 @@ module Enscalator
       # @param storage [String] storage kind (ebs or ephemeral)
       # @param arch [String] architecture (amd64 or i386)
       # @param instance_class [String] instance class (type)
-      # @param allocate_public_ip [Boolean] automatically allocate public ip address
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,

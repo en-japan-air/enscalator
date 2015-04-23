@@ -2,7 +2,6 @@
 
 module Enscalator
 
-  # namespace for template collection
   module Templates
 
     # Production database for CareerCard

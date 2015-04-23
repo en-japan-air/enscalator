@@ -90,7 +90,7 @@ module Enscalator
     #
     # @param client [Aws::EC2::Client] instance of AWS EC2 client
     # @raise [ArgumentError] when client is not provided or its not expected class type
-    # @returns [Hash] images satisfying query conditions
+    # @return [Hash] images satisfying query conditions
     def find_ami(client, owners: ['self'], filters: nil)
       raise ArgumentError,
             'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)

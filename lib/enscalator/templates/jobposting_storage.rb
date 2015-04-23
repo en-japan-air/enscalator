@@ -2,7 +2,6 @@
 
 module Enscalator
 
-  # Namespace for cloudformation templates
   module Templates
 
     # Template for JobPosting storage

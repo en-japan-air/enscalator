@@ -1,6 +1,5 @@
 module Enscalator
 
-  # Namespace for cloudformation templates
   module Templates
 
     # enJapan Amazon AWS virtual private cloud template

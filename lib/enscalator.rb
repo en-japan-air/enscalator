@@ -19,16 +19,7 @@ require 'enscalator/plugins/ubuntu'
 require 'enscalator/plugins/rethinkdb'
 require 'enscalator/plugins/rds'
 require 'enscalator/plugins/rds_snapshot'
-require 'enscalator/templates/enjapan_vpc'
-require 'enscalator/templates/vpn'
-require 'enscalator/templates/jobposting_storage'
-require 'enscalator/templates/interaction'
-require 'enscalator/templates/auth_service'
-require 'enscalator/templates/enslurp'
-require 'enscalator/templates/elk'
-require 'enscalator/templates/cc_rds'
-require 'enscalator/templates/cc_landing_page_generator'
-require 'enscalator/templates/test_instance'
+require 'enscalator/templates'
 
 # Namespace for Enscalator related code
 module Enscalator
