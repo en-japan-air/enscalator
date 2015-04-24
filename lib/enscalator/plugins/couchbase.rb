@@ -4,7 +4,6 @@ require 'shellwords'
 
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # Plugin for Couchbase

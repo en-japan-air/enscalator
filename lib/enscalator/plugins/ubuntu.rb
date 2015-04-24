@@ -2,7 +2,6 @@ require 'open-uri'
 
 module Enscalator
 
-  # Namespace for enscalator plugins
   module Plugins
 
     # Ubuntu appliance
@@ -70,12 +69,10 @@ module Enscalator
       # @param storage [String] storage kind (ebs or ephemeral)
       # @param arch [String] architecture (amd64 or i386)
       # @param instance_class [String] instance class (type)
-      # @param allocate_public_ip [Boolean] automatically allocate public ip address
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,
-                      instance_class: 'm1.medium',
-                      allocate_public_ip: false)
+                      instance_class: 'm1.medium')
 
         mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: arch)
 
@@ -94,19 +91,13 @@ module Enscalator
 
         instance_vpc "Ubuntu#{instance_name}",
                      find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'hvm'),
-                     ref_resource_subnet_a,
-                     [ref_private_security_group, ref_resource_security_group],
+                     ref_application_subnet_a,
+                     [ref_private_security_group, ref_application_security_group],
                      dependsOn: [],
                      properties: {
                        :KeyName => ref("Ubuntu#{instance_name}KeyName"),
                        :InstanceType => ref("Ubuntu#{instance_name}InstanceClass")
                      }
-
-        resource "Ubuntu#{instance_name}PublicIpAddress",
-                 :Type => 'AWS::EC2::EIP',
-                 :Properties => {
-                   :InstanceId => ref("Ubuntu#{instance_name}")
-                 } if allocate_public_ip
       end
 
     end # Ubuntu

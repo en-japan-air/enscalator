@@ -3,6 +3,7 @@ require 'simplecov'
 require 'coveralls'
 SimpleCov.formatter = Coveralls::SimpleCov::Formatter
 SimpleCov.start do
+  add_filter 'lib/enscalator/templates' # don't track coverage for templates
   add_filter 'spec/lib'
   add_filter 'spec/helpers'
 end

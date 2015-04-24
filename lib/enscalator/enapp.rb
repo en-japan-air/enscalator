@@ -10,6 +10,7 @@ module Enscalator
 
     include Enscalator::Helpers
 
+    # Mapping for subnet index start values
     START_IP_IDX_MAPPING = {
       auth_service: 16,
       cc_landing_page_generator: 20,
@@ -17,7 +18,8 @@ module Enscalator
       interaction: 28,
       cc_rds: 32,
       jobposting_storage: 36,
-      test_instance: 40
+      elk: 40,
+      test_instance: 252
     }
 
     # Get start ip index according to class name
