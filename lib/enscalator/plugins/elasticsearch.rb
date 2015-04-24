@@ -16,18 +16,19 @@ module Enscalator
                              allocated_storage: 5,
                              instance_class: 't2.medium',
                              properties: {})
-        # static mapping
-        mapping 'AWSElasticsearchAMI',
+
+        # static mapping for elasticsearch 1.4.4
+        mapping 'AWSElasticsearchAMI64Ebs',
                 {
-                  :'us-east-1' => {:amd64 => 'ami-041c4e6c'},
-                  :'us-west-2' => {:amd64 => 'ami-315c7d01'},
-                  :'us-west-1' => {:amd64 => 'ami-f726c3b3'},
-                  :'eu-west-1' => {:amd64 => 'ami-b51d8ac2'},
-                  :'ap-southeast-1' => {:amd64 => 'ami-62645330'},
-                  :'ap-southeast-2' => {:amd64 => 'ami-6b9deb51'},
-                  :'ap-northeast-1' => {:amd64 => 'ami-a952b0a9'},
-                  :'sa-east-1' => {:amd64 => 'ami-e9259bf4'},
-                  :Security => {:amd64 => 'Group'},
+                  :'us-east-1' => {:hvm => 'ami-36a7f45e', :pv => 'ami-c8a7f4a0'},
+                  :'us-west-1' => {:hvm => 'ami-33ca2f77', :pv => 'ami-3dca2f79'},
+                  :'us-west-2' => {:hvm => 'ami-9d7657ad', :pv => 'ami-eb7657db'},
+                  :'eu-west-1' => {:hvm => 'ami-6948df1e', :pv => 'ami-2d48df5a'},
+                  :'eu-central-1' => {:hvm => 'ami-d41f2dc9', :pv => 'ami-d01f2dcd'},
+                  :'ap-southeast-1' => {:hvm => 'ami-a88abefa', :pv => 'ami-548bbf06'},
+                  :'ap-northeast-1' => {:hvm => 'ami-f938daf9', :pv => 'ami-f538daf5'},
+                  :'ap-southeast-2' => {:hvm => 'ami-b5abdd8f', :pv => 'ami-ababdd91'},
+                  :'sa-east-1' => {:hvm => 'ami-d12c92cc', :pv => 'ami-d32c92ce'}
                 }
 
         parameter_keyname "Elasticsearch#{db_name}"
@@ -45,7 +46,8 @@ module Enscalator
         properties[:InstanceType] = ref("Elasticsearch#{db_name}InstanceClass")
 
         instance_vpc("Elasticsearch#{db_name}",
-                     find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), 'amd64'),
+                     # find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), 'amd64'),
+                     find_in_map('AWSElasticsearchAMI64Ebs', ref('AWS::Region'), 'hvm'),
                      ref_resource_subnet_a,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
