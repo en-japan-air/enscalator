@@ -13,15 +13,34 @@ module Enscalator
 
       class << self
 
+        # Supported storage types in AWS
+        STORAGE=[:'ebs', :'instance-store']
+
+        # Supported Ubuntu image architectures
+        ARCH=[:amd64, :i386]
+
         private
 
         # Structure to hold parsed record
         Struct.new('Elasicsearch', :name, :version, :baseos, :root_storage, :arch, :region, :ami, :virtualization)
 
         # Always fetches the most recent version
-        def fetch_mapping
+        def fetch_mapping(storage: :ebs, arch: :amd64)
+          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
+          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
+
           versions = fetch_versions('https://bitnami.com/stack/elasticsearch/cloud/amazon')
-          versions
+          versions.select(&->(r) { r.root_storage == storage && r.arch == arch })
+            .group_by(&:region)
+            .map(&->(k, v) {
+                   [
+                     k,
+                     v.map(&->(i) { [i.virtualization, i.ami] }).to_h
+                   ]
+                 }
+            )
+            .to_h
+            .with_indifferent_access
         end
 
         # Make request to Bitnami Elasticsearch release pages, parse response and make
@@ -52,7 +71,7 @@ module Enscalator
             Struct::Elasicsearch.new(name,
                                      Semantic::Version.new(version.gsub('=', '-')),
                                      baseos,
-                                     version_str.include?('ebs') ? :ebs : :'instance-store',
+                                     version_str.include?('ebs') ? :'ebs' : :'instance-store',
                                      version_str.include?('x64') ? :amd64 : :i386,
                                      region,
                                      ami,

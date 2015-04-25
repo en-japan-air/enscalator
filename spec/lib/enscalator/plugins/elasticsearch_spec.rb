@@ -9,11 +9,12 @@ describe 'Enscalator::Plugins::Elasticsearch' do
   end
 end
 
-# Test for internal private methods
+# Tests for internal private methods
 describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
-  xit 'should fetch mapping for the most recent version' do
+  it 'should fetch mapping for the most recent version' do
     VCR.use_cassette 'elasticsearch_most_recent_version_mapping' do
       mapping = Enscalator::Plugins::Elasticsearch.send(:fetch_mapping)
+      assert_mapping(mapping)
     end
   end
 
@@ -36,7 +37,7 @@ describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
     expect(parsedEntry.arch).to eq(:amd64)
     expect(parsedEntry.region).to eq('us-east-1')
     expect(parsedEntry.ami).to eq('ami-96a7f4fe')
-    expect(parsedEntry.ami).to eq('ami-96a7f4fe')
+    assert_ami(parsedEntry.ami)
     expect(parsedEntry.virtualization).to eq(:pv)
   end
 
