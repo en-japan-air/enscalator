@@ -19,16 +19,19 @@ module Enscalator
         # Supported Ubuntu image architectures
         ARCH=[:amd64, :i386]
 
+        def get_mapping(storage: :ebs, arch: :amd64)
+          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
+          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
+          fetch_mapping(storage, arch)
+        end
+
         private
 
         # Structure to hold parsed record
         Struct.new('Elasicsearch', :name, :version, :baseos, :root_storage, :arch, :region, :ami, :virtualization)
 
         # Always fetches the most recent version
-        def fetch_mapping(storage: :ebs, arch: :amd64)
-          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
-          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
-
+        def fetch_mapping(storage, arch)
           versions = fetch_versions('https://bitnami.com/stack/elasticsearch/cloud/amazon')
           versions.select(&->(r) { r.root_storage == storage && r.arch == arch })
             .group_by(&:region)
@@ -89,7 +92,7 @@ module Enscalator
           str.gsub(Regexp.new(pattern), ['=', token, '-'].join)
         end
 
-      end
+      end # class << self
 
       # Create new elasticsearch instance
       #
@@ -101,19 +104,7 @@ module Enscalator
                              instance_class: 't2.medium',
                              properties: {})
 
-        # static mapping for elasticsearch 1.4.4
-        mapping 'AWSElasticsearchAMI64Ebs',
-                {
-                  :'us-east-1' => {:hvm => 'ami-36a7f45e', :pv => 'ami-c8a7f4a0'},
-                  :'us-west-1' => {:hvm => 'ami-33ca2f77', :pv => 'ami-3dca2f79'},
-                  :'us-west-2' => {:hvm => 'ami-9d7657ad', :pv => 'ami-eb7657db'},
-                  :'eu-west-1' => {:hvm => 'ami-6948df1e', :pv => 'ami-2d48df5a'},
-                  :'eu-central-1' => {:hvm => 'ami-d41f2dc9', :pv => 'ami-d01f2dcd'},
-                  :'ap-southeast-1' => {:hvm => 'ami-a88abefa', :pv => 'ami-548bbf06'},
-                  :'ap-northeast-1' => {:hvm => 'ami-f938daf9', :pv => 'ami-f538daf5'},
-                  :'ap-southeast-2' => {:hvm => 'ami-b5abdd8f', :pv => 'ami-ababdd91'},
-                  :'sa-east-1' => {:hvm => 'ami-d12c92cc', :pv => 'ami-d32c92ce'}
-                }
+        mapping 'AWSElasticsearchAMI', Elasticsearch.get_mapping
 
         parameter_keyname "Elasticsearch#{db_name}"
 
@@ -130,8 +121,7 @@ module Enscalator
         properties[:InstanceType] = ref("Elasticsearch#{db_name}InstanceClass")
 
         instance_vpc("Elasticsearch#{db_name}",
-                     # find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), 'amd64'),
-                     find_in_map('AWSElasticsearchAMI64Ebs', ref('AWS::Region'), 'hvm'),
+                     find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
                      ref_resource_subnet_a,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
