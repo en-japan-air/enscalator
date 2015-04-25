@@ -1,11 +1,39 @@
 # -*- encoding : utf-8 -*-
 
+require 'open-uri'
+require 'nokogiri'
+
 module Enscalator
 
   module Plugins
 
     # Elasticsearch related configuration
     module Elasticsearch
+
+      class << self
+
+        private
+
+        # Always fetches the most recent version
+        def fetch_mapping
+          versions = fetch_versions('https://bitnami.com/stack/elasticsearch/cloud/amazon')
+          versions
+        end
+
+        # Make request to Bitnami Elasticsearch release pages, parse response and make
+        #
+        # @param url [String] url to page with Elasticsearch versions
+        # @return [Array] list
+        def fetch_versions(url)
+          html = Nokogiri::HTML(open(url))
+          raw_entries = html.xpath('//td[@class="instance_id"]')
+          images = raw_entries.xpath('a')
+          raw_entries.xpath('strong/a').each { |sa| images << sa }
+          versions = images.map { |r| [r.xpath('@href').first.value.split('/').last, r.children.first.text] }.to_h
+          versions
+        end
+
+      end
 
       # Create new elasticsearch instance
       #
