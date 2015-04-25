@@ -2,6 +2,7 @@
 
 require 'open-uri'
 require 'nokogiri'
+require 'semantic'
 
 module Enscalator
 
@@ -14,6 +15,9 @@ module Enscalator
 
         private
 
+        # Structure to hold parsed record
+        Struct.new('Elasicsearch', :name, :version, :baseos, :root_storage, :arch, :region, :ami, :virtualization)
+
         # Always fetches the most recent version
         def fetch_mapping
           versions = fetch_versions('https://bitnami.com/stack/elasticsearch/cloud/amazon')
@@ -23,14 +27,47 @@ module Enscalator
         # Make request to Bitnami Elasticsearch release pages, parse response and make
         #
         # @param url [String] url to page with Elasticsearch versions
-        # @return [Array] list
+        # @return [Array] list of all versions across all AWS regions
         def fetch_versions(url)
           html = Nokogiri::HTML(open(url))
           raw_entries = html.xpath('//td[@class="instance_id"]')
-          images = raw_entries.xpath('a')
-          raw_entries.xpath('strong/a').each { |sa| images << sa }
-          versions = images.map { |r| [r.xpath('@href').first.value.split('/').last, r.children.first.text] }.to_h
-          versions
+          entries = raw_entries.xpath('a')
+          raw_entries.xpath('strong/a').each { |sa| entries << sa }
+          raw_versions = entries.map { |i| [
+            i.xpath('@href').first.value.split('/').last,
+            i.children.first.text
+          ] }.to_h
+          parse_versions(raw_versions)
+        end
+
+        # Parse list of raw strings
+        #
+        # @param entries [Array] list of strings
+        # @return [Array]
+        def parse_versions(entries)
+          entries.map do |rw, ami|
+            str, region = rw.split('?').map { |s| s.start_with?('region') ? s.split('=').last : s }
+            version_str = fix_entry(str).split('-')
+            name, version, baseos = version_str
+            Struct::Elasicsearch.new(name,
+                                     Semantic::Version.new(version.gsub('=', '-')),
+                                     baseos,
+                                     version_str.include?('ebs') ? :ebs : :'instance-store',
+                                     version_str.include?('x64') ? :amd64 : :i386,
+                                     region,
+                                     ami,
+                                     version_str.include?('hvm') ? :hvm : :pv)
+          end
+        end
+
+        # Fix elasticsearch version string to have predictable format
+        #
+        # @param str [String] raw version string
+        # @return [String] reformatted version string
+        def fix_entry(str)
+          pattern = '[-](?:[\w\d]+){1,3}[-]ami'
+          token = Regexp.new(pattern.gsub('?:', '')).match(str)[1] rescue nil
+          str.gsub(Regexp.new(pattern), ['=', token, '-'].join)
         end
 
       end

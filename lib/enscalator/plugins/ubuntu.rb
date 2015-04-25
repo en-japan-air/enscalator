@@ -27,7 +27,7 @@ module Enscalator
         }
 
         # Structure to hold parsed record
-        Struct.new('Image', :name, :edition, :state, :timestamp, :root_storage, :arch, :region, :ami, :virtualization)
+        Struct.new('Ubuntu', :name, :edition, :state, :timestamp, :root_storage, :arch, :region, :ami, :virtualization)
 
         # Get mapping for Ubuntu images
         #
@@ -46,7 +46,7 @@ module Enscalator
             version = RELEASE.keys.include?(release) ? release : RELEASE.key(release)
             body = open("https://cloud-images.ubuntu.com/query/#{version}/server/released.current.txt") { |f| f.read }
             body.split("\n").map { |m| m.squeeze("\t").split("\t").reject { |r| r.include? 'aki' } }
-              .map { |l| Struct::Image.new(*l) }
+              .map { |l| Struct::Ubuntu.new(*l) }
               .select(&->(r) { r.root_storage == storage.to_s && r.arch == arch.to_s })
               .group_by(&:region)
               .map(&->(k, v) {
