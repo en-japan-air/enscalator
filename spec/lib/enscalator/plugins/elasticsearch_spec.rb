@@ -21,6 +21,13 @@ describe 'Enscalator::Plugins::Elasticsearch' do
       expect(resource_under_test.keys).to include('Elasticsearchtest_server')
     end
   end
+
+  it 'should return Elasticsearch version string used for mapping' do
+    VCR.use_cassette 'elasticsearch_version_string' do
+      version = Enscalator::Plugins::Elasticsearch.get_release_version
+      expect(version.split('.').size).to eq(3)
+    end
+  end
 end
 
 # Tests for internal private methods
@@ -34,8 +41,7 @@ describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
 
   it 'should make request to bitnami release page and parse it to return list of versions' do
     VCR.use_cassette 'elasticsearch_most_recent_version_raw_html' do
-      testUrl = 'https://bitnami.com/stack/elasticsearch/cloud/amazon'
-      versions = Enscalator::Plugins::Elasticsearch.send(:fetch_versions, testUrl)
+      versions = Enscalator::Plugins::Elasticsearch.send(:fetch_versions)
       expect(versions.sample).to be_instance_of(Struct::Elasicsearch)
     end
   end

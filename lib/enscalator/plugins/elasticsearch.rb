@@ -16,13 +16,32 @@ module Enscalator
         # Supported storage types in AWS
         STORAGE=[:'ebs', :'instance-store']
 
-        # Supported Ubuntu image architectures
+        # Supported Elasticsearch image architectures
         ARCH=[:amd64, :i386]
 
+        # Get ami region/virtualization type mapping
+        #
+        # @param storage [Symbol] image root storage
+        # @param arch [Symbol] image architecture type
+        # @return [Hash] mapping
         def get_mapping(storage: :ebs, arch: :amd64)
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
           raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
           fetch_mapping(storage, arch)
+        end
+
+        # Get ami release version string
+        #
+        # @param storage [Symbol] image root storage
+        # @param arch [Symbol] image architecture type
+        # @return [Hash] mapping
+        def get_release_version(storage: :ebs, arch: :amd64)
+          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
+          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
+          fetch_versions
+            .select(&->(r) { r.root_storage == storage && r.arch == arch })
+            .map(&->(v) { v.version.to_s }).uniq.first
+            .gsub(/[-][\w\d]/, '')
         end
 
         private
@@ -31,8 +50,12 @@ module Enscalator
         Struct.new('Elasicsearch', :name, :version, :baseos, :root_storage, :arch, :region, :ami, :virtualization)
 
         # Always fetches the most recent version
+        #
+        # @param storage [Symbol] image root storage
+        # @param arch [Symbol] image architecture type
+        # @return [Hash] mapping
         def fetch_mapping(storage, arch)
-          versions = fetch_versions('https://bitnami.com/stack/elasticsearch/cloud/amazon')
+          versions = fetch_versions
           versions.select(&->(r) { r.root_storage == storage && r.arch == arch })
             .group_by(&:region)
             .map(&->(k, v) {
@@ -48,10 +71,9 @@ module Enscalator
 
         # Make request to Bitnami Elasticsearch release pages, parse response and make
         #
-        # @param url [String] url to page with Elasticsearch versions
         # @return [Array] list of all versions across all AWS regions
-        def fetch_versions(url)
-          html = Nokogiri::HTML(open(url))
+        def fetch_versions
+          html = Nokogiri::HTML(open('https://bitnami.com/stack/elasticsearch/cloud/amazon'))
           raw_entries = html.xpath('//td[@class="instance_id"]')
           entries = raw_entries.xpath('a')
           raw_entries.xpath('strong/a').each { |sa| entries << sa }
@@ -115,10 +137,22 @@ module Enscalator
 
         parameter_instance_class "Elasticsearch#{db_name}",
                                  default: instance_class,
-                                 allowed_values: %w(t2.micro t2.small t2.medium m3.medium m3.large m3.xlarge m3.2xlarge)
+                                 allowed_values: %w(t2.micro t2.small t2.medium m3.medium
+                                                 m3.large m3.xlarge m3.2xlarge)
 
         properties[:KeyName] = ref("Elasticsearch#{db_name}KeyName")
         properties[:InstanceType] = ref("Elasticsearch#{db_name}InstanceClass")
+
+        versionTag = {
+          Key: 'Version',
+          Value: Elasticsearch.get_release_version
+        }
+
+        if properties.has_key?(:Tags) && !properties[:Tags].empty?
+          properties[:Tags] << versionTag
+        else
+          properties[:Tags] = [versionTag]
+        end
 
         instance_vpc("Elasticsearch#{db_name}",
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
