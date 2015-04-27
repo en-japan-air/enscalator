@@ -2,7 +2,7 @@
 
 require_relative 'templates/enjapan_vpc'
 require_relative '***REMOVED***'
-require_relative 'templates/jobposting_storage'
+require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
