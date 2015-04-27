@@ -143,20 +143,36 @@ module Enscalator
         properties[:KeyName] = ref("Elasticsearch#{db_name}KeyName")
         properties[:InstanceType] = ref("Elasticsearch#{db_name}InstanceClass")
 
-        versionTag = {
+        version_tag = {
           Key: 'Version',
           Value: Elasticsearch.get_release_version
         }
 
+        cluster_name_tag = {
+          Key: 'ClusterName',
+          Value: db_name
+        }
+
+        plugin_tags = [version_tag, cluster_name_tag]
+
+        # Set instance tags
         if properties.has_key?(:Tags) && !properties[:Tags].empty?
-          properties[:Tags] << versionTag
+          properties[:Tags].concat(plugin_tags)
         else
-          properties[:Tags] = [versionTag]
+          properties[:Tags] = plugin_tags
         end
+
+        # Configure instance using user-data
+        if !properties.has_key?(:UserData) || !properties[:UserData].empty?
+          properties[:UserData] = Base64.encode64(read_user_data('elasticsearch'))
+        end
+
+        # Assign IAM role to instance
+        properties[:IamInstanceProfile] = iam_instance_profile_with_full_access(db_name, *%w(ec2 s3))
 
         instance_vpc("Elasticsearch#{db_name}",
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
-                     ref_resource_subnet_a,
+                     ref_application_subnet_a,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: properties
