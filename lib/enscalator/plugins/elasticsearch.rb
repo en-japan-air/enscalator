@@ -39,15 +39,15 @@ module Enscalator
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
           raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
           fetch_versions
-            .select(&->(r) { r.root_storage == storage && r.arch == arch })
-            .map(&->(v) { v.version.to_s }).uniq.first
+            .select { |r| r.root_storage == storage && r.arch == arch }
+            .map { |v| v.version.to_s }.uniq.first
             .gsub(/[-][\w\d]/, '')
         end
 
         private
 
         # Structure to hold parsed record
-        Struct.new('Elasicsearch', :name, :version, :baseos, :root_storage, :arch, :region, :ami, :virtualization)
+        Struct.new('ElasticSearch', :name, :version, :baseos, :root_storage, :arch, :region, :ami, :virtualization)
 
         # Always fetches the most recent version
         #
@@ -56,16 +56,10 @@ module Enscalator
         # @return [Hash] mapping
         def fetch_mapping(storage, arch)
           versions = fetch_versions
-          versions.select(&->(r) { r.root_storage == storage && r.arch == arch })
+          versions.select { |r| r.root_storage == storage && r.arch == arch }
             .group_by(&:region)
-            .map(&->(k, v) {
-                   [
-                     k,
-                     v.map(&->(i) { [i.virtualization, i.ami] }).to_h
-                   ]
-                 }
-            )
-            .to_h
+            .map { |k, v| [k,
+                           v.map { |i| [i.virtualization, i.ami] }.to_h] }.to_h
             .with_indifferent_access
         end
 
@@ -93,14 +87,14 @@ module Enscalator
             str, region = rw.split('?').map { |s| s.start_with?('region') ? s.split('=').last : s }
             version_str = fix_entry(str).split('-')
             name, version, baseos = version_str
-            Struct::Elasicsearch.new(name,
-                                     Semantic::Version.new(version.gsub('=', '-')),
-                                     baseos,
-                                     version_str.include?('ebs') ? :'ebs' : :'instance-store',
-                                     version_str.include?('x64') ? :amd64 : :i386,
-                                     region,
-                                     ami,
-                                     version_str.include?('hvm') ? :hvm : :pv)
+            Struct::ElasticSearch.new(name,
+                                      Semantic::Version.new(version.gsub('=', '-')),
+                                      baseos,
+                                      version_str.include?('ebs') ? :'ebs' : :'instance-store',
+                                      version_str.include?('x64') ? :amd64 : :i386,
+                                      region,
+                                      ami,
+                                      version_str.include?('hvm') ? :hvm : :pv)
           end
         end
 

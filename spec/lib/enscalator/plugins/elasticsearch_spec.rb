@@ -42,7 +42,7 @@ describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
   it 'should make request to bitnami release page and parse it to return list of versions' do
     VCR.use_cassette 'elasticsearch_most_recent_version_raw_html' do
       versions = Enscalator::Plugins::Elasticsearch.send(:fetch_versions)
-      expect(versions.sample).to be_instance_of(Struct::Elasicsearch)
+      expect(versions.sample).to be_instance_of(Struct::ElasticSearch)
     end
   end
 
