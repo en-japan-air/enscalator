@@ -144,7 +144,7 @@ module Enscalator
 
         cluster_name_tag = {
           Key: 'ClusterName',
-          Value: db_name
+          Value: db_name.downcase
         }
 
         plugin_tags = [version_tag, cluster_name_tag]
