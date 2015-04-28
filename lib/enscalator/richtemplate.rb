@@ -364,7 +364,7 @@ module Enscalator
       properties[:SubnetId] = subnet
       properties[:SecurityGroupIds] = security_groups
       if properties[:Tags] && !properties[:Tags].any? { |x| x[:Key] == 'Name' }
-        properties[:Tags] += {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+        properties[:Tags] << {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
       end
       options = {
         :Type => 'AWS::EC2::Instance',
@@ -386,7 +386,7 @@ module Enscalator
       properties[:ImageId] = image_id
       properties[:NetworkInterfaces] = network_interfaces
       if properties[:Tags] && !properties[:Tags].any? { |x| x[:Key] == 'Name' }
-        properties[:Tags] += {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+        properties[:Tags] << {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
       end
       options = {
         :Type => 'AWS::EC2::Instance',
