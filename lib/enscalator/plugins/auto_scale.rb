@@ -8,13 +8,16 @@ module Enscalator
       # @param [String] image_id image id that will be used to launch instance
       # @param [String] auto_scale_name auto scaling group name (default: stack name)
       # @param [String] launch_config_props dictionary that is used to overwrite default launch configuration settings
+      #                 Reference: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
       # @param [String] auto_scale_props dictionary that is used to overwrite default auto scaling group settings
+      #                 Reference: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
       # @return [String] auto scaling group resource name
       def auto_scale_init(image_id,
                           auto_scale_name: nil,
                           launch_config_props: {},
                           auto_scale_props: {})
 
+        @launch_config_resource_name = 'LaunchConfig'
         @auto_scale_resource_name = 'AutoScale'
         @auto_scale_name = "#{auto_scale_name || aws_stack_name}AutoScale"
 
@@ -24,7 +27,7 @@ module Enscalator
                          force_create: false
         end
 
-        resource 'LaunchConfig',
+        resource @launch_config_resource_name,
                  Type: 'AWS::AutoScaling::LaunchConfiguration',
                  Properties: {
                    ImageId: image_id,
@@ -42,7 +45,7 @@ module Enscalator
                      ref_resource_subnet_a,
                      ref_resource_subnet_c
                    ],
-                   LaunchConfigurationName: ref('LaunchConfig'),
+                   LaunchConfigurationName: ref(@launch_config_resource_name),
                    MinSize: 0,
                    MaxSize: 1,
                    DesiredCapacity: 1,
