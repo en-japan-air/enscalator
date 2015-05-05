@@ -17,20 +17,35 @@ module Enscalator
       enslurp: 24,
       interaction: 28,
       cc_rds: 32,
-      jobposting_storage: 36,
+      job_posting_service: 36,
       elk: 40,
       test_instance: 252
     }
 
+    attr_reader :region, :stack_name,
+                :app_name
+
+    # Create new EnAppTemplateDSL instance
+    #
+    # @param options [Hash] command-line arguments
+    def initialize(options={})
+      @region = options[:region]
+      @stack_name = options[:stack_name]
+      # application name taken from template name as default
+      @app_name = self.class.name.demodulize
+
+      super
+    end
+
     # Get start ip index according to class name
     def get_start_ip_idx
-      key = self.class.name.split('::').last.underscore
+      key = self.class.name.demodulize.underscore
       START_IP_IDX_MAPPING[key.to_sym] || fail('Need to add start ip index to START_IP_IDX_MAPPING for current template')
     end
 
     # Get availability zones
     def get_availability_zones
-      Aws::EC2::Client.new(region: @options[:region])
+      ec2_client(region)
         .describe_availability_zones
         .availability_zones
         .select { |az| az.state == 'available' }
@@ -77,7 +92,7 @@ module Enscalator
     #
     # @param stack_name [String] name of the cloudformation stack
     # @param region [String] valid Amazon AWS region
-    def pre_setup(stack_name: 'enjapan-vpc', region: 'us-east-1')
+    def pre_setup(stack_name: 'enjapan-vpc', region: self.region)
       cfn = cfn_resource(cfn_client(region))
       stack = cfn.stack(stack_name)
       vpc_id = get_resource(stack, 'VpcId')
