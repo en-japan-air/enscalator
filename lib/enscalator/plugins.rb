@@ -2,6 +2,7 @@
 
 require_relative 'plugins/core_os'
 require_relative 'plugins/elb'
+require_relative 'plugins/auto_scale'
 require_relative 'plugins/couchbase'
 require_relative 'plugins/core_os'
 require_relative 'plugins/elasticsearch'

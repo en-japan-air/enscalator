@@ -10,6 +10,7 @@ module Enscalator
 
     # Elasticsearch related configuration
     module Elasticsearch
+      include Enscalator::Helpers
 
       class << self
 
@@ -112,30 +113,36 @@ module Enscalator
 
       # Create new elasticsearch instance
       #
-      # @param db_name [String] database name
-      # @param allocated_storage [Integer] size of instance primary storage
-      # @param instance_class [String] instance class (type)
-      def elasticsearch_init(db_name,
+      # @param [String] storage_name storage name
+      # @param [Integer] allocated_storage size of instance primary storage
+      # @param [String] instance_class instance class (type)
+      # @param [String] zone_name route53 zone name
+      def elasticsearch_init(storage_name,
                              allocated_storage: 5,
                              instance_class: 't2.medium',
-                             properties: {})
+                             properties: {},
+                             zone_name: 'enjapan.local.')
+
+        pre_run do
+          create_ssh_key "Elasticsearch#{storage_name}".underscore,
+                         region,
+                         force_create: false
+        end
 
         mapping 'AWSElasticsearchAMI', Elasticsearch.get_mapping
 
-        parameter_keyname "Elasticsearch#{db_name}"
-
-        parameter_allocated_storage "Elasticsearch#{db_name}",
+        parameter_allocated_storage "Elasticsearch#{storage_name}",
                                     default: allocated_storage,
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_class "Elasticsearch#{db_name}",
+        parameter_instance_class "Elasticsearch#{storage_name}",
                                  default: instance_class,
                                  allowed_values: %w(t2.micro t2.small t2.medium m3.medium
                                                  m3.large m3.xlarge m3.2xlarge)
 
-        properties[:KeyName] = ref("Elasticsearch#{db_name}KeyName")
-        properties[:InstanceType] = ref("Elasticsearch#{db_name}InstanceClass")
+        properties[:KeyName] = "Elasticsearch#{storage_name}".underscore
+        properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceClass")
 
         version_tag = {
           Key: 'Version',
@@ -144,7 +151,7 @@ module Enscalator
 
         cluster_name_tag = {
           Key: 'ClusterName',
-          Value: db_name.downcase
+          Value: storage_name.downcase
         }
 
         plugin_tags = [version_tag, cluster_name_tag]
@@ -162,15 +169,29 @@ module Enscalator
         end
 
         # Assign IAM role to instance
-        properties[:IamInstanceProfile] = iam_instance_profile_with_full_access(db_name, *%w(ec2 s3))
+        properties[:IamInstanceProfile] = iam_instance_profile_with_full_access(storage_name, *%w(ec2 s3))
 
-        instance_vpc("Elasticsearch#{db_name}",
+        instance_vpc "Elasticsearch#{storage_name}",
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
                      ref_application_subnet_a,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: properties
-        )
+
+        post_run do
+          cfn = cfn_resource(cfn_client(region))
+          # wait for the stack to be created
+          stack = wait_stack(cfn, stack_name)
+
+          # get elasticsearch instance IP address
+          es_ip_addr = get_resource(stack, "Elasticsearch#{storage_name}PrivateIpAddress")
+
+          # create a DNS record in route53
+          upsert_dns_record zone_name: zone_name,
+                            record_name: "elasticsearch.#{storage_name.downcase}.#{zone_name}",
+                            type: 'A',
+                            values: [es_ip_addr]
+        end
       end
     end # module Elasticsearch
   end # module Plugins

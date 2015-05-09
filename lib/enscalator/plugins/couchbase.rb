@@ -32,7 +32,7 @@ module Enscalator
                                    }
 
         fail 'You need to provide a bucket for couchbase' if bucket.nil?
-        parameter_keyname "Couchbase#{db_name}"
+        parameter_key_name "Couchbase#{db_name}"
 
         parameter_allocated_storage "Couchbase#{db_name}",
                                     default: allocated_storage,

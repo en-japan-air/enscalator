@@ -182,10 +182,10 @@ module Enscalator
       end
     end
 
-    # Keyname parameter
+    # Key name parameter
     #
     # @param instance_name [String] instance name
-    def parameter_keyname(instance_name)
+    def parameter_key_name(instance_name)
       parameter "#{instance_name}KeyName",
                 :Description => "Name of the #{instance_name} ssh key pair",
                 :Type => 'String',
