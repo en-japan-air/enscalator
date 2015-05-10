@@ -64,7 +64,7 @@ module Enscalator
             .with_indifferent_access
         end
 
-        # Make request to Bitnami Elasticsearch release pages, parse response and make
+        # Make request to Bitnami Elasticsearch release pages, parse response and make list of versions
         #
         # @return [Array] list of all versions across all AWS regions
         def fetch_versions
@@ -116,6 +116,7 @@ module Enscalator
       # @param [String] storage_name storage name
       # @param [Integer] allocated_storage size of instance primary storage
       # @param [String] instance_class instance class (type)
+      # @param [Hash] properties additional properties
       # @param [String] zone_name route53 zone name
       def elasticsearch_init(storage_name,
                              allocated_storage: 5,

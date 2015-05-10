@@ -60,28 +60,28 @@ module Enscalator
                        db.m2.4xlarge db.cr1.8xlarge db.m1.medium db.m1.large db.m1.xlarge)
 
         resource "RDSSubnetGroup", :Type => 'AWS::RDS::DBSubnetGroup', :Properties => {
-                                   :DBSubnetGroupDescription => 'Subnet group within VPC',
-                                   :SubnetIds => [
-                                     ref_resource_subnet_a,
-                                     ref_resource_subnet_c
-                                   ],
-                                   :Tags => [{:Key => "Name", :Value => "RDSSubnetGroup"}]
+                                     :DBSubnetGroupDescription => 'Subnet group within VPC',
+                                     :SubnetIds => [
+                                         ref_resource_subnet_a,
+                                         ref_resource_subnet_c
+                                     ],
+                                     :Tags => [{:Key => "Name", :Value => "RDSSubnetGroup"}]
                                  }
 
         resource "RDSInstance", :Type => 'AWS::RDS::DBInstance', :Properties => {
-                                :Engine => 'MySQL',
-                                :PubliclyAccessible => 'false',
-                                :DBSnapshotIdentifier => ref("SnapshotId"),
-                                :MultiAZ => ref("Multizone"),
-                                :MasterUsername => ref("RDSUsername"),
-                                :MasterUserPassword => ref("RDSPassword"),
-                                :DBInstanceClass => ref("RDSInstanceClass"),
-                                :VPCSecurityGroups => [ref_resource_security_group],
-                                :DBSubnetGroupName => ref("RDSSubnetGroup"),
-                                :DBParameterGroupName => ref("RDSParameterGroup"),
-                                :AllocatedStorage => ref("RDSAllocatedStorage"),
-                                :StorageType => ref("RDSStorageType"),
-                                :Tags => [{:Key => "Name", :Value => "RDSInstance"}]
+                                  :Engine => 'MySQL',
+                                  :PubliclyAccessible => 'false',
+                                  :DBSnapshotIdentifier => ref("SnapshotId"),
+                                  :MultiAZ => ref("Multizone"),
+                                  :MasterUsername => ref("RDSUsername"),
+                                  :MasterUserPassword => ref("RDSPassword"),
+                                  :DBInstanceClass => ref("RDSInstanceClass"),
+                                  :VPCSecurityGroups => [ref_resource_security_group],
+                                  :DBSubnetGroupName => ref("RDSSubnetGroup"),
+                                  :DBParameterGroupName => ref("RDSParameterGroup"),
+                                  :AllocatedStorage => ref("RDSAllocatedStorage"),
+                                  :StorageType => ref("RDSStorageType"),
+                                  :Tags => [{:Key => "Name", :Value => "RDSInstance"}]
                               }
 
         output "RDSEndpointAddress",

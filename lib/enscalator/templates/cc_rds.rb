@@ -6,22 +6,35 @@ module Enscalator
 
     # Production database for CareerCard
     class CareerCardProductionRDS < Enscalator::EnAppTemplateDSL
-      include Enscalator::Plugins::RDS_Snapshot
+      include Enscalator::Plugins::RDS
 
       def tpl
 
         pre_run do
-          magic_setup stack_name: 'enjapan-vpc',
-                      region: @options[:region]
+          pre_setup stack_name: 'enjapan-vpc',
+                    region: @options[:region]
         end
+
+        @db_name = 'cc-prod'
 
         description 'Production RDS stack for Career Card'
 
-        rds_snapshot_init('cc-prod-20150331',
-                          allocated_storage: 100,
-                          multizone: 'true',
-                          parameter_group: 'careercard-production-mysql',
-                          instance_class: 'db.m3.large')
+        # TODO: adjust template to support both RDS and snapshot settings
+        rds_init(@db_name,
+                 snapshot_id: 'cc-prod-20150331',
+                 allocated_storage: 100,
+                 multizone: 'true',
+                 parameter_group: 'careercard-production-mysql',
+                 instance_class: 'db.m3.large',
+                 properties: {
+                     Tags: [
+                         {
+                             Key: 'Billing',
+                             Value: 'CareerCard'
+                         }
+                     ]
+                 }
+        )
 
         post_run do
           stack_name = @options[:stack_name]

@@ -1,4 +1,4 @@
-# encoding: UTF-8
+# -*- encoding : utf-8 -*-
 
 require_relative 'plugins/core_os'
 require_relative 'plugins/elb'
