@@ -19,7 +19,6 @@ module Enscalator
 
         description 'Production RDS stack for Career Card'
 
-        # TODO: adjust template to support both RDS and snapshot settings
         rds_init(@db_name,
                  snapshot_id: 'cc-prod-20150331',
                  allocated_storage: 100,

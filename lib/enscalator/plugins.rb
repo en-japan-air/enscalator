@@ -9,7 +9,6 @@ require_relative 'plugins/elasticsearch'
 require_relative 'plugins/ubuntu'
 require_relative 'plugins/rethinkdb'
 require_relative 'plugins/rds'
-require_relative 'plugins/rds_snapshot'
 
 module Enscalator
 
