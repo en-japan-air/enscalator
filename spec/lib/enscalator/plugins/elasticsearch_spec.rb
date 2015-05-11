@@ -73,29 +73,29 @@ describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
   end
 
   it 'should parse raw version string' do
-    testEntry = [['elasticsearch-1.4.4-0-amiubuntu-x64?region=us-east-1', 'ami-96a7f4fe']].to_h
-    parsedEntry = Enscalator::Plugins::Elasticsearch.send(:parse_versions, testEntry).first
-    expect(parsedEntry.name).to eq('elasticsearch')
-    expect(parsedEntry.version).to be_instance_of(Semantic::Version)
-    expect(parsedEntry.version).to eq(Semantic::Version.new('1.4.4-0'))
-    expect(parsedEntry.baseos).to eq('ubuntu')
-    expect(parsedEntry.root_storage).to eq(:'instance-store')
-    expect(parsedEntry.arch).to eq(:amd64)
-    expect(parsedEntry.region).to eq('us-east-1')
-    expect(parsedEntry.ami).to eq('ami-96a7f4fe')
-    assert_ami(parsedEntry.ami)
-    expect(parsedEntry.virtualization).to eq(:pv)
+    test_entry = [%w{elasticsearch-1.4.4-0-amiubuntu-x64?region=us-east-1 ami-96a7f4fe}].to_h
+    parsed_entry = Enscalator::Plugins::Elasticsearch.send(:parse_versions, test_entry).first
+    expect(parsed_entry.name).to eq('elasticsearch')
+    expect(parsed_entry.version).to be_instance_of(Semantic::Version)
+    expect(parsed_entry.version).to eq(Semantic::Version.new('1.4.4-0'))
+    expect(parsed_entry.baseos).to eq('ubuntu')
+    expect(parsed_entry.root_storage).to eq(:'instance-store')
+    expect(parsed_entry.arch).to eq(:amd64)
+    expect(parsed_entry.region).to eq('us-east-1')
+    expect(parsed_entry.ami).to eq('ami-96a7f4fe')
+    assert_ami(parsed_entry.ami)
+    expect(parsed_entry.virtualization).to eq(:pv)
   end
 
   it 'should format raw version string removing non-relevant tokens' do
-    testStr = 'elasticsearch-1.4.4-0-amiubuntu-x64-hvm-ebs'
-    version_str = Enscalator::Plugins::Elasticsearch.send(:fix_entry, testStr)
+    test_str = 'elasticsearch-1.4.4-0-amiubuntu-x64-hvm-ebs'
+    version_str = Enscalator::Plugins::Elasticsearch.send(:fix_entry, test_str)
     expect(version_str).to match('elasticsearch-1.4.4=0-ubuntu-x64-hvm-ebs')
   end
 
   it 'should return original string if re-formatting wasn\'t possible' do
-    testStr = 'elasticsearch-1.4.4-ebs'
-    version_str = Enscalator::Plugins::Elasticsearch.send(:fix_entry, testStr)
-    expect(version_str).to match(testStr)
+    test_str = 'elasticsearch-1.4.4-ebs'
+    version_str = Enscalator::Plugins::Elasticsearch.send(:fix_entry, test_str)
+    expect(version_str).to match(test_str)
   end
 end
