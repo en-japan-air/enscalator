@@ -22,6 +22,32 @@ describe 'Enscalator::Plugins::Elasticsearch' do
     end
   end
 
+  it 'should properly combine tags when they supplied in both plugin and template' do
+    VCR.use_cassette 'elasticsearch_template_and_plugin_with_tags' do
+      class ElasticsearchTestTagsTemplate < Enscalator::EnAppTemplateDSL
+        include Enscalator::Plugins::Elasticsearch
+        define_method :tpl do
+          elasticsearch_init('test_server',
+                             properties: {
+                               Tags: [
+                                 {
+                                   Key: 'TestKey',
+                                   Value: 'TestValue'
+                                 }
+                               ]
+                             })
+        end
+      end
+
+      elasticsearch_tags_template = ElasticsearchTestTagsTemplate.new
+      dict = elasticsearch_tags_template.instance_variable_get(:@dict)
+      tags = dict[:Resources]['Elasticsearchtest_server'][:Properties][:Tags]
+      keys = tags.map { |t| t[:Key] }
+      expect(keys).to include(*%w{TestKey Version ClusterName Name})
+      expect(tags.select { |t| t[:Key] == 'TestKey' }.first[:Value]).to eq('TestValue')
+    end
+  end
+
   it 'should return Elasticsearch version string used for mapping' do
     VCR.use_cassette 'elasticsearch_version_string' do
       version = Enscalator::Plugins::Elasticsearch.get_release_version
