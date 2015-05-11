@@ -85,10 +85,11 @@ module Enscalator
 
         # DBName and DBSnapshotIdentifier are mutually exclusive, thus
         # when snapshot_id is given DBName won't be included to resource parameters
+        props = properties.deep_dup
         if snapshot_id && !snapshot_id.empty?
-          properties[:DBSnapshotIdentifier] = ref("RDS#{db_name}SnapshotId")
+          props[:DBSnapshotIdentifier] = ref("RDS#{db_name}SnapshotId")
         else
-          properties[:DBName] = ref("RDS#{db_name}Name")
+          props[:DBName] = ref("RDS#{db_name}Name")
         end
 
         rds_instance_tags = [
@@ -99,13 +100,13 @@ module Enscalator
         ]
 
         # Set instance tags
-        if properties.has_key?(:Tags) && !properties[:Tags].empty?
-          properties[:Tags].concat(rds_instance_tags)
+        if props.has_key?(:Tags) && !props[:Tags].empty?
+          props[:Tags].concat(rds_instance_tags)
         else
-          properties[:Tags] = rds_instance_tags
+          props[:Tags] = rds_instance_tags
         end
 
-        rds_properties = {
+        rds_props = {
             :Engine => 'MySQL',
             :PubliclyAccessible => 'false',
             :MultiAZ => ref("RDS#{db_name}Multizone"),
@@ -121,7 +122,7 @@ module Enscalator
 
         resource "RDS#{db_name}Instance",
                  :Type => 'AWS::RDS::DBInstance',
-                 :Properties => properties.merge(rds_properties)
+                 :Properties => props.merge(rds_props)
 
         output "#{db_name}EndpointAddress",
                :Description => "#{db_name} Endpoint Address",
