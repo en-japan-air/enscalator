@@ -12,6 +12,7 @@ module Enscalator
     module Elasticsearch
       include Enscalator::Helpers
 
+      # Retrieves mapping for Elasticsearch Bitnami stack
       class << self
 
         # Supported storage types in AWS
@@ -40,9 +41,9 @@ module Enscalator
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
           raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
           fetch_versions
-            .select { |r| r.root_storage == storage && r.arch == arch }
-            .map { |v| v.version.to_s }.uniq.first
-            .gsub(/[-][\w\d]/, '')
+              .select { |r| r.root_storage == storage && r.arch == arch }
+              .map { |v| v.version.to_s }.uniq.first
+              .gsub(/[-][\w\d]/, '')
         end
 
         private
@@ -58,10 +59,10 @@ module Enscalator
         def fetch_mapping(storage, arch)
           versions = fetch_versions
           versions.select { |r| r.root_storage == storage && r.arch == arch }
-            .group_by(&:region)
-            .map { |k, v| [k,
-                           v.map { |i| [i.virtualization, i.ami] }.to_h] }.to_h
-            .with_indifferent_access
+              .group_by(&:region)
+              .map { |k, v| [k,
+                             v.map { |i| [i.virtualization, i.ami] }.to_h] }.to_h
+              .with_indifferent_access
         end
 
         # Make request to Bitnami Elasticsearch release pages, parse response and make
@@ -73,8 +74,8 @@ module Enscalator
           entries = raw_entries.xpath('a')
           raw_entries.xpath('strong/a').each { |sa| entries << sa }
           raw_versions = entries.map { |i| [
-            i.xpath('@href').first.value.split('/').last,
-            i.children.first.text
+              i.xpath('@href').first.value.split('/').last,
+              i.children.first.text
           ] }.to_h
           parse_versions(raw_versions)
         end
@@ -117,14 +118,18 @@ module Enscalator
       # @param [Integer] allocated_storage size of instance primary storage
       # @param [String] instance_class instance class (type)
       # @param [String] zone_name route53 zone name
+      # @param [Integer] ttl time to live value
       def elasticsearch_init(storage_name,
                              allocated_storage: 5,
                              instance_class: 't2.medium',
                              properties: {},
-                             zone_name: 'enjapan.local.')
+                             zone_name: 'enjapan.local.',
+                             ttl: 300)
+
+        @key_name = "Elasticsearch#{storage_name}".underscore
 
         pre_run do
-          create_ssh_key "Elasticsearch#{storage_name}".underscore,
+          create_ssh_key @key_name,
                          region,
                          force_create: false
         end
@@ -141,17 +146,17 @@ module Enscalator
                                  allowed_values: %w(t2.micro t2.small t2.medium m3.medium
                                                  m3.large m3.xlarge m3.2xlarge)
 
-        properties[:KeyName] = "Elasticsearch#{storage_name}".underscore
+        properties[:KeyName] = @key_name
         properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceClass")
 
         version_tag = {
-          Key: 'Version',
-          Value: Elasticsearch.get_release_version
+            Key: 'Version',
+            Value: Elasticsearch.get_release_version
         }
 
         cluster_name_tag = {
-          Key: 'ClusterName',
-          Value: storage_name.downcase
+            Key: 'ClusterName',
+            Value: storage_name.downcase
         }
 
         plugin_tags = [version_tag, cluster_name_tag]
@@ -180,6 +185,7 @@ module Enscalator
 
         post_run do
           cfn = cfn_resource(cfn_client(region))
+
           # wait for the stack to be created
           stack = wait_stack(cfn, stack_name)
 
@@ -190,7 +196,8 @@ module Enscalator
           upsert_dns_record zone_name: zone_name,
                             record_name: "elasticsearch.#{storage_name.downcase}.#{zone_name}",
                             type: 'A',
-                            values: [es_ip_addr]
+                            values: [es_ip_addr],
+                            ttl: ttl
         end
       end
     end # module Elasticsearch
