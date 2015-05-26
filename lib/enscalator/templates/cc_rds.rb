@@ -15,7 +15,7 @@ module Enscalator
                     region: @options[:region]
         end
 
-        @db_name = 'cc-prod'
+        @db_name = 'ccprod'
 
         description 'Production RDS stack for Career Card'
 
@@ -40,7 +40,7 @@ module Enscalator
           cfn = cfn_resource(cfn_client(@options[:region]))
 
           stack = wait_stack(cfn, stack_name)
-          host = get_resource(stack, 'RDSEndpointAddress')
+          host = get_resource(stack, "RDS#{@db_name}EndpointAddress")
 
           upsert_dns_record(
               zone_name: 'enjapan.prod.',

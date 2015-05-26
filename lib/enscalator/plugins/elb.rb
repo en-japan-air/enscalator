@@ -1,7 +1,5 @@
 module Enscalator
-
   module Plugins
-
     # Internet facing ELB instance
     module Elb
 
@@ -17,7 +15,9 @@ module Enscalator
                    region,
                    elb_name: join('-', aws_stack_name, 'elb'),
                    web_server_port: 9000,
-                   zone_name: 'enjapan.local.')
+                   zone_name: 'enjapan.local.',
+                   ssl: false,
+                   internal: true)
 
         @elb_resource_name = 'LoadBalancer'
 
@@ -29,6 +29,14 @@ module Enscalator
                   :MaxValue => '65535',
                   :ConstraintDescription => 'must be an integer between 0 and 65535.'
 
+
+        if ssl
+          parameter 'SSLCertificateId',
+            :Description => 'Id of the SSL certificate (iam-servercertgetattributes -s certname)',
+            :Type => 'String',
+            :ConstraintDescription => 'must be a string'
+        end
+
         resource @elb_resource_name,
                  :Type => 'AWS::ElasticLoadBalancing::LoadBalancer',
                  :Properties => {
@@ -39,7 +47,10 @@ module Enscalator
                        :InstancePort => ref('WebServerPort'),
                        :Protocol => 'HTTP',
                      },
-                   ],
+                   ] + (ssl == false ? [] : [{:LoadBalancerPort => '443',
+                                                          :InstancePort => ref('WebServerPort'),
+                                                          :SSLCertificateId => ref('SSLCertificateId'),
+                                                          :Protocol => 'HTTPS'}]),
                    :HealthCheck => {
                      :Target => join('', 'HTTP:', ref_web_server_port, '/'),
                      :HealthyThreshold => '3',
@@ -47,7 +58,6 @@ module Enscalator
                      :Interval => '30',
                      :Timeout => '5',
                    },
-                   :Scheme => 'internal',
                    :SecurityGroups => [ref_application_security_group],
                    :Subnets => [
                      ref_resource_subnet_a,
@@ -64,7 +74,7 @@ module Enscalator
                      },
                      {:Key => 'Network', :Value => 'Private'},
                    ],
-                 }
+                 }.merge(internal ? {:Scheme => 'internal'} : {})
 
         resource 'WebServerPortSecurityGroupId', :Type => 'AWS::EC2::SecurityGroupIngress',
                  :Properties => {
