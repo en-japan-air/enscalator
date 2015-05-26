@@ -12,16 +12,14 @@ module Enscalator
 
     # Mapping for subnet index start values
     START_IP_IDX_MAPPING = {
-      auth_service_rds: 16,
+      auth_service: 16,
       cc_landing_page_generator: 20,
       enslurp: 24,
       interaction: 28,
       career_card_production_rds: 32,
       job_posting_service: 36,
       elk: 40,
-      waza_backend_elb: 44,
-      waza_backend_rds: 48,
-      auth_service_elb: 52,
+      waza_backend: 44,
       test_instance: 252
     }
 
