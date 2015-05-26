@@ -21,6 +21,7 @@ module Enscalator
       elk: 40,
       waza_backend_elb: 44,
       waza_backend_rds: 48,
+      auth_service_elb: 52,
       test_instance: 252
     }
 
