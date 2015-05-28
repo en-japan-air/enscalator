@@ -20,6 +20,7 @@ module Enscalator
       job_posting_service: 36,
       elk: 40,
       waza_backend: 44,
+      payment_service: 48,
       test_instance: 252
     }
 
