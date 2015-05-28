@@ -403,7 +403,7 @@ module Enscalator
               :IpProtocol => 'tcp',
               :FromPort => '22',
               :ToPort => '22',
-              :SourceSecurityGroupId => ref('PrivateSecurityGroup'),
+              :CidrIp => ref('10.0.0.0/8'),
             },
             { :IpProtocol => 'tcp', :FromPort => '80', :ToPort => '80', :CidrIp => '0.0.0.0/0' },
             { :IpProtocol => 'tcp', :FromPort => '443', :ToPort => '443', :CidrIp => '0.0.0.0/0' },
