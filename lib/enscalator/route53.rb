@@ -10,6 +10,7 @@ module Enscalator
     # @param region [String] AWS region identifier
     # @return [Aws::Route53::Client]
     def route53_client(region: 'us-east-1')
+      @region = region
       Aws::Route53::Client.new(region: region)
     end
 
@@ -43,6 +44,7 @@ module Enscalator
                           ttl: 300)
       client = route53_client
       zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
+      record_name = record_name.gsub(zone_name, '') + @region + "." + zone_name 
       client.change_resource_record_sets(
         hosted_zone_id: zone.id,
         change_batch: {
