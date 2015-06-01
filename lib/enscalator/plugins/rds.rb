@@ -80,13 +80,13 @@ module Enscalator
         # DBName and DBSnapshotIdentifier are mutually exclusive, thus
         # when snapshot_id is given DBName won't be included to resource parameters
         props = properties.deep_dup
-       if snapshot_id && !snapshot_id.empty?
-        parameter "RDS#{db_name}SnapshotId",
-                  :Default => snapshot_id,
-                  :Description => 'Identifier for the DB snapshot to restore from',
-                  :Type => 'String',
-                  :MinLength => '1',
-                  :MaxLength => '64'
+        if snapshot_id && !snapshot_id.empty?
+          parameter "RDS#{db_name}SnapshotId",
+            :Default => snapshot_id,
+            :Description => 'Identifier for the DB snapshot to restore from',
+            :Type => 'String',
+            :MinLength => '1',
+            :MaxLength => '64'
           props[:DBSnapshotIdentifier] = ref("RDS#{db_name}SnapshotId")
         else
           props[:DBName] = ref("RDS#{db_name}Name")

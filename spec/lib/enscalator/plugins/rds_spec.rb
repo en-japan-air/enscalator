@@ -25,7 +25,7 @@ describe 'Enscalator::Plugins::RDS' do
     params_under_test = dict[:Parameters]
     resources_under_test = dict[:Resources]
 
-    expected_parameters = %w{Name AllocatedStorage SnapshotId
+    expected_parameters = %w{Name AllocatedStorage
                           StorageType Multizone ParameterGroup
                           InstanceClass Username Password}.map { |p| "RDS#{test_instance_name}#{p}" }
     expect(params_under_test.keys).to include(*expected_parameters)
@@ -34,7 +34,7 @@ describe 'Enscalator::Plugins::RDS' do
     rds_instance_res = "RDS#{test_instance_name}Instance"
     expect(resources_under_test.keys).to include(*[subnet_res, rds_instance_res])
     expect(resources_under_test[rds_instance_res][:Properties].keys).not_to include(:DBSnapshotIdentifier)
-    expect(dict[:Outputs].keys).to include("#{test_instance_name}EndpointAddress")
+    expect(dict[:Outputs].keys).to include("RDS#{test_instance_name}EndpointAddress")
   end
 
   it 'should create RDS template with tags passed from template dsl excluding name tag' do
