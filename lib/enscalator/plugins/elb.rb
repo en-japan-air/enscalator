@@ -21,6 +21,12 @@ module Enscalator
 
         @elb_resource_name = 'LoadBalancer'
 
+        def vpc_id
+          cfn = cfn_resource(cfn_client(region))
+          stack = cfn.stack('enjapan-vpc')
+          get_resource(stack, 'VpcId')
+        end
+
         parameter 'WebServerPort',
                   :Description => 'TCP/IP Port for the web service',
                   :Default => web_server_port,
@@ -30,11 +36,52 @@ module Enscalator
                   :ConstraintDescription => 'must be an integer between 0 and 65535.'
 
 
+        security_group_vpc 'ELBSecurityGroup',
+                         'Security group of the application servers',
+                         vpc_id,
+                         securityGroupIngress: [
+                           {:IpProtocol => 'tcp',
+                            :FromPort => '0',
+                            :ToPort => '65535',
+                            :CidrIp => '10.0.0.0/8'
+                           }
+                         ] + (!internal ? [
+                           {:IpProtocol => 'tcp',
+                            :FromPort => '80',
+                            :ToPort => '80',
+                            :CidrIp => '0.0.0.0/0'
+                           },
+                           {:IpProtocol => 'tcp',
+                            :FromPort => '443',
+                            :ToPort => '443',
+                            :CidrIp => '0.0.0.0/0'
+                           }
+                         ] : []),
+                         tags: {
+                           'Name' => join('-', aws_stack_name, 'app', 'sg'),
+                           'Application' => aws_stack_name
+                         }
+
+
         if ssl
           parameter 'SSLCertificateId',
             :Description => 'Id of the SSL certificate (iam-servercertgetattributes -s certname)',
             :Type => 'String',
             :ConstraintDescription => 'must be a string'
+        end
+
+        subnets = -> {
+          internal ? private_subnets : public_subnets
+        }
+
+        def private_subnets
+          [ref_application_subnet_a, ref_application_subnet_c]
+        end
+
+        def public_subnets
+          cfn = cfn_resource(cfn_client(region))
+          stack = wait_stack(cfn, 'enjapan-vpc')
+          [get_resource(stack, 'PublicSubnet1'), get_resource(stack, 'PublicSubnet2')]
         end
 
         resource @elb_resource_name,
@@ -58,11 +105,8 @@ module Enscalator
                      :Interval => '30',
                      :Timeout => '5',
                    },
-                   :SecurityGroups => [ref_application_security_group],
-                   :Subnets => [
-                     ref_resource_subnet_a,
-                     ref_resource_subnet_c
-                   ],
+                   :SecurityGroups => [ref('ELBSecurityGroup')],
+                   :Subnets => subnets.(),
                    :Tags => [
                      {
                        :Key => 'Name',
