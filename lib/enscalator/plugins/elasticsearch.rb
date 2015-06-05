@@ -198,7 +198,8 @@ module Enscalator
                             record_name: "elasticsearch.#{storage_name.downcase}.#{zone_name}",
                             type: 'A',
                             values: [es_ip_addr],
-                            ttl: ttl
+                            ttl: ttl,
+                            region: @options[:region]
         end
       end
     end # module Elasticsearch

@@ -45,7 +45,7 @@ module Enscalator
           upsert_dns_record(
               zone_name: 'enjapan.prod.',
               record_name: "rds.#{stack_name}.enjapan.prod.",
-              type: 'CNAME', values: [host], ttl: 30)
+              type: 'CNAME', values: [host], ttl: 30, region: @options[:region])
         end
 
       end
