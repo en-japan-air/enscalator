@@ -16,9 +16,11 @@ module Enscalator
       cc_landing_page_generator: 20,
       enslurp: 24,
       interaction: 28,
-      cc_rds: 32,
+      career_card_production_rds: 32,
       job_posting_service: 36,
       elk: 40,
+      waza_backend: 44,
+      payment_service: 48,
       test_instance: 252
     }
 

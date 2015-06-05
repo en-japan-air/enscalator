@@ -31,12 +31,6 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter "RDS#{db_name}SnapshotId",
-                  :Default => snapshot_id,
-                  :Description => 'Identifier for the DB snapshot to restore from',
-                  :Type => 'String',
-                  :MinLength => '1',
-                  :MaxLength => '64'
 
         parameter "RDS#{db_name}StorageType",
                   :Default => storage_type,
@@ -87,6 +81,12 @@ module Enscalator
         # when snapshot_id is given DBName won't be included to resource parameters
         props = properties.deep_dup
         if snapshot_id && !snapshot_id.empty?
+          parameter "RDS#{db_name}SnapshotId",
+            :Default => snapshot_id,
+            :Description => 'Identifier for the DB snapshot to restore from',
+            :Type => 'String',
+            :MinLength => '1',
+            :MaxLength => '64'
           props[:DBSnapshotIdentifier] = ref("RDS#{db_name}SnapshotId")
         else
           props[:DBName] = ref("RDS#{db_name}Name")
@@ -124,7 +124,7 @@ module Enscalator
                  :Type => 'AWS::RDS::DBInstance',
                  :Properties => props.merge(rds_props)
 
-        output "#{db_name}EndpointAddress",
+        output "RDS#{db_name}EndpointAddress",
                :Description => "#{db_name} Endpoint Address",
                :Value => get_att("RDS#{db_name}Instance", 'Endpoint.Address')
 

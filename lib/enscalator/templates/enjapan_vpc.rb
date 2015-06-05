@@ -200,52 +200,13 @@ module Enscalator
         resource 'InboundHTTPPublicNetworkAclEntry', :DependsOn => [ 'PublicNetworkAcl' ], :Type => 'AWS::EC2::NetworkAclEntry', :Properties => {
           :NetworkAclId => ref('PublicNetworkAcl'),
           :RuleNumber => '100',
-          :Protocol => '6',
+          :Protocol => '-1',
           :RuleAction => 'allow',
           :Egress => 'false',
-          :CidrBlock => '0.0.0.0/0',
-          :PortRange => { :From => '80', :To => '80' },
-        }
-
-        resource 'InboundHTTPSPublicNetworkAclEntry', :DependsOn => [ 'PublicNetworkAcl' ], :Type => 'AWS::EC2::NetworkAclEntry', :Properties => {
-          :NetworkAclId => ref('PublicNetworkAcl'),
-          :RuleNumber => '101',
-          :Protocol => '6',
-          :RuleAction => 'allow',
-          :Egress => 'false',
-          :CidrBlock => '0.0.0.0/0',
-          :PortRange => { :From => '443', :To => '443' },
-        }
-
-        resource 'InboundSSHPublicNetworkAclEntry', :DependsOn => [ 'PublicNetworkAcl' ], :Type => 'AWS::EC2::NetworkAclEntry', :Properties => {
-          :NetworkAclId => ref('PublicNetworkAcl'),
-          :RuleNumber => '102',
-          :Protocol => '6',
-          :RuleAction => 'allow',
-          :Egress => 'false',
-          :CidrBlock => ref('SSHFrom'),
-          :PortRange => { :From => '22', :To => '22' },
-        }
-
-        resource 'InboundEmphemeralPublicNetworkAclEntry', :DependsOn => [ 'PublicNetworkAcl' ], :Type => 'AWS::EC2::NetworkAclEntry', :Properties => {
-          :NetworkAclId => ref('PublicNetworkAcl'),
-          :RuleNumber => '103',
-          :Protocol => '6',
-          :RuleAction => 'allow',
-          :Egress => 'false',
-          :CidrBlock => '0.0.0.0/0',
-          :PortRange => { :From => '1024', :To => '65535' },
-        }
-
-        resource 'OutboundPublicNetworkAclEntry', :DependsOn => [ 'PublicNetworkAcl' ], :Type => 'AWS::EC2::NetworkAclEntry', :Properties => {
-          :NetworkAclId => ref('PublicNetworkAcl'),
-          :RuleNumber => '100',
-          :Protocol => '6',
-          :RuleAction => 'allow',
-          :Egress => 'true',
           :CidrBlock => '0.0.0.0/0',
           :PortRange => { :From => '0', :To => '65535' },
         }
+
 
         resource 'PublicSubnetNetworkAclAssociation1', :DependsOn => [ 'PublicSubnet1', 'PublicNetworkAcl' ], :Type => 'AWS::EC2::SubnetNetworkAclAssociation', :Properties => {
           :SubnetId => ref('PublicSubnet1'),
@@ -376,8 +337,7 @@ module Enscalator
             },
           ],
           :SecurityGroupEgress => [
-            { :IpProtocol => 'tcp', :FromPort => '80', :ToPort => '80', :CidrIp => '0.0.0.0/0' },
-            { :IpProtocol => 'tcp', :FromPort => '443', :ToPort => '443', :CidrIp => '0.0.0.0/0' },
+            { :IpProtocol => 'tcp', :FromPort => '0', :ToPort => '65535', :CidrIp => '0.0.0.0/0' }
           ],
         }
 
