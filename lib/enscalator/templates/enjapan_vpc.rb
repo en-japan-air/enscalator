@@ -15,6 +15,7 @@ module Enscalator
                   'bastion host to allow SSH access to the Elastic Beanstalk hosts.',
                   'The second subnet is private and contains the Elastic Beanstalk instances.',
                   'You will be billed for the AWS resources used if you create a stack from this template.'].join(' ')
+
         parameter 'BastionKeyName',
                   :Description => 'Name of an existing EC2 KeyPair to enable SSH access to the bastion host',
                   :Type => 'String',
@@ -135,50 +136,60 @@ module Enscalator
                           ],
                       }
 
-        resource 'PublicSubnet1', :DependsOn => ['VPC'], :Type => 'AWS::EC2::Subnet', :Properties => {
-                                    :VpcId => ref('VPC'),
-                                    :AvailabilityZone => join('', ref('AWS::Region'), 'a'),
-                                    :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public1'),
-                                    :Tags => [
-                                        {
-                                            :Key => 'Application',
-                                            :Value => aws_stack_name,
-                                        },
-                                        {:Key => 'Network', :Value => 'Public'},
-                                    ],
-                                }
+        resource 'PublicSubnet1',
+                 :DependsOn => ['VPC'],
+                 :Type => 'AWS::EC2::Subnet',
+                 :Properties => {
+                     :VpcId => ref('VPC'),
+                     :AvailabilityZone => join('', ref('AWS::Region'), 'a'),
+                     :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public1'),
+                     :Tags => [
+                         {
+                             :Key => 'Application',
+                             :Value => aws_stack_name,
+                         },
+                         {:Key => 'Network', :Value => 'Public'},
+                     ],
+                 }
 
-        resource 'PublicSubnet2', :DependsOn => ['VPC'], :Type => 'AWS::EC2::Subnet', :Properties => {
-                                    :VpcId => ref('VPC'),
-                                    :AvailabilityZone => join('', ref('AWS::Region'), 'c'),
-                                    :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public2'),
-                                    :Tags => [
-                                        {
-                                            :Key => 'Application',
-                                            :Value => aws_stack_name,
-                                        },
-                                        {:Key => 'Network', :Value => 'Public'},
-                                    ],
-                                }
+        resource 'PublicSubnet2',
+                 :DependsOn => ['VPC'],
+                 :Type => 'AWS::EC2::Subnet',
+                 :Properties => {
+                     :VpcId => ref('VPC'),
+                     :AvailabilityZone => join('', ref('AWS::Region'), 'c'),
+                     :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public2'),
+                     :Tags => [
+                         {
+                             :Key => 'Application',
+                             :Value => aws_stack_name,
+                         },
+                         {:Key => 'Network', :Value => 'Public'},
+                     ],
+                 }
 
-        resource 'InternetGateway', :Type => 'AWS::EC2::InternetGateway', :Properties => {
-                                      :Tags => [
-                                          {
-                                              :Key => 'Application',
-                                              :Value => aws_stack_name,
-                                          },
-                                          {:Key => 'Network', :Value => 'Public'},
-                                      ],
-                                  }
+        resource 'InternetGateway',
+                 :Type => 'AWS::EC2::InternetGateway',
+                 :Properties => {
+                     :Tags => [
+                         {
+                             :Key => 'Application',
+                             :Value => aws_stack_name,
+                         },
+                         {:Key => 'Network', :Value => 'Public'},
+                     ],
+                 }
 
-        resource 'GatewayToInternet', :DependsOn => ['VPC', 'InternetGateway'],
+        resource 'GatewayToInternet',
+                 :DependsOn => ['VPC', 'InternetGateway'],
                  :Type => 'AWS::EC2::VPCGatewayAttachment',
                  :Properties => {
                      :VpcId => ref('VPC'),
                      :InternetGatewayId => ref('InternetGateway'),
                  }
 
-        resource 'PublicRouteTable', :DependsOn => ['VPC'],
+        resource 'PublicRouteTable',
+                 :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::RouteTable',
                  :Properties => {
                      :VpcId => ref('VPC'),
@@ -409,7 +420,12 @@ module Enscalator
                          },
                      ],
                      :SecurityGroupEgress => [
-                         {:IpProtocol => 'tcp', :FromPort => '0', :ToPort => '65535', :CidrIp => '0.0.0.0/0'}
+                         {
+                             :IpProtocol => 'tcp',
+                             :FromPort => '0',
+                             :ToPort => '65535',
+                             :CidrIp => '0.0.0.0/0'
+                         }
                      ],
                  }
 
