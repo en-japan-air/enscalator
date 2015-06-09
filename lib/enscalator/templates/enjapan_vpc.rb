@@ -254,6 +254,18 @@ module Enscalator
                      :PortRange => {:From => '0', :To => '65535'},
                  }
 
+        resource 'OutboundHTTPPublicNetworkAclEntry',
+                 :DependsOn => ['PublicNetworkAcl'],
+                 :Type => 'AWS::EC2::NetworkAclEntry',
+                 :Properties => {
+                     :NetworkAclId => ref('PublicNetworkAcl'),
+                     :RuleNumber => '100',
+                     :Protocol => '-1',
+                     :RuleAction => 'allow',
+                     :Egress => 'true',
+                     :CidrBlock => '0.0.0.0/0',
+                     :PortRange => {:From => '0', :To => '65535'},
+                 }
 
         resource 'PublicSubnetNetworkAclAssociation1',
                  :DependsOn => ['PublicSubnet1', 'PublicNetworkAcl'],
