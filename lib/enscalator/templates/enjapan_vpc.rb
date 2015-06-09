@@ -132,7 +132,10 @@ module Enscalator
                                   :Key => 'Application',
                                   :Value => aws_stack_name,
                               },
-                              {:Key => 'Network', :Value => 'Public'},
+                              {
+                                  :Key => 'Network',
+                                  :Value => 'Public'
+                              },
                           ],
                       }
 
@@ -148,7 +151,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Public'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Public'
+                         },
                      ],
                  }
 
@@ -164,7 +170,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Public'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Public'
+                         },
                      ],
                  }
 
@@ -176,7 +185,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Public'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Public'
+                         },
                      ],
                  }
 
@@ -198,7 +210,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Public'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Public'
+                         },
                      ],
                  }
 
@@ -237,7 +252,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Public'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Public'
+                         },
                      ],
                  }
 
@@ -293,7 +311,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Private'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Private'
+                         },
                      ],
                  }
 
@@ -307,7 +328,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Private'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Private'
+                         },
                      ],
                  }
 
@@ -339,7 +363,10 @@ module Enscalator
                              :Key => 'Application',
                              :Value => aws_stack_name,
                          },
-                         {:Key => 'Network', :Value => 'Private'},
+                         {
+                             :Key => 'Network',
+                             :Value => 'Private'
+                         },
                      ],
                  }
 
@@ -386,7 +413,10 @@ module Enscalator
                          },
                      ],
                      :Tags => [
-                         {:Key => 'Name', :Value => 'NATDevice1'},
+                         {
+                             :Key => 'Name',
+                             :Value => 'NATDevice1'
+                         },
                      ],
                  }
 
@@ -407,7 +437,10 @@ module Enscalator
                          },
                      ],
                      :Tags => [
-                         {:Key => 'Name', :Value => 'NATDevice2'},
+                         {
+                             :Key => 'Name',
+                             :Value => 'NATDevice2'
+                         },
                      ],
                  }
 
