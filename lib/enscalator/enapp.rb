@@ -21,6 +21,7 @@ module Enscalator
       elk: 40,
       waza_backend: 44,
       payment_service: 48,
+      career_card_ops: 52,
       test_instance: 252
     }
 

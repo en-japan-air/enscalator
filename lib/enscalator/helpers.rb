@@ -92,6 +92,8 @@ module Enscalator
     # @raise [ArgumentError] when client is not provided or its not expected class type
     # @return [Hash] images satisfying query conditions
     def find_ami(client, owners: ['self'], filters: nil)
+      
+      
       raise ArgumentError,
             'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
       query = {}
@@ -99,6 +101,7 @@ module Enscalator
       query[:owners] = owners if owners.kind_of?(Array) && owners.any?
       query[:filters] = filters if filters.kind_of?(Array) && filters.any?
       client.describe_images(query)
+
     end
 
     # Wait until stack gets created
@@ -107,6 +110,7 @@ module Enscalator
     # @param stack_name [String] name of the stack
     # @return [Aws::CloudFormation::Stack]
     def wait_stack(cfn, stack_name)
+      require 'pry'
 
       stack = cfn.stack(stack_name)
 
@@ -123,7 +127,10 @@ module Enscalator
         stack = cfn.stack(stack_name)
       end
 
+      binding.pry
+
       stack
+
     end
 
     # Get resource for given key from given stack
