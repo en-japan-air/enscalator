@@ -24,8 +24,7 @@ module Enscalator
       test_instance: 252
     }
 
-    attr_reader :region, :stack_name,
-                :app_name
+    attr_reader :region, :stack_name, :app_name
 
     # Create new EnAppTemplateDSL instance
     #
@@ -33,7 +32,7 @@ module Enscalator
     def initialize(options={})
       @region = options[:region]
       @stack_name = options[:stack_name]
-      # application name taken from template name as default
+      # application name taken from template name by default
       @app_name = self.class.name.demodulize
 
       super

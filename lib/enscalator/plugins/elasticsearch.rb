@@ -199,7 +199,7 @@ module Enscalator
                             type: 'A',
                             values: [es_ip_addr],
                             ttl: ttl,
-                            region: @options[:region]
+                            region: region
         end
       end
     end # module Elasticsearch
