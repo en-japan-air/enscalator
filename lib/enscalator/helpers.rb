@@ -93,7 +93,6 @@ module Enscalator
     # @return [Hash] images satisfying query conditions
     def find_ami(client, owners: ['self'], filters: nil)
       
-      
       raise ArgumentError,
             'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
       query = {}
@@ -110,7 +109,7 @@ module Enscalator
     # @param stack_name [String] name of the stack
     # @return [Aws::CloudFormation::Stack]
     def wait_stack(cfn, stack_name)
-      require 'pry'
+      
 
       stack = cfn.stack(stack_name)
 
@@ -120,14 +119,15 @@ module Enscalator
                                     :total => nil
 
       loop do
+        
         break unless stack.stack_status =~ /(CREATE|UPDATE)_IN_PROGRESS$/
         progress.title = title + " [#{stack.stack_status}]"
+
         progress.increment
         sleep 5
         stack = cfn.stack(stack_name)
+        
       end
-
-      binding.pry
 
       stack
 
