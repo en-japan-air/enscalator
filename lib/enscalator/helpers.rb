@@ -306,12 +306,13 @@ module Enscalator
     # @param rds_client [Aws::RDS::Client] instance of Aws RDS client
     # @param tags [Array<Hash>] list of tags, tag is Hash with format `{key: 'key', value: 'value'}`
     # @return [Array] list of RDS snapshot instances
-    def find_rds_snapshots(rds_client, tags = [])
+    def find_rds_snapshots(rds_client, tags: [])
       db_instances = rds_client.describe_db_instances.db_instances
       target_db_instance = nil
       db_instances.each do |dbi|
         resource_name = rds_arn(rds_client.config.region, dbi.db_instance_identifier)
         tag_list = rds_client.list_tags_for_resource(resource_name: resource_name).tag_list
+        # in order to reduce web requests, break immediately once found matched result
         if tags.all? { |tag| !tag_list.select(&->(list) { list.key == tag[:key] && list.value == tag[:value] }).empty? }
           target_db_instance = dbi
           break

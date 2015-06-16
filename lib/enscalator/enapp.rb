@@ -21,22 +21,27 @@ module Enscalator
       elk: 40,
       waza_backend: 44,
       payment_service: 48,
+      cc_backend: 52,
       test_instance: 252
     }
 
-    attr_reader :region, :stack_name,
-                :app_name
+    attr_reader :region, :app_name
 
     # Create new EnAppTemplateDSL instance
     #
     # @param options [Hash] command-line arguments
     def initialize(options={})
       @region = options[:region]
-      @stack_name = options[:stack_name]
       # application name taken from template name as default
       @app_name = self.class.name.demodulize
 
       super
+    end
+
+    # Stack name accessor
+    #  (`attr_reader` is not available, because `@stack_name` will be modified in `super` initializer)
+    def stack_name
+      @options[:stack_name]
     end
 
     # Get start ip index according to class name

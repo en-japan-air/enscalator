@@ -71,7 +71,7 @@ describe 'Enscalator::Asserts' do
     client = Aws::RDS::Client.new(region: 'ap-northeast-1')
     tags = [{key: 'aws:cloudformation:stack-name', value: 'cc-storage'}]
     VCR.use_cassette 'aws_rds_snapshots' do
-      expect(test_fixture.find_rds_snapshots(client, tags)).not_to be_empty
+      expect(test_fixture.find_rds_snapshots(client, tags: tags)).not_to be_empty
     end
   end
 
