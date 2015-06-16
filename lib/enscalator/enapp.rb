@@ -12,20 +12,19 @@ module Enscalator
 
     # Mapping for subnet index start values
     START_IP_IDX_MAPPING = {
-      auth_service: 16,
-      cc_landing_page_generator: 20,
-      enslurp: 24,
-      interaction: 28,
-      career_card_production_rds: 32,
-      job_posting_service: 36,
-      elk: 40,
-      waza_backend: 44,
-      payment_service: 48,
-      test_instance: 252
+        auth_service: 16,
+        cc_landing_page_generator: 20,
+        enslurp: 24,
+        interaction: 28,
+        career_card_production_rds: 32,
+        job_posting_service: 36,
+        elk: 40,
+        waza_backend: 44,
+        payment_service: 48,
+        test_instance: 252
     }
 
-    attr_reader :region, :stack_name,
-                :app_name
+    attr_reader :region, :stack_name, :app_name
 
     # Create new EnAppTemplateDSL instance
     #
@@ -33,7 +32,7 @@ module Enscalator
     def initialize(options={})
       @region = options[:region]
       @stack_name = options[:stack_name]
-      # application name taken from template name as default
+      # application name taken from template name by default
       @app_name = self.class.name.demodulize
 
       super
@@ -48,11 +47,11 @@ module Enscalator
     # Get availability zones
     def get_availability_zones
       ec2_client(region)
-        .describe_availability_zones
-        .availability_zones
-        .select { |az| az.state == 'available' }
-        .collect(&:zone_name)
-        .select { |n| n =~ /[ac]$/ } # TODO: support all availability zones
+          .describe_availability_zones
+          .availability_zones
+          .select { |az| az.state == 'available' }
+          .collect(&:zone_name)
+          .select { |n| n =~ /[ac]$/ } # TODO: support all availability zones
     end
 
     # Reference to subnet in availability zone A
@@ -153,37 +152,37 @@ module Enscalator
               (EnJapanConfiguration::mapping_vpc_net.map do |k, v|
                 subs = IPAddress(v[:VPC]).subnet(24).map(&:to_string).drop(start_ip_idx).take(4)
                 {
-                  k => {
-                    :applicationA => subs[0], :applicationC => subs[1],
-                    :resourceA => subs[2], :resourceC => subs[3]
-                  }
+                    k => {
+                        :applicationA => subs[0], :applicationC => subs[1],
+                        :resourceA => subs[2], :resourceC => subs[3]
+                    }
                 }
               end.reduce(:merge).with_indifferent_access)
 
       private_route_tables.keys.map do |z|
         subnet(
-          "ApplicationSubnet#{z.upcase}",
-          vpc,
-          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "application#{z.upcase}"),
-          availabilityZone: join('', ref('AWS::Region'), z),
-          tags: {
-            'Network' => 'Private',
-            'Application' => aws_stack_name,
-            'immutable_metadata' => join('', '{ "purpose": "', aws_stack_name, '-app" }')
-          }
+            "ApplicationSubnet#{z.upcase}",
+            vpc,
+            find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "application#{z.upcase}"),
+            availabilityZone: join('', ref('AWS::Region'), z),
+            tags: {
+                'Network' => 'Private',
+                'Application' => aws_stack_name,
+                'immutable_metadata' => join('', '{ "purpose": "', aws_stack_name, '-app" }')
+            }
         )
       end
 
       private_route_tables.keys.map do |z|
         subnet(
-          "ResourceSubnet#{z.upcase}",
-          vpc,
-          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "resource#{z.upcase}"),
-          availabilityZone: join('', ref('AWS::Region'), z),
-          tags: {
-            'Network' => 'Private',
-            'Application' => aws_stack_name
-          }
+            "ResourceSubnet#{z.upcase}",
+            vpc,
+            find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "resource#{z.upcase}"),
+            availabilityZone: join('', ref('AWS::Region'), z),
+            tags: {
+                'Network' => 'Private',
+                'Application' => aws_stack_name
+            }
         )
       end
 
@@ -191,8 +190,8 @@ module Enscalator
         resource "RouteTableAssociation#{z.upcase}",
                  :Type => 'AWS::EC2::SubnetRouteTableAssociation',
                  :Properties => {
-                   :RouteTableId => ref("PrivateRouteTable#{z.upcase}"),
-                   :SubnetId => ref("ApplicationSubnet#{z.upcase}"),
+                     :RouteTableId => ref("PrivateRouteTable#{z.upcase}"),
+                     :SubnetId => ref("ApplicationSubnet#{z.upcase}"),
                  }
       end
 
@@ -201,18 +200,18 @@ module Enscalator
                          ref_vpc_id,
                          securityGroupEgress: [],
                          securityGroupIngress: [
-                           {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '22',
-                             :ToPort => '22',
-                             :CidrIp => '10.0.0.0/8'
-                           },
-                           {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '0',
-                             :ToPort => '65535',
-                             :SourceSecurityGroupId => ref_application_security_group
-                           },
+                             {
+                                 :IpProtocol => 'tcp',
+                                 :FromPort => '22',
+                                 :ToPort => '22',
+                                 :CidrIp => '10.0.0.0/8'
+                             },
+                             {
+                                 :IpProtocol => 'tcp',
+                                 :FromPort => '0',
+                                 :ToPort => '65535',
+                                 :SourceSecurityGroupId => ref_application_security_group
+                             },
                          ],
                          dependsOn: [],
                          tags: {}
@@ -221,15 +220,15 @@ module Enscalator
                          'Security group of the application servers',
                          vpc,
                          securityGroupIngress: [
-                           {:IpProtocol => 'tcp',
-                            :FromPort => '0',
-                            :ToPort => '65535',
-                            :CidrIp => '10.0.0.0/8'
-                           }
+                             {:IpProtocol => 'tcp',
+                              :FromPort => '0',
+                              :ToPort => '65535',
+                              :CidrIp => '10.0.0.0/8'
+                             }
                          ],
                          tags: {
-                           'Name' => join('-', aws_stack_name, 'app', 'sg'),
-                           'Application' => aws_stack_name
+                             'Name' => join('-', aws_stack_name, 'app', 'sg'),
+                             'Application' => aws_stack_name
                          }
 
     end

@@ -474,10 +474,6 @@ module Enscalator
                      ],
                  }
 
-        resource 'BastionIPAddress1', :Type => 'AWS::EC2::EIP', :Properties => {:Domain => 'vpc'}
-
-        resource 'BastionIPAddress2', :Type => 'AWS::EC2::EIP', :Properties => {:Domain => 'vpc'}
-
         resource 'BastionSecurityGroup',
                  :DependsOn => ['VPC', 'PrivateSecurityGroup'],
                  :Type => 'AWS::EC2::SecurityGroup',
@@ -568,22 +564,6 @@ module Enscalator
         output 'PrivateSecurityGroup',
                :Description => 'SecurityGroup to add private resources',
                :Value => ref('PrivateSecurityGroup')
-
-        output 'BastionIp1',
-               :Description => 'IP Address of the first Bastion host',
-               :Value => ref('BastionIPAddress1')
-
-        output 'BastionIpAllocationId1',
-               :Description => 'Allocation Id of the EIP Address for the first Bastion host',
-               :Value => get_att('BastionIPAddress1', 'AllocationId')
-
-        output 'BastionIp2',
-               :Description => 'IP Address of the second Bastion host',
-               :Value => ref('BastionIPAddress2')
-
-        output 'BastionIpAllocationId2',
-               :Description => 'Allocation Id of the EIP Address for the second Bastion host',
-               :Value => get_att('BastionIPAddress2', 'AllocationId')
       end # tpl
     end # EnJapanVPC
   end
