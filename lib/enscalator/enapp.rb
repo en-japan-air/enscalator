@@ -32,7 +32,7 @@ module Enscalator
     # @param options [Hash] command-line arguments
     def initialize(options={})
       @region = options[:region]
-      # application name taken from template name as default
+      # application name taken from template name by default
       @app_name = self.class.name.demodulize
 
       super

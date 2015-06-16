@@ -191,8 +191,8 @@ module Enscalator
                 :Type => 'String',
                 :MinLength => '1',
                 :MaxLength => '64',
-                :AllowedPattern => '[a-zA-Z][a-zA-Z0-9]*',
-                :ConstraintDescription => 'must begin with a letter and contain only alphanumeric characters.'
+                :AllowedPattern => '[a-zA-Z][-_a-zA-Z0-9]*',
+                :ConstraintDescription => 'can contain only alphanumeric characters, dashes and underscores.'
     end
 
     # Name parameter

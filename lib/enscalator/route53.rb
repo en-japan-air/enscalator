@@ -43,7 +43,7 @@ module Enscalator
                           ttl: 300, region: 'us-east-1')
       client = route53_client(region: region)
       zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
-      record_name = record_name.gsub(zone_name, '') + region + "." + zone_name 
+      record_name = record_name.gsub(zone_name, '') + region + '.' + zone_name
       client.change_resource_record_sets(
         hosted_zone_id: zone.id,
         change_batch: {
