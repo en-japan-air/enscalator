@@ -16,30 +16,22 @@ module Enscalator
                   'The second subnet is private and contains the Elastic Beanstalk instances.',
                   'You will be billed for the AWS resources used if you create a stack from this template.'].join(' ')
 
-        parameter 'BastionKeyName',
+        parameter 'SSHFrom',
+        :Description => 'Lockdown SSH access to the bastion host (default can be accessed from anywhere)',
+        :Type => 'String',
+        :MinLength => '9',
+        :MaxLength => '18',
+        :Default => '0.0.0.0/0',
+        :AllowedPattern => '(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})',
+        :ConstraintDescription => 'must be a valid CIDR range of the form x.x.x.x/x.'
+
+        parameter 'NatKeyName',
                   :Description => 'Name of an existing EC2 KeyPair to enable SSH access to the bastion host',
                   :Type => 'String',
                   :MinLength => '1',
                   :MaxLength => '64',
                   :AllowedPattern => '[-_ a-zA-Z0-9]*',
                   :ConstraintDescription => 'can contain only alphanumeric characters, spaces, dashes and underscores.'
-
-        parameter 'SSHFrom',
-                  :Description => 'Lockdown SSH access to the bastion host (default can be accessed from anywhere)',
-                  :Type => 'String',
-                  :MinLength => '9',
-                  :MaxLength => '18',
-                  :Default => '0.0.0.0/0',
-                  :AllowedPattern => '(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})',
-                  :ConstraintDescription => 'must be a valid CIDR range of the form x.x.x.x/x.'
-
-        parameter 'BastionInstanceType',
-                  :Description => 'Bastion Host EC2 instance type',
-                  :Type => 'String',
-                  :Default => 'm1.small',
-                  :AllowedValues => %w(t1.micro m1.small m1.medium m1.large m1.xlarge m2.xlarge m2.2xlarge m2.4xlarge
-                            c1.medium c1.xlarge cc1.4xlarge cc2.8xlarge cg1.4xlarge),
-                  :ConstraintDescription => 'must be a valid EC2 instance type.'
 
         parameter 'NATInstanceType',
                   :Description => 'NAT Device EC2 instance type',
@@ -401,7 +393,7 @@ module Enscalator
                  :Type => 'AWS::EC2::Instance',
                  :Properties => {
                      :InstanceType => ref('NATInstanceType'),
-                     :KeyName => ref('BastionKeyName'),
+                     :KeyName => ref('NatKeyName'),
                      :SourceDestCheck => 'false',
                      :ImageId => find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
                      :NetworkInterfaces => [
@@ -426,7 +418,7 @@ module Enscalator
                  :Properties => {
                      :InstanceType => ref('NATInstanceType'),
                      :SourceDestCheck => 'false',
-                     :KeyName => ref('BastionKeyName'),
+                     :KeyName => ref('NatKeyName'),
                      :ImageId => find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
                      :NetworkInterfaces => [
                          {
@@ -474,55 +466,8 @@ module Enscalator
                      ],
                  }
 
-        resource 'BastionSecurityGroup',
-                 :DependsOn => ['VPC', 'PrivateSecurityGroup'],
-                 :Type => 'AWS::EC2::SecurityGroup',
-                 :Properties => {
-                     :GroupDescription => 'Enable access to the Bastion host',
-                     :VpcId => ref('VPC'),
-                     :SecurityGroupIngress => [
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '22',
-                             :ToPort => '22',
-                             :CidrIp => ref('SSHFrom'),
-                         },
-                         {
-                             :IpProtocol => 'udp',
-                             :FromPort => '500',
-                             :ToPort => '500',
-                             :CidrIp => '0.0.0.0/0'
-                         },
-                         {
-                             :IpProtocol => 'udp',
-                             :FromPort => '4500',
-                             :ToPort => '4500',
-                             :CidrIp => '0.0.0.0/0'
-                         },
-                     ],
-                     :SecurityGroupEgress => [
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '22',
-                             :ToPort => '22',
-                             :CidrIp => '10.0.0.0/8',
-                         },
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '80',
-                             :ToPort => '80',
-                             :CidrIp => '0.0.0.0/0'
-                         },
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '443',
-                             :ToPort => '443',
-                             :CidrIp => '0.0.0.0/0'
-                         },
-                     ],
-                 }
-
-        resource 'PrivateSecurityGroup', :DependsOn => ['VPC'],
+        resource 'PrivateSecurityGroup',
+                 :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::SecurityGroup',
                  :Properties => {
                      :GroupDescription => 'Allow the Application instances to access the NAT device',
@@ -556,10 +501,6 @@ module Enscalator
         output 'PublicSubnet2',
                :Description => 'Created Subnet2',
                :Value => ref('PublicSubnet2')
-
-        output 'BastionSecurityGroup',
-               :Description => 'SecurityGroup to add the VPN gateways',
-               :Value => ref('BastionSecurityGroup')
 
         output 'PrivateSecurityGroup',
                :Description => 'SecurityGroup to add private resources',
