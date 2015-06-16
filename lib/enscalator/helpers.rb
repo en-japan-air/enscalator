@@ -85,6 +85,15 @@ module Enscalator
       Aws::EC2::Client.new(region: region)
     end
 
+    # RDS client
+    #
+    # @param region [String] Region in Amazon AWS
+    # @raise [ArgumentError] when region is not given
+    # @return [Aws::RDS::Client]
+    def rds_client(region)
+      raise ArgumentError, 'Unable to proceed without region' if region.blank?
+      Aws::RDS::Client.new(region: region)
+    end
 
     # Find ami images registered
     #
@@ -274,6 +283,44 @@ module Enscalator
       user_data_path = File.join(File.expand_path('..', __FILE__), 'confs', 'user-data', app_name)
       fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
       File.read(user_data_path)
+    end
+
+    # Get current user id for amazon web service
+    #
+    # @return [String] user id
+    def current_aws_user_id
+      @current_aws_user_id ||= Aws::IAM::CurrentUser.new(region: 'us-west-1').arn.scan(%r'arn:aws:iam::(\d+):user/.*').flatten.first
+    end
+
+    # Get amazon resource name for RDS resource
+    #
+    # @param region [String] Amazon web service region
+    # @param db_instance_identifier [String] RDS db instance identifier
+    # @return [String] amazon resource name
+    def rds_arn(region, db_instance_identifier)
+      "arn:aws:rds:#{region}:#{current_aws_user_id}:db:#{db_instance_identifier}"
+    end
+
+    # Get RDS snapshots filtered by tags
+    #
+    # @param rds_client [Aws::RDS::Client] instance of Aws RDS client
+    # @param tags [Array<Hash>] list of tags, tag is Hash with format `{key: 'key', value: 'value'}`
+    # @return [Array] list of RDS snapshot instances
+    def find_rds_snapshots(rds_client, tags = [])
+      db_instances = rds_client.describe_db_instances.db_instances
+      target_db_instance = nil
+      db_instances.each do |dbi|
+        resource_name = rds_arn(rds_client.config.region, dbi.db_instance_identifier)
+        tag_list = rds_client.list_tags_for_resource(resource_name: resource_name).tag_list
+        if tags.all? { |tag| !tag_list.select(&->(list) { list.key == tag[:key] && list.value == tag[:value] }).empty? }
+          target_db_instance = dbi
+          break
+        end
+      end
+
+      target_db_instance ?
+        rds_client.describe_db_snapshots(db_instance_identifier: target_db_instance.db_instance_identifier).db_snapshots :
+        []
     end
 
   end # module Asserts
