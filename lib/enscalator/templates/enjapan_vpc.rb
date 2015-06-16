@@ -9,24 +9,15 @@ module Enscalator
         value :AWSTemplateFormatVersion => '2010-09-09'
 
         value :Description => [
-                  'AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.',
-                  'The stack contains 2 subnets: the first subnet is public and contains the',
-                  'load balancer, a NAT device for internet access from the private subnet and a',
-                  'bastion host to allow SSH access to the Elastic Beanstalk hosts.',
-                  'The second subnet is private and contains the Elastic Beanstalk instances.',
-                  'You will be billed for the AWS resources used if you create a stack from this template.'].join(' ')
-
-        parameter 'SSHFrom',
-        :Description => 'Lockdown SSH access to the bastion host (default can be accessed from anywhere)',
-        :Type => 'String',
-        :MinLength => '9',
-        :MaxLength => '18',
-        :Default => '0.0.0.0/0',
-        :AllowedPattern => '(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})',
-        :ConstraintDescription => 'must be a valid CIDR range of the form x.x.x.x/x.'
+                'AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.',
+                'The stack contains 2 subnets: the first subnet is public and contains the',
+                'load balancer, a NAT device for internet access from the private subnet and a',
+                'bastion host to allow SSH access to the Elastic Beanstalk hosts.',
+                'The second subnet is private and contains the Elastic Beanstalk instances.',
+                'You will be billed for the AWS resources used if you create a stack from this template.'].join(' ')
 
         parameter 'NatKeyName',
-                  :Description => 'Name of an existing EC2 KeyPair to enable SSH access to the bastion host',
+                  :Description => 'Name of an existing EC2 KeyPair to enable SSH access to the nat host',
                   :Type => 'String',
                   :MinLength => '1',
                   :MaxLength => '64',
@@ -67,46 +58,46 @@ module Enscalator
 
         mapping 'AWSRegionArch2AMI',
                 :'us-east-1' => {
-                    :'32' => 'ami-a0cd60c9',
-                    :'64' => 'ami-aecd60c7',
-                    :'64Cluster' => 'ami-a8cd60c1',
-                    :'64GPU' => 'ami-eccf6285'
+                  :'32' => 'ami-a0cd60c9',
+                  :'64' => 'ami-aecd60c7',
+                  :'64Cluster' => 'ami-a8cd60c1',
+                  :'64GPU' => 'ami-eccf6285'
                 },
                 :'us-west-2' => {
-                    :'32' => 'ami-46da5576',
-                    :'64' => 'ami-48da5578',
-                    :'64Cluster' => 'NOT_YET_SUPPORTED',
-                    :'64GPU' => 'NOT_YET_SUPPORTED',
+                  :'32' => 'ami-46da5576',
+                  :'64' => 'ami-48da5578',
+                  :'64Cluster' => 'NOT_YET_SUPPORTED',
+                  :'64GPU' => 'NOT_YET_SUPPORTED',
                 },
                 :'us-west-1' => {
-                    :'32' => 'ami-7d4c6938',
-                    :'64' => 'ami-734c6936',
-                    :'64Cluster' => 'NOT_YET_SUPPORTED',
-                    :'64GPU' => 'NOT_YET_SUPPORTED',
+                  :'32' => 'ami-7d4c6938',
+                  :'64' => 'ami-734c6936',
+                  :'64Cluster' => 'NOT_YET_SUPPORTED',
+                  :'64GPU' => 'NOT_YET_SUPPORTED',
                 },
                 :'eu-west-1' => {
-                    :'32' => 'ami-61555115',
-                    :'64' => 'ami-6d555119',
-                    :'64Cluster' => 'ami-67555113',
-                    :'64GPU' => 'NOT_YET_SUPPORTED'
+                  :'32' => 'ami-61555115',
+                  :'64' => 'ami-6d555119',
+                  :'64Cluster' => 'ami-67555113',
+                  :'64GPU' => 'NOT_YET_SUPPORTED'
                 },
                 :'ap-southeast-1' => {
-                    :'32' => 'ami-220b4a70',
-                    :'64' => 'ami-3c0b4a6e',
-                    :'64Cluster' => 'NOT_YET_SUPPORTED',
-                    :'64GPU' => 'NOT_YET_SUPPORTED',
+                  :'32' => 'ami-220b4a70',
+                  :'64' => 'ami-3c0b4a6e',
+                  :'64Cluster' => 'NOT_YET_SUPPORTED',
+                  :'64GPU' => 'NOT_YET_SUPPORTED',
                 },
                 :'ap-northeast-1' => {
-                    :'32' => 'ami-2a19aa2b',
-                    :'64' => 'ami-2819aa29',
-                    :'64Cluster' => 'NOT_YET_SUPPORTED',
-                    :'64GPU' => 'NOT_YET_SUPPORTED',
+                  :'32' => 'ami-2a19aa2b',
+                  :'64' => 'ami-2819aa29',
+                  :'64Cluster' => 'NOT_YET_SUPPORTED',
+                  :'64GPU' => 'NOT_YET_SUPPORTED',
                 },
                 :'sa-east-1' => {
-                    :'32' => 'ami-f836e8e5',
-                    :'64' => 'ami-fe36e8e3',
-                    :'64Cluster' => 'NOT_YET_SUPPORTED',
-                    :'64GPU' => 'NOT_YET_SUPPORTED',
+                  :'32' => 'ami-f836e8e5',
+                  :'64' => 'ami-fe36e8e3',
+                  :'64Cluster' => 'NOT_YET_SUPPORTED',
+                  :'64GPU' => 'NOT_YET_SUPPORTED',
                 }
 
         mapping 'AWSRegionNetConfig',
@@ -116,378 +107,378 @@ module Enscalator
                 Enscalator::EnJapanConfiguration::mapping_availability_zones
 
         resource 'VPC', :Type => 'AWS::EC2::VPC', :Properties => {
-                          :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'VPC'),
-                          :EnableDnsSupport => 'true',
-                          :EnableDnsHostnames => 'true',
-                          :Tags => [
-                              {
-                                  :Key => 'Application',
-                                  :Value => aws_stack_name,
-                              },
-                              {
-                                  :Key => 'Network',
-                                  :Value => 'Public'
-                              },
-                          ],
+                        :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'VPC'),
+                        :EnableDnsSupport => 'true',
+                        :EnableDnsHostnames => 'true',
+                        :Tags => [
+                          {
+                            :Key => 'Application',
+                            :Value => aws_stack_name,
+                          },
+                          {
+                            :Key => 'Network',
+                            :Value => 'Public'
+                          },
+                        ],
                       }
 
         resource 'PublicSubnet1',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::Subnet',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :AvailabilityZone => join('', ref('AWS::Region'), 'a'),
-                     :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public1'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Public'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :AvailabilityZone => join('', ref('AWS::Region'), 'a'),
+                   :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public1'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Public'
+                     },
+                   ],
                  }
 
         resource 'PublicSubnet2',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::Subnet',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :AvailabilityZone => join('', ref('AWS::Region'), 'c'),
-                     :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public2'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Public'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :AvailabilityZone => join('', ref('AWS::Region'), 'c'),
+                   :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'Public2'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Public'
+                     },
+                   ],
                  }
 
         resource 'InternetGateway',
                  :Type => 'AWS::EC2::InternetGateway',
                  :Properties => {
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Public'
-                         },
-                     ],
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Public'
+                     },
+                   ],
                  }
 
         resource 'GatewayToInternet',
                  :DependsOn => ['VPC', 'InternetGateway'],
                  :Type => 'AWS::EC2::VPCGatewayAttachment',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :InternetGatewayId => ref('InternetGateway'),
+                   :VpcId => ref('VPC'),
+                   :InternetGatewayId => ref('InternetGateway'),
                  }
 
         resource 'PublicRouteTable',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::RouteTable',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Public'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Public'
+                     },
+                   ],
                  }
 
         resource 'PublicRoute',
                  :DependsOn => ['PublicRouteTable', 'InternetGateway'],
                  :Type => 'AWS::EC2::Route',
                  :Properties => {
-                     :RouteTableId => ref('PublicRouteTable'),
-                     :DestinationCidrBlock => '0.0.0.0/0',
-                     :GatewayId => ref('InternetGateway'),
+                   :RouteTableId => ref('PublicRouteTable'),
+                   :DestinationCidrBlock => '0.0.0.0/0',
+                   :GatewayId => ref('InternetGateway'),
                  }
 
         resource 'PublicSubnetRouteTableAssociation1',
                  :DependsOn => ['PublicSubnet1', 'PublicRouteTable'],
                  :Type => 'AWS::EC2::SubnetRouteTableAssociation',
                  :Properties => {
-                     :SubnetId => ref('PublicSubnet1'),
-                     :RouteTableId => ref('PublicRouteTable'),
+                   :SubnetId => ref('PublicSubnet1'),
+                   :RouteTableId => ref('PublicRouteTable'),
                  }
 
         resource 'PublicSubnetRouteTableAssociation2',
                  :DependsOn => ['PublicSubnet2', 'PublicRouteTable'],
                  :Type => 'AWS::EC2::SubnetRouteTableAssociation',
                  :Properties => {
-                     :SubnetId => ref('PublicSubnet2'),
-                     :RouteTableId => ref('PublicRouteTable'),
+                   :SubnetId => ref('PublicSubnet2'),
+                   :RouteTableId => ref('PublicRouteTable'),
                  }
 
         resource 'PublicNetworkAcl',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::NetworkAcl',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Public'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Public'
+                     },
+                   ],
                  }
 
         resource 'InboundHTTPPublicNetworkAclEntry',
                  :DependsOn => ['PublicNetworkAcl'],
                  :Type => 'AWS::EC2::NetworkAclEntry',
                  :Properties => {
-                     :NetworkAclId => ref('PublicNetworkAcl'),
-                     :RuleNumber => '100',
-                     :Protocol => '-1',
-                     :RuleAction => 'allow',
-                     :Egress => 'false',
-                     :CidrBlock => '0.0.0.0/0',
-                     :PortRange => {:From => '0', :To => '65535'},
+                   :NetworkAclId => ref('PublicNetworkAcl'),
+                   :RuleNumber => '100',
+                   :Protocol => '-1',
+                   :RuleAction => 'allow',
+                   :Egress => 'false',
+                   :CidrBlock => '0.0.0.0/0',
+                   :PortRange => {:From => '0', :To => '65535'},
                  }
 
         resource 'OutboundHTTPPublicNetworkAclEntry',
                  :DependsOn => ['PublicNetworkAcl'],
                  :Type => 'AWS::EC2::NetworkAclEntry',
                  :Properties => {
-                     :NetworkAclId => ref('PublicNetworkAcl'),
-                     :RuleNumber => '100',
-                     :Protocol => '-1',
-                     :RuleAction => 'allow',
-                     :Egress => 'true',
-                     :CidrBlock => '0.0.0.0/0',
-                     :PortRange => {:From => '0', :To => '65535'},
+                   :NetworkAclId => ref('PublicNetworkAcl'),
+                   :RuleNumber => '100',
+                   :Protocol => '-1',
+                   :RuleAction => 'allow',
+                   :Egress => 'true',
+                   :CidrBlock => '0.0.0.0/0',
+                   :PortRange => {:From => '0', :To => '65535'},
                  }
 
         resource 'PublicSubnetNetworkAclAssociation1',
                  :DependsOn => ['PublicSubnet1', 'PublicNetworkAcl'],
                  :Type => 'AWS::EC2::SubnetNetworkAclAssociation',
                  :Properties => {
-                     :SubnetId => ref('PublicSubnet1'),
-                     :NetworkAclId => ref('PublicNetworkAcl'),
+                   :SubnetId => ref('PublicSubnet1'),
+                   :NetworkAclId => ref('PublicNetworkAcl'),
                  }
 
         resource 'PublicSubnetNetworkAclAssociation2',
                  :DependsOn => ['PublicSubnet2', 'PublicNetworkAcl'],
                  :Type => 'AWS::EC2::SubnetNetworkAclAssociation',
                  :Properties => {
-                     :SubnetId => ref('PublicSubnet2'),
-                     :NetworkAclId => ref('PublicNetworkAcl'),
+                   :SubnetId => ref('PublicSubnet2'),
+                   :NetworkAclId => ref('PublicNetworkAcl'),
                  }
 
         resource 'PrivateRouteTable1',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::RouteTable',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Private'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Private'
+                     },
+                   ],
                  }
 
         resource 'PrivateRouteTable2',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::RouteTable',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Private'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Private'
+                     },
+                   ],
                  }
 
         resource 'PrivateRoute1',
                  :DependsOn => ['PrivateRouteTable1', 'NATDevice1'],
                  :Type => 'AWS::EC2::Route',
                  :Properties => {
-                     :RouteTableId => ref('PrivateRouteTable1'),
-                     :DestinationCidrBlock => '0.0.0.0/0',
-                     :InstanceId => ref('NATDevice1'),
+                   :RouteTableId => ref('PrivateRouteTable1'),
+                   :DestinationCidrBlock => '0.0.0.0/0',
+                   :InstanceId => ref('NATDevice1'),
                  }
 
         resource 'PrivateRoute2',
                  :DependsOn => ['PrivateRouteTable2', 'NATDevice2'],
                  :Type => 'AWS::EC2::Route',
                  :Properties => {
-                     :RouteTableId => ref('PrivateRouteTable2'),
-                     :DestinationCidrBlock => '0.0.0.0/0',
-                     :InstanceId => ref('NATDevice2'),
+                   :RouteTableId => ref('PrivateRouteTable2'),
+                   :DestinationCidrBlock => '0.0.0.0/0',
+                   :InstanceId => ref('NATDevice2'),
                  }
 
         resource 'PrivateNetworkAcl',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::NetworkAcl',
                  :Properties => {
-                     :VpcId => ref('VPC'),
-                     :Tags => [
-                         {
-                             :Key => 'Application',
-                             :Value => aws_stack_name,
-                         },
-                         {
-                             :Key => 'Network',
-                             :Value => 'Private'
-                         },
-                     ],
+                   :VpcId => ref('VPC'),
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Private'
+                     },
+                   ],
                  }
 
         resource 'InboundPrivateNetworkAclEntry',
                  :DependsOn => ['PrivateNetworkAcl'],
                  :Type => 'AWS::EC2::NetworkAclEntry',
                  :Properties => {
-                     :NetworkAclId => ref('PrivateNetworkAcl'),
-                     :RuleNumber => '100',
-                     :Protocol => '6',
-                     :RuleAction => 'allow',
-                     :Egress => 'false',
-                     :CidrBlock => '0.0.0.0/0',
-                     :PortRange => {:From => '0', :To => '65535'},
+                   :NetworkAclId => ref('PrivateNetworkAcl'),
+                   :RuleNumber => '100',
+                   :Protocol => '6',
+                   :RuleAction => 'allow',
+                   :Egress => 'false',
+                   :CidrBlock => '0.0.0.0/0',
+                   :PortRange => {:From => '0', :To => '65535'},
                  }
 
         resource 'OutBoundPrivateNetworkAclEntry',
                  :DependsOn => ['PrivateNetworkAcl'],
                  :Type => 'AWS::EC2::NetworkAclEntry',
                  :Properties => {
-                     :NetworkAclId => ref('PrivateNetworkAcl'),
-                     :RuleNumber => '100',
-                     :Protocol => '6',
-                     :RuleAction => 'allow',
-                     :Egress => 'true',
-                     :CidrBlock => '0.0.0.0/0',
-                     :PortRange => {:From => '0', :To => '65535'},
+                   :NetworkAclId => ref('PrivateNetworkAcl'),
+                   :RuleNumber => '100',
+                   :Protocol => '6',
+                   :RuleAction => 'allow',
+                   :Egress => 'true',
+                   :CidrBlock => '0.0.0.0/0',
+                   :PortRange => {:From => '0', :To => '65535'},
                  }
 
         resource 'NATDevice1',
                  :DependsOn => ['PublicSubnet1', 'NATSecurityGroup'],
                  :Type => 'AWS::EC2::Instance',
                  :Properties => {
-                     :InstanceType => ref('NATInstanceType'),
-                     :KeyName => ref('NatKeyName'),
-                     :SourceDestCheck => 'false',
-                     :ImageId => find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
-                     :NetworkInterfaces => [
-                         {
-                             :AssociatePublicIpAddress => 'true',
-                             :DeviceIndex => '0',
-                             :SubnetId => ref('PublicSubnet1'),
-                             :GroupSet => [ref('NATSecurityGroup')],
-                         },
-                     ],
-                     :Tags => [
-                         {
-                             :Key => 'Name',
-                             :Value => 'NATDevice1'
-                         },
-                     ],
+                   :InstanceType => ref('NATInstanceType'),
+                   :KeyName => ref('NatKeyName'),
+                   :SourceDestCheck => 'false',
+                   :ImageId => find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
+                   :NetworkInterfaces => [
+                     {
+                       :AssociatePublicIpAddress => 'true',
+                       :DeviceIndex => '0',
+                       :SubnetId => ref('PublicSubnet1'),
+                       :GroupSet => [ref('NATSecurityGroup')],
+                     },
+                   ],
+                   :Tags => [
+                     {
+                       :Key => 'Name',
+                       :Value => 'NATDevice1'
+                     },
+                   ],
                  }
 
         resource 'NATDevice2',
                  :DependsOn => ['PublicSubnet2', 'NATSecurityGroup'],
                  :Type => 'AWS::EC2::Instance',
                  :Properties => {
-                     :InstanceType => ref('NATInstanceType'),
-                     :SourceDestCheck => 'false',
-                     :KeyName => ref('NatKeyName'),
-                     :ImageId => find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
-                     :NetworkInterfaces => [
-                         {
-                             :AssociatePublicIpAddress => 'true',
-                             :DeviceIndex => '0',
-                             :SubnetId => ref('PublicSubnet2'),
-                             :GroupSet => [ref('NATSecurityGroup')],
-                         },
-                     ],
-                     :Tags => [
-                         {
-                             :Key => 'Name',
-                             :Value => 'NATDevice2'
-                         },
-                     ],
+                   :InstanceType => ref('NATInstanceType'),
+                   :SourceDestCheck => 'false',
+                   :KeyName => ref('NatKeyName'),
+                   :ImageId => find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
+                   :NetworkInterfaces => [
+                     {
+                       :AssociatePublicIpAddress => 'true',
+                       :DeviceIndex => '0',
+                       :SubnetId => ref('PublicSubnet2'),
+                       :GroupSet => [ref('NATSecurityGroup')],
+                     },
+                   ],
+                   :Tags => [
+                     {
+                       :Key => 'Name',
+                       :Value => 'NATDevice2'
+                     },
+                   ],
                  }
 
         resource 'NATSecurityGroup',
                  :DependsOn => ['PrivateSecurityGroup'],
                  :Type => 'AWS::EC2::SecurityGroup',
                  :Properties => {
-                     :GroupDescription => 'Enable internal access to the NAT device',
-                     :VpcId => ref('VPC'),
-                     :SecurityGroupIngress => [
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '80',
-                             :ToPort => '80',
-                             :SourceSecurityGroupId => ref('PrivateSecurityGroup'),
-                         },
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '443',
-                             :ToPort => '443',
-                             :SourceSecurityGroupId => ref('PrivateSecurityGroup'),
-                         },
-                     ],
-                     :SecurityGroupEgress => [
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '0',
-                             :ToPort => '65535',
-                             :CidrIp => '0.0.0.0/0'
-                         }
-                     ],
+                   :GroupDescription => 'Enable internal access to the NAT device',
+                   :VpcId => ref('VPC'),
+                   :SecurityGroupIngress => [
+                     {
+                       :IpProtocol => 'tcp',
+                       :FromPort => '80',
+                       :ToPort => '80',
+                       :SourceSecurityGroupId => ref('PrivateSecurityGroup'),
+                     },
+                     {
+                       :IpProtocol => 'tcp',
+                       :FromPort => '443',
+                       :ToPort => '443',
+                       :SourceSecurityGroupId => ref('PrivateSecurityGroup'),
+                     },
+                   ],
+                   :SecurityGroupEgress => [
+                     {
+                       :IpProtocol => 'tcp',
+                       :FromPort => '0',
+                       :ToPort => '65535',
+                       :CidrIp => '0.0.0.0/0'
+                     }
+                   ],
                  }
 
         resource 'PrivateSecurityGroup',
                  :DependsOn => ['VPC'],
                  :Type => 'AWS::EC2::SecurityGroup',
                  :Properties => {
-                     :GroupDescription => 'Allow the Application instances to access the NAT device',
-                     :VpcId => ref('VPC'),
-                     :SecurityGroupEgress => [
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '0',
-                             :ToPort => '65535',
-                             :CidrIp => '10.0.0.0/8'
-                         },
-                     ],
-                     :SecurityGroupIngress => [
-                         {
-                             :IpProtocol => 'tcp',
-                             :FromPort => '0',
-                             :ToPort => '65535',
-                             :CidrIp => '10.0.0.0/8'
-                         },
-                     ],
+                   :GroupDescription => 'Allow the Application instances to access the NAT device',
+                   :VpcId => ref('VPC'),
+                   :SecurityGroupEgress => [
+                     {
+                       :IpProtocol => 'tcp',
+                       :FromPort => '0',
+                       :ToPort => '65535',
+                       :CidrIp => '10.0.0.0/8'
+                     },
+                   ],
+                   :SecurityGroupIngress => [
+                     {
+                       :IpProtocol => 'tcp',
+                       :FromPort => '0',
+                       :ToPort => '65535',
+                       :CidrIp => '10.0.0.0/8'
+                     },
+                   ],
                  }
 
         output 'VpcId',
