@@ -29,7 +29,8 @@ module Enscalator
                                  default: 'm3.medium'
 
         rds_init(@db_name)
-        elb_resource_name = elb_init(@options[:stack_name], @options[:region], zone_name: @zone_name)
+        elb_resource_name = elb_init(@options[:stack_name], @options[:region], 
+                                     zone_name: @zone_name, ssl: false, internal: false)
 
         auto_scale_init image.image_id,
                         auto_scale_name: app_name,
@@ -50,7 +51,7 @@ module Enscalator
         post_run do
 
           stack_name = @options[:stack_name]
-          cfn = cfn_resource(cfn_client(@options[:region]))
+          cfn = cfn_resource(cfn_client(region))
 
           stack = wait_stack(cfn, stack_name)
           host = get_resource(stack, "RDS#{@db_name}EndpointAddress")
@@ -58,7 +59,7 @@ module Enscalator
           upsert_dns_record(
               zone_name: @zone_name,
               record_name: "rds.#{stack_name}.enjapan.prod.",
-              type: 'CNAME', values: [host], ttl: 30, region: @options[:region])
+              type: 'CNAME', values: [host], ttl: 30, region: region)
 
           
         end
