@@ -40,10 +40,16 @@ module Enscalator
                           record_name: nil,
                           type: 'A',
                           values: [],
-                          ttl: 300, region: 'us-east-1')
+                          ttl: 300,
+                          region: 'us-east-1',
+                          suffix: '')
       client = route53_client(region: region)
       zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
-      record_name = record_name.gsub(zone_name, '') + region + '.' + zone_name
+
+      record_tokens = [].concat([record_name.gsub(zone_name, ''), region])
+      record_tokens << suffix if suffix && !suffix.empty?
+      record_name = [record_tokens.join, zone_name].join('.')
+
       client.change_resource_record_sets(
         hosted_zone_id: zone.id,
         change_batch: {
