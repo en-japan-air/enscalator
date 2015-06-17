@@ -41,10 +41,10 @@ describe 'Enscalator::Plugins::RDS' do
 
     ::EnAppTemplateDSL.const_set(:TestTags,
                                  {
-                                     Tags: [
-                                         Key: 'TestTagKey',
-                                         Value: 'TestTagValue'
-                                     ]
+                                   Tags: [
+                                     Key: 'TestTagKey',
+                                     Value: 'TestTagValue'
+                                   ]
                                  })
 
     class RDSTestTagsTemplate < Enscalator::EnAppTemplateDSL
@@ -61,34 +61,30 @@ describe 'Enscalator::Plugins::RDS' do
     dict = rds_template.instance_variable_get(:@dict)
     tags_under_test = dict[:Resources]["RDS#{test_instance_name}Instance"][:Properties][:Tags]
     expected_tags = test_instance_tags[:Tags].dup.concat([
-                                                             {
-                                                                 Key: 'Name',
-                                                                 Value: "RDS#{test_instance_name}Instance"
-                                                             }
+                                                           {
+                                                             Key: 'Name',
+                                                             Value: "RDS#{test_instance_name}Instance"
+                                                           }
                                                          ])
     expect(tags_under_test).to include(*expected_tags)
 
     ::EnAppTemplateDSL.send(:remove_const, :TestTags.to_s)
   end
 
-  it 'should create RDS template with snaphost_id set' do
+  it 'should create RDS template with use_snapshot set to true' do
 
     class RDSTestSnapshotTemplate < Enscalator::EnAppTemplateDSL
       include Enscalator::Plugins::RDS
       define_method :tpl do
         rds_init(TestRDSInstance,
-                 snapshot_id: 'snapshot')
+                 use_snapshot: true)
       end
     end
 
     rds_template = RDSTestSnapshotTemplate.new
     test_instance_name = ::EnAppTemplateDSL::TestRDSInstance
     dict = rds_template.instance_variable_get(:@dict)
-    params_under_test = dict[:Parameters]
     resources_under_test = dict[:Resources]
-
-    expect(params_under_test["RDS#{test_instance_name}SnapshotId"][:Default]).to eq('snapshot')
-
     rds_resource_props = resources_under_test["RDS#{test_instance_name}Instance"][:Properties]
     expect(rds_resource_props).to include(:DBSnapshotIdentifier)
     expect(rds_resource_props).not_to include(:DBName)
