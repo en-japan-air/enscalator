@@ -29,7 +29,7 @@ module Enscalator
                                  default: 'm3.medium'
 
         rds_init(@db_name)
-        elb_resource_name = elb_init(@options[:stack_name], @options[:region], 
+        elb_resource_name = elb_init(@options[:stack_name], region, 
                                      zone_name: @zone_name, ssl: false, internal: false)
 
         auto_scale_init image.image_id,
