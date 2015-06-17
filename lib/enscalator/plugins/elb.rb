@@ -37,37 +37,37 @@ module Enscalator
 
 
         security_group_vpc 'ELBSecurityGroup',
-                         'Security group of the application servers',
-                         vpc_id,
-                         securityGroupIngress: [
-                           {:IpProtocol => 'tcp',
-                            :FromPort => '0',
-                            :ToPort => '65535',
-                            :CidrIp => '10.0.0.0/8'
+                           'Security group of the application servers',
+                           vpc_id,
+                           securityGroupIngress: [
+                             {:IpProtocol => 'tcp',
+                              :FromPort => '0',
+                              :ToPort => '65535',
+                              :CidrIp => '10.0.0.0/8'
+                             }
+                           ] + (!internal ? [
+                             {:IpProtocol => 'tcp',
+                              :FromPort => '80',
+                              :ToPort => '80',
+                              :CidrIp => '0.0.0.0/0'
+                             },
+                             {:IpProtocol => 'tcp',
+                              :FromPort => '443',
+                              :ToPort => '443',
+                              :CidrIp => '0.0.0.0/0'
+                             }
+                           ] : []),
+                           tags: {
+                             'Name' => join('-', aws_stack_name, 'app', 'sg'),
+                             'Application' => aws_stack_name
                            }
-                         ] + (!internal ? [
-                           {:IpProtocol => 'tcp',
-                            :FromPort => '80',
-                            :ToPort => '80',
-                            :CidrIp => '0.0.0.0/0'
-                           },
-                           {:IpProtocol => 'tcp',
-                            :FromPort => '443',
-                            :ToPort => '443',
-                            :CidrIp => '0.0.0.0/0'
-                           }
-                         ] : []),
-                         tags: {
-                           'Name' => join('-', aws_stack_name, 'app', 'sg'),
-                           'Application' => aws_stack_name
-                         }
 
 
         if ssl
           parameter 'SSLCertificateId',
-            :Description => 'Id of the SSL certificate (iam-servercertgetattributes -s certname)',
-            :Type => 'String',
-            :ConstraintDescription => 'must be a string'
+                    :Description => 'Id of the SSL certificate (iam-servercertgetattributes -s certname)',
+                    :Type => 'String',
+                    :ConstraintDescription => 'must be a string'
         end
 
         subnets = -> {
@@ -95,9 +95,9 @@ module Enscalator
                        :Protocol => 'HTTP',
                      },
                    ] + (ssl == false ? [] : [{:LoadBalancerPort => '443',
-                                                          :InstancePort => ref('WebServerPort'),
-                                                          :SSLCertificateId => ref('SSLCertificateId'),
-                                                          :Protocol => 'HTTPS'}]),
+                                              :InstancePort => ref('WebServerPort'),
+                                              :SSLCertificateId => ref('SSLCertificateId'),
+                                              :Protocol => 'HTTPS'}]),
                    :HealthCheck => {
                      :Target => join('', 'HTTP:', ref_web_server_port, '/'),
                      :HealthyThreshold => '3',

@@ -27,19 +27,25 @@ module Enscalator
         parameter 'NATInstanceType',
                   :Description => 'NAT Device EC2 instance type',
                   :Type => 'String',
-                  :Default => 'm1.small',
-                  :AllowedValues => %w(t1.micro m1.small m1.medium m1.large m1.xlarge m2.xlarge m2.2xlarge m2.4xlarge
-                            c1.medium c1.xlarge cc1.4xlarge cc2.8xlarge cg1.4xlarge),
+                  :Default => 't2.small',
+                  :AllowedValues => %w(t2.micro t2.small t2.medium m4.large m4.xlarge m4.2xlarge m4.4xlarge
+                                    m4.10xlarge m3.medium m3.large m3.xlarge m3.2xlarge c4.large c4.xlarge
+                                    c4.2xlarge c4.4xlarge c4.8xlarge c3.large c3.xlarge c3.2xlarge c3.4xlarge
+                                    c3.8xlarge r3.large r3.xlarge r3.2xlarge r3.4xlarge r3.8xlarge g2.2xlarge
+                                    g2.8xlarge i2.xlarge i2.xlarge i2.4xlarge i2.8xlarge d2.xlarge d2.2xlarge
+                                    d2.4xlarge d2.8xlarge),
                   :ConstraintDescription => 'must be a valid EC2 instance type.'
 
         mapping 'AWSNATAMI',
-                :'us-east-1' => {:AMI => 'ami-c6699baf'},
-                :'us-west-2' => {:AMI => 'ami-52ff7262'},
-                :'us-west-1' => {:AMI => 'ami-3bcc9e7e'},
-                :'eu-west-1' => {:AMI => 'ami-0b5b6c7f'},
-                :'ap-southeast-1' => {:AMI => 'ami-02eb9350'},
-                :'ap-northeast-1' => {:AMI => 'ami-14d86d15'},
-                :'sa-east-1' => {:AMI => 'ami-0439e619'}
+                :'us-east-1' => {:AMI => 'ami-303b1458'},
+                :'us-west-1' => {:AMI => 'ami-7da94839'},
+                :'us-west-2' => {:AMI => 'ami-69ae8259'},
+                :'eu-west-1' => {:AMI => 'ami-6975eb1e'},
+                :'eu-central-1' => {:AMI => 'ami-46073a5b'},
+                :'ap-northeast-1' => {:AMI => 'ami-03cf3903'},
+                :'ap-southeast-1' => {:AMI => 'ami-b49dace6'},
+                :'ap-southeast-2' => {:AMI => 'ami-e7ee9edd'},
+                :'sa-east-1' => {:AMI => 'ami-fbfa41e6'}
 
         mapping 'AWSInstanceType2Arch',
                 :'t1.micro' => {:Arch => '64'},
