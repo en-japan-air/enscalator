@@ -44,8 +44,8 @@ module Enscalator
                  Properties: {
                    AvailabilityZones: get_availability_zones,
                    VPCZoneIdentifier: [
-                     ref_resource_subnet_a,
-                     ref_resource_subnet_c
+                     ref_application_subnet_a,
+                     ref_application_subnet_c
                    ],
                    LaunchConfigurationName: ref(@launch_config_resource_name),
                    MinSize: 0,
