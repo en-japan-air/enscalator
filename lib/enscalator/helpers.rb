@@ -85,7 +85,6 @@ module Enscalator
       Aws::EC2::Client.new(region: region)
     end
 
-
     # Find ami images registered
     #
     # @param client [Aws::EC2::Client] instance of AWS EC2 client
@@ -275,6 +274,5 @@ module Enscalator
       fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
       File.read(user_data_path)
     end
-
   end # module Asserts
 end # module Enscalator

@@ -52,5 +52,4 @@ describe 'Enscalator::Asserts' do
     expect { test_fixture.find_ami('') }.to raise_exception ArgumentError
     expect { test_fixture.find_ami(test_fixture.cfn_client('us-east-1')) }.to raise_exception ArgumentError
   end
-
 end

@@ -24,6 +24,20 @@ module Enscalator
       super(&block)
     end
 
+    # `region`, `stack_name`, `parameters` accessors
+    #  (as those instance variables will be modified in `super` initializer, `attr_reader` is not available)
+    def region
+      @options[:region]
+    end
+
+    def stack_name
+      @options[:stack_name]
+    end
+
+    def parameters
+      (@options[:parameters] || '').split(';').map(&->(s) { s.split '=' }).to_h
+    end
+
     # Pre-run hook
     #
     # @param block [Proc] hook body
@@ -434,13 +448,11 @@ module Enscalator
 
       command << (@options[:create_stack] ? ' create-stack' : ' update-stack')
 
-      if @options[:stack_name]
-        stack_name = @options[:stack_name]
+      if stack_name
         command.concat(%W{--stack-name '#{stack_name}'})
       end
 
-      if @options[:region]
-        region = @options[:region]
+      if region
         command.concat(%W{--region '#{region}'})
       end
 
@@ -449,12 +461,8 @@ module Enscalator
         command.concat(%W{--capabilities '#{capabilities}'})
       end
 
-      if @options[:parameters]
-        params = @options[:parameters].split(';').map do |x|
-          key, val = x.split('=')
-          {:ParameterKey => key, :ParameterValue => val}
-        end
-
+      unless parameters.empty?
+        params = parameters.map { |key, val| {:ParameterKey => key, :ParameterValue => val} }
         command.concat(%W{--parameters '#{params.to_json}'})
       end
 
