@@ -8,7 +8,7 @@ module Enscalator
       # Create new Amazon RDS instance
       #
       # @param db_name [String] database name
-      # @param snapshot_id [String] snapshot identifier
+      # @param use_snapshot [Boolean] use snapshot or not
       # @param allocated_storage [Integer] size of instance primary storage
       # @param storage_type [String] instance storage type
       # @param multizone [String] deploy as multizone or use only single availability zone
@@ -16,7 +16,7 @@ module Enscalator
       # @param instance_class [String] instance class (type)
       # @param properties [Hash] additional properties
       def rds_init(db_name,
-                   snapshot_id: nil,
+                   use_snapshot: false,
                    allocated_storage: 5,
                    storage_type: 'gp2',
                    multizone: 'false',
@@ -64,39 +64,38 @@ module Enscalator
         resource "RDS#{db_name}SubnetGroup",
                  :Type => 'AWS::RDS::DBSubnetGroup',
                  :Properties => {
-                     :DBSubnetGroupDescription => 'Subnet group within VPC',
-                     :SubnetIds => [
-                         ref_resource_subnet_a,
-                         ref_resource_subnet_c
-                     ],
-                     :Tags => [
-                         {
-                             :Key => 'Name',
-                             :Value => "RDS#{db_name}SubnetGroup"
-                         }
-                     ]
+                   :DBSubnetGroupDescription => 'Subnet group within VPC',
+                   :SubnetIds => [
+                     ref_resource_subnet_a,
+                     ref_resource_subnet_c
+                   ],
+                   :Tags => [
+                     {
+                       :Key => 'Name',
+                       :Value => "RDS#{db_name}SubnetGroup"
+                     }
+                   ]
                  }
 
         # DBName and DBSnapshotIdentifier are mutually exclusive, thus
         # when snapshot_id is given DBName won't be included to resource parameters
         props = properties.deep_dup
-        if snapshot_id && !snapshot_id.empty?
+        if use_snapshot
           parameter "RDS#{db_name}SnapshotId",
-            :Default => snapshot_id,
-            :Description => 'Identifier for the DB snapshot to restore from',
-            :Type => 'String',
-            :MinLength => '1',
-            :MaxLength => '64'
+                    :Description => 'Identifier for the DB snapshot to restore from',
+                    :Type => 'String',
+                    :MinLength => '1',
+                    :MaxLength => '64'
           props[:DBSnapshotIdentifier] = ref("RDS#{db_name}SnapshotId")
         else
           props[:DBName] = ref("RDS#{db_name}Name")
         end
 
         rds_instance_tags = [
-            {
-                :Key => 'Name',
-                :Value => "RDS#{db_name}Instance"
-            }
+          {
+            :Key => 'Name',
+            :Value => "RDS#{db_name}Instance"
+          }
         ]
 
         # Set instance tags
@@ -107,17 +106,17 @@ module Enscalator
         end
 
         rds_props = {
-            :Engine => 'MySQL',
-            :PubliclyAccessible => 'false',
-            :MultiAZ => ref("RDS#{db_name}Multizone"),
-            :MasterUsername => ref("RDS#{db_name}Username"),
-            :MasterUserPassword => ref("RDS#{db_name}Password"),
-            :DBInstanceClass => ref("RDS#{db_name}InstanceClass"),
-            :VPCSecurityGroups => [ref_resource_security_group],
-            :DBSubnetGroupName => ref("RDS#{db_name}SubnetGroup"),
-            :DBParameterGroupName => ref("RDS#{db_name}ParameterGroup"),
-            :AllocatedStorage => ref("RDS#{db_name}AllocatedStorage"),
-            :StorageType => ref("RDS#{db_name}StorageType")
+          :Engine => 'MySQL',
+          :PubliclyAccessible => 'false',
+          :MultiAZ => ref("RDS#{db_name}Multizone"),
+          :MasterUsername => ref("RDS#{db_name}Username"),
+          :MasterUserPassword => ref("RDS#{db_name}Password"),
+          :DBInstanceClass => ref("RDS#{db_name}InstanceClass"),
+          :VPCSecurityGroups => [ref_resource_security_group],
+          :DBSubnetGroupName => ref("RDS#{db_name}SubnetGroup"),
+          :DBParameterGroupName => ref("RDS#{db_name}ParameterGroup"),
+          :AllocatedStorage => ref("RDS#{db_name}AllocatedStorage"),
+          :StorageType => ref("RDS#{db_name}StorageType")
         }
 
         resource "RDS#{db_name}Instance",

@@ -7,15 +7,17 @@ module Enscalator
       #
       # @param [String] image_id image id that will be used to launch instance
       # @param [String] auto_scale_name auto scaling group name (default: stack name)
-      # @param [String] launch_config_props dictionary that is used to overwrite default launch configuration settings
-      #                 Reference: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
-      # @param [String] auto_scale_props dictionary that is used to overwrite default auto scaling group settings
-      #                 Reference: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+      # @param [Hash] launch_config_props dictionary that is used to overwrite default launch configuration settings
+      #               Reference: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-launchconfig.html
+      # @param [Hash] auto_scale_props dictionary that is used to overwrite default auto scaling group settings
+      #               Reference: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-as-group.html
+      # @param [Array] auto_scale_tags list of tags that is added to auto scaling group tags
       # @return [String] auto scaling group resource name
       def auto_scale_init(image_id,
                           auto_scale_name: nil,
                           launch_config_props: {},
-                          auto_scale_props: {})
+                          auto_scale_props: {},
+                          auto_scale_tags: [])
 
         @launch_config_resource_name = 'LaunchConfig'
         @auto_scale_resource_name = 'AutoScale'
@@ -42,8 +44,8 @@ module Enscalator
                  Properties: {
                    AvailabilityZones: get_availability_zones,
                    VPCZoneIdentifier: [
-                     ref_resource_subnet_a,
-                     ref_resource_subnet_c
+                     ref_application_subnet_a,
+                     ref_application_subnet_c
                    ],
                    LaunchConfigurationName: ref(@launch_config_resource_name),
                    MinSize: 0,
@@ -55,7 +57,7 @@ module Enscalator
                        Value: @auto_scale_name,
                        PropagateAtLaunch: true
                      }
-                   ]
+                   ].concat(auto_scale_tags)
                  }.merge(auto_scale_props)
 
         # return resource name

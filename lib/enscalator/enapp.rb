@@ -16,25 +16,23 @@ module Enscalator
       cc_landing_page_generator: 20,
       enslurp: 24,
       interaction: 28,
-      career_card_production_rds: 32,
+      cc_backend_storage: 32,
       job_posting_service: 36,
       elk: 40,
       waza_backend: 44,
       payment_service: 48,
+      cc_backend: 52,
       career_card_ops: 56,
       test_instance: 252
     }
 
-    attr_reader :region, :stack_name,
-                :app_name
+    attr_reader :app_name
 
     # Create new EnAppTemplateDSL instance
     #
     # @param options [Hash] command-line arguments
     def initialize(options={})
-      @region = options[:region]
-      @stack_name = options[:stack_name]
-      # application name taken from template name as default
+      # application name taken from template name by default
       @app_name = self.class.name.demodulize
 
       super
