@@ -9,6 +9,7 @@ module Enscalator
       include Enscalator::Plugins::Elb
       include Enscalator::Plugins::AutoScale
 
+      # template body
       def tpl
 
         @zone_name = 'enjapan.prod.'

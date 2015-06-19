@@ -7,14 +7,14 @@ module Enscalator
 
       # Create new Amazon RDS instance
       #
-      # @param db_name [String] database name
-      # @param use_snapshot [Boolean] use snapshot or not
-      # @param allocated_storage [Integer] size of instance primary storage
-      # @param storage_type [String] instance storage type
-      # @param multizone [String] deploy as multizone or use only single availability zone
-      # @param parameter_group [String] RDS instance parameter group
-      # @param instance_class [String] instance class (type)
-      # @param properties [Hash] additional properties
+      # @param [String] db_name database name
+      # @param [Boolean] use_snapshot use snapshot or not
+      # @param [Integer] allocated_storage size of instance primary storage
+      # @param [String] storage_type instance storage type
+      # @param [String] multizone deploy as multizone or use only single availability zone
+      # @param [String] parameter_group RDS instance parameter group
+      # @param [String] instance_class instance class (type)
+      # @param [Hash] properties additional properties
       def rds_init(db_name,
                    use_snapshot: false,
                    allocated_storage: 5,
