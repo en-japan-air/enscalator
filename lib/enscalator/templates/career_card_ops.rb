@@ -16,7 +16,7 @@ module Enscalator
                   .sort { |a, b| a.creation_date <=> b.creation_date }
                   .last || fail("Cannot find valid image in region: '#{region}'")
 
-        pre_run { pre_setup }
+        pre_run { load_vpc_params }
 
         @db_name = 'CareerCardOps'
 

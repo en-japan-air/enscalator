@@ -90,7 +90,7 @@ module Enscalator
     end
 
     # Query and pre-configure VPC parameters required for the stack
-    def pre_setup
+    def load_vpc_params
       cfn = cfn_resource(cfn_client(region))
       stack = cfn.stack(vpc_stack_name)
       vpc_id = get_resource(stack, 'VpcId')
