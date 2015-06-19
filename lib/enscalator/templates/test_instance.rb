@@ -39,8 +39,9 @@ module Enscalator
                     virtualization: :hvm,
                     allocate_public_ip: true
 
-        elb_init @options[:stack_name],
-                 @options[:region]
+        elb_init stack_name,
+                 region,
+                 zone_name: hosted_zone
 
         # Provide public ip for instance
         resource "Ubuntu#{@instance_name}PublicIpAddress",

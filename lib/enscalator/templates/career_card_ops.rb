@@ -10,9 +10,6 @@ module Enscalator
       include Enscalator::Plugins::AutoScale
 
       def tpl
-
-        @zone_name = 'enjapan.prod.'
-
         # get the latest uploaded image's id
         image = find_ami(ec2_client(region), filters: [{name: 'tag:Name', values: [app_name]}])
                   .images
@@ -29,8 +26,11 @@ module Enscalator
                                  default: 'm3.medium'
 
         rds_init(@db_name)
-        elb_resource_name = elb_init(@options[:stack_name], region, 
-                                     zone_name: @zone_name, ssl: false, internal: false)
+        elb_resource_name = elb_init(stack_name,
+                                     region,
+                                     zone_name: hosted_zone,
+                                     ssl: false,
+                                     internal: false)
 
         auto_scale_init image.image_id,
                         auto_scale_name: app_name,
@@ -56,12 +56,14 @@ module Enscalator
           stack = wait_stack(cfn, stack_name)
           host = get_resource(stack, "RDS#{@db_name}EndpointAddress")
 
-          upsert_dns_record(
-              zone_name: @zone_name,
-              record_name: "rds.#{stack_name}.enjapan.prod.",
-              type: 'CNAME', values: [host], ttl: 30, region: region)
+          upsert_dns_record(zone_name: hosted_zone,
+                            record_name: "rds.#{stack_name}.#{hosted_zone}",
+                            type: 'CNAME',
+                            values: [host],
+                            ttl: 30,
+                            region: region)
 
-          
+
         end
 
       end
