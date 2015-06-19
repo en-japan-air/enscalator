@@ -11,8 +11,9 @@ task :test => :spec
 
 # Generate documentation with yard
 YARD::Rake::YardocTask.new do |t|
-  t.files = ['lib/**/*.rb']
+  t.files = %w(lib/*.rb lib/enscalator/*.rb lib/enscalator/plugins/*.rb)
+  t.stats_options = %w{--list-undoc --compact}
 end
 
-desc "Generate gem documentation (same as running 'rake yard')"
+desc 'Generate gem documentation (same as running "rake yard")'
 task :doc => :yard

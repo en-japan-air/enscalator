@@ -5,7 +5,6 @@ module Enscalator
 
     # Ubuntu instance for testing deployment configuration
     class TestEC2Instance < Enscalator::EnAppTemplateDSL
-
       include Enscalator::Plugins::Ubuntu
       include Enscalator::Plugins::Elb
       include Enscalator::Helpers

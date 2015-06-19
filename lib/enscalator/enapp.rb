@@ -30,7 +30,7 @@ module Enscalator
 
     # Create new EnAppTemplateDSL instance
     #
-    # @param options [Hash] command-line arguments
+    # @param [Hash] options command-line arguments
     def initialize(options={})
       # application name taken from template name by default
       @app_name = self.class.name.demodulize
@@ -91,8 +91,8 @@ module Enscalator
 
     # Query and pre-configure VPC parameters required for the stack
     #
-    # @param stack_name [String] name of the cloudformation stack
-    # @param region [String] valid Amazon AWS region
+    # @param [String] stack_name name of the cloudformation stack
+    # @param [String] region valid Amazon AWS region
     def pre_setup(stack_name: 'enjapan-vpc', region: self.region)
       cfn = cfn_resource(cfn_client(region))
       stack = cfn.stack(stack_name)
@@ -111,12 +111,12 @@ module Enscalator
 
     # Setup VPC configuration which is required in order to create stack
     #
-    # @param vpc [String] the vpc_id
-    # @param start_ip_idx [Integer] is the starting ip address inside the vpc subnet for this stack, i.e.
+    # @param [String] vpc the vpc_id
+    # @param [Integer] start_ip_idx is the starting ip address inside the vpc subnet for this stack, i.e.
     #   "10.0.start_ip_idx.0/24"
     # (see {https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration})
-    # @param private_security_group [String] the id of the security group with access to the NAT instances
-    # @param private_route_tables [Hash] the route tables to the NAT instances
+    # @param [String] private_security_group the id of the security group with access to the NAT instances
+    # @param [Hash] private_route_tables the route tables to the NAT instances
     #  private_route_tables is a hash of the form Hash, where keys are 'a' and 'c'
     #  being the suffixes of the availability zones and values are ids for route tables, e.g
     #   "{'a' => route_table_id1, 'c' => route_table_id2 }"

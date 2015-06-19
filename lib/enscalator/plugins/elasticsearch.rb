@@ -23,8 +23,8 @@ module Enscalator
 
         # Get ami region/virtualization type mapping
         #
-        # @param storage [Symbol] image root storage
-        # @param arch [Symbol] image architecture type
+        # @param [Symbol] storage image root storage
+        # @param [Symbol] arch image architecture type
         # @return [Hash] mapping
         def get_mapping(storage: :ebs, arch: :amd64)
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
@@ -34,8 +34,8 @@ module Enscalator
 
         # Get ami release version string
         #
-        # @param storage [Symbol] image root storage
-        # @param arch [Symbol] image architecture type
+        # @param [Symbol] storage image root storage
+        # @param [Symbol] arch image architecture type
         # @return [Hash] mapping
         def get_release_version(storage: :ebs, arch: :amd64)
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
@@ -53,8 +53,8 @@ module Enscalator
 
         # Always fetches the most recent version
         #
-        # @param storage [Symbol] image root storage
-        # @param arch [Symbol] image architecture type
+        # @param [Symbol] storage image root storage
+        # @param [Symbol] arch image architecture type
         # @return [Hash] mapping
         def fetch_mapping(storage, arch)
           versions = fetch_versions
@@ -102,7 +102,7 @@ module Enscalator
 
         # Fix elasticsearch version string to have predictable format
         #
-        # @param str [String] raw version string
+        # @param [String] str raw version string
         # @return [String] reformatted version string
         def fix_entry(str)
           pattern = '[-](?:[\w\d]+){1,3}[-]ami'

@@ -7,7 +7,7 @@ module Enscalator
 
     # Route 53 client
     #
-    # @param region [String] AWS region identifier
+    # @param [String] region AWS region identifier
     # @return [Aws::Route53::Client]
     def route53_client(region: 'us-east-1')
       Aws::Route53::Client.new(region: region)
@@ -15,7 +15,7 @@ module Enscalator
 
     # Get existing DNS records
     #
-    # @param zone_name [String] zone name
+    # @param [String] zone_name name of the hosted zone
     def get_dns_records(zone_name: nil)
       client = route53_client
       zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
@@ -31,11 +31,13 @@ module Enscalator
 
     # Create DNS record in given hosted zone
     #
-    # @param zone_name [String] name of the hosted zone
-    # @param record_name [String] name of the dns record
-    # @param type [String] record type (NS, MX, CNAME and etc.)
-    # @param values [Array] list of record values
-    # @param ttl [Integer] time to live
+    # @param [String] zone_name name of the hosted zone
+    # @param [String] record_name name of the dns record
+    # @param [String] type record type (NS, MX, CNAME and etc.)
+    # @param [Array] values list of record values
+    # @param [Integer] ttl time to live
+    # @param [String] region aws valid region identifier
+    # @param [String] suffix additional identifier following region
     def upsert_dns_record(zone_name: nil,
                           record_name: nil,
                           type: 'A',

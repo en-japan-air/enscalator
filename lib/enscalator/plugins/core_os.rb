@@ -19,8 +19,8 @@ module Enscalator
 
         # Get CoreOS mapping for specific version from specific channel (stable, beta or alpha)
         #
-        # @param channel [Symbol] channel identifier
-        # @param tag [String] specific version release tag
+        # @param [Symbol] channel channel identifier
+        # @param [String] tag specific version release tag
         # @return [Hash] CoreOS mapping for specific version and channel
         #  (if version tag is not given, returns the most latest version number)
         def get_channel_version(channel: :stable, tag: nil)
@@ -31,7 +31,7 @@ module Enscalator
 
         # Get CoreOS mapping for specific version regardless of its release channel
         #
-        # @param tag [String] version tag
+        # @param [String] tag version tag
         # @return [Hash] CoreOS mapping for specific version
         #  (if version tag is not given, returns the most latest version number)
         def get_specific_version(tag: nil)
@@ -47,8 +47,8 @@ module Enscalator
 
         # Fetch CoreOS region/virtualization/ami mapping
         #
-        # @param base_url [String] url excluding version number and mapping file
-        # @param tag [String] specific version release tag
+        # @param [String] base_url url excluding version number and mapping file
+        # @param [String] tag specific version release tag
         # @return [Hash] CoreOS mapping
         def fetch_mapping(base_url, tag)
           raise ArgumentError, 'url cannot be empty or nil' if base_url.blank?
@@ -66,7 +66,7 @@ module Enscalator
 
         # Make request to CoreOS release pages, parse response and make a list of versions
         #
-        # @param url [String] url to page with CoreOS versions
+        # @param [String] url of web page with CoreOS versions
         # @return [Array] list of Semantic::Version
         def fetch_versions(url)
           html = Nokogiri::HTML(open(url))
@@ -76,7 +76,7 @@ module Enscalator
 
         # Parse and reformat CoreOS default mapping
         #
-        # @param coreos_mapping [Array] list of region to virtualization kind mappings
+        # @param [Array] coreos_mapping list of region to virtualization kind mappings
         # @return [Hash] mapping, that can be referred to with find_in_map
         def parse_raw_mapping(coreos_mapping)
           if coreos_mapping
