@@ -22,12 +22,6 @@ module Enscalator
 
         @elb_resource_name = 'LoadBalancer'
 
-        def vpc_id
-          cfn = cfn_resource(cfn_client(region))
-          stack = cfn.stack('enjapan-vpc')
-          get_resource(stack, 'VpcId')
-        end
-
         parameter 'WebServerPort',
                   :Description => 'TCP/IP Port for the web service',
                   :Default => web_server_port,
@@ -39,14 +33,14 @@ module Enscalator
 
         security_group_vpc 'ELBSecurityGroup',
                            'Security group of the application servers',
-                           vpc_id,
+                           ref('VpcId'),
                            securityGroupIngress: [
                              {:IpProtocol => 'tcp',
                               :FromPort => '0',
                               :ToPort => '65535',
                               :CidrIp => '10.0.0.0/8'
                              }
-                           ] + (!internal ? [
+                           ] + (internal ? [] : [
                              {:IpProtocol => 'tcp',
                               :FromPort => '80',
                               :ToPort => '80',
@@ -57,7 +51,7 @@ module Enscalator
                               :ToPort => '443',
                               :CidrIp => '0.0.0.0/0'
                              }
-                           ] : []),
+                           ]),
                            tags: {
                              'Name' => join('-', aws_stack_name, 'app', 'sg'),
                              'Application' => aws_stack_name
@@ -120,14 +114,6 @@ module Enscalator
                      {:Key => 'Network', :Value => 'Private'},
                    ],
                  }.merge(internal ? {:Scheme => 'internal'} : {})
-
-        resource 'WebServerPortSecurityGroupId', :Type => 'AWS::EC2::SecurityGroupIngress',
-                 :Properties => {
-                   :IpProtocol => 'tcp',
-                   :FromPort => ref('WebServerPort'),
-                   :ToPort => ref('WebServerPort'),
-                   :GroupId => get_att('ApplicationSecurityGroup', 'GroupId')
-                 }
 
         output 'LoadBalancerDnsName',
                :Description => 'LoadBalancer DNS Name',
