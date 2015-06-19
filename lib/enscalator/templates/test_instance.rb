@@ -5,12 +5,10 @@ module Enscalator
 
     # Ubuntu instance for testing deployment configuration
     class TestEC2Instance < Enscalator::EnAppTemplateDSL
-
       include Enscalator::Plugins::Ubuntu
       include Enscalator::Plugins::Elb
       include Enscalator::Helpers
 
-      # template body
       def tpl
         warn '[Warning] Deploying testing instance, do NOT rely on it to run some code'
 

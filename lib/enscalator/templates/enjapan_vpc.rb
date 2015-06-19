@@ -5,7 +5,6 @@ module Enscalator
     # enJapan Amazon AWS virtual private cloud template
     class EnJapanVPC < Enscalator::RichTemplateDSL
 
-      # template body
       def tpl
 
         value :AWSTemplateFormatVersion => '2010-09-09'
