@@ -43,6 +43,13 @@ module Enscalator
       @options[:stack_name]
     end
 
+    # Helper method to provide value accessor for `vpc_stack_name`
+    #
+    # @return [String] vpc_stack_name
+    def vpc_stack_name
+      @options[:vpc_stack_name] || fail('Requires ')
+    end
+
     # Helper method to provide value accessor for `parameters`
     #
     # @return [Hash] parameters as key-value pairs

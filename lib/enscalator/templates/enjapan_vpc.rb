@@ -48,86 +48,28 @@ module Enscalator
                 :'ap-southeast-2' => {:AMI => 'ami-e7ee9edd'},
                 :'sa-east-1' => {:AMI => 'ami-fbfa41e6'}
 
-        mapping 'AWSInstanceType2Arch',
-                :'t1.micro' => {:Arch => '64'},
-                :'m1.small' => {:Arch => '64'},
-                :'m1.medium' => {:Arch => '64'},
-                :'m1.large' => {:Arch => '64'},
-                :'m1.xlarge' => {:Arch => '64'},
-                :'m2.xlarge' => {:Arch => '64'},
-                :'m2.2xlarge' => {:Arch => '64'},
-                :'m2.4xlarge' => {:Arch => '64'},
-                :'c1.medium' => {:Arch => '64'},
-                :'c1.xlarge' => {:Arch => '64'},
-                :'cc1.4xlarge' => {:Arch => '64Cluster'},
-                :'cc2.8xlarge' => {:Arch => '64Cluster'},
-                :'cg1.4xlarge' => {:Arch => '64GPU'}
-
-        mapping 'AWSRegionArch2AMI',
-                :'us-east-1' => {
-                  :'32' => 'ami-a0cd60c9',
-                  :'64' => 'ami-aecd60c7',
-                  :'64Cluster' => 'ami-a8cd60c1',
-                  :'64GPU' => 'ami-eccf6285'
-                },
-                :'us-west-2' => {
-                  :'32' => 'ami-46da5576',
-                  :'64' => 'ami-48da5578',
-                  :'64Cluster' => 'NOT_YET_SUPPORTED',
-                  :'64GPU' => 'NOT_YET_SUPPORTED',
-                },
-                :'us-west-1' => {
-                  :'32' => 'ami-7d4c6938',
-                  :'64' => 'ami-734c6936',
-                  :'64Cluster' => 'NOT_YET_SUPPORTED',
-                  :'64GPU' => 'NOT_YET_SUPPORTED',
-                },
-                :'eu-west-1' => {
-                  :'32' => 'ami-61555115',
-                  :'64' => 'ami-6d555119',
-                  :'64Cluster' => 'ami-67555113',
-                  :'64GPU' => 'NOT_YET_SUPPORTED'
-                },
-                :'ap-southeast-1' => {
-                  :'32' => 'ami-220b4a70',
-                  :'64' => 'ami-3c0b4a6e',
-                  :'64Cluster' => 'NOT_YET_SUPPORTED',
-                  :'64GPU' => 'NOT_YET_SUPPORTED',
-                },
-                :'ap-northeast-1' => {
-                  :'32' => 'ami-2a19aa2b',
-                  :'64' => 'ami-2819aa29',
-                  :'64Cluster' => 'NOT_YET_SUPPORTED',
-                  :'64GPU' => 'NOT_YET_SUPPORTED',
-                },
-                :'sa-east-1' => {
-                  :'32' => 'ami-f836e8e5',
-                  :'64' => 'ami-fe36e8e3',
-                  :'64Cluster' => 'NOT_YET_SUPPORTED',
-                  :'64GPU' => 'NOT_YET_SUPPORTED',
-                }
-
         mapping 'AWSRegionNetConfig',
                 Enscalator::EnJapanConfiguration::mapping_vpc_net
 
         mapping 'AWSRegion2AZ',
                 Enscalator::EnJapanConfiguration::mapping_availability_zones
 
-        resource 'VPC', :Type => 'AWS::EC2::VPC', :Properties => {
-                        :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'VPC'),
-                        :EnableDnsSupport => 'true',
-                        :EnableDnsHostnames => 'true',
-                        :Tags => [
-                          {
-                            :Key => 'Application',
-                            :Value => aws_stack_name,
-                          },
-                          {
-                            :Key => 'Network',
-                            :Value => 'Public'
-                          },
-                        ],
-                      }
+        resource 'VPC', :Type => 'AWS::EC2::VPC',
+                 :Properties => {
+                   :CidrBlock => find_in_map('AWSRegionNetConfig', ref('AWS::Region'), 'VPC'),
+                   :EnableDnsSupport => 'true',
+                   :EnableDnsHostnames => 'true',
+                   :Tags => [
+                     {
+                       :Key => 'Application',
+                       :Value => aws_stack_name,
+                     },
+                     {
+                       :Key => 'Network',
+                       :Value => 'Public'
+                     },
+                   ],
+                 }
 
         resource 'PublicSubnet1',
                  :DependsOn => ['VPC'],

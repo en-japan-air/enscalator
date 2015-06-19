@@ -77,7 +77,7 @@ module Enscalator
         # Create list of public subnets
         def public_subnets
           cfn = cfn_resource(cfn_client(region))
-          stack = wait_stack(cfn, 'enjapan-vpc')
+          stack = wait_stack(cfn, vpc_stack_name )
           [get_resource(stack, 'PublicSubnet1'), get_resource(stack, 'PublicSubnet2')]
         end
 

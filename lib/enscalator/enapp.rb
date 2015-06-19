@@ -90,12 +90,9 @@ module Enscalator
     end
 
     # Query and pre-configure VPC parameters required for the stack
-    #
-    # @param [String] stack_name name of the cloudformation stack
-    # @param [String] region valid Amazon AWS region
-    def pre_setup(stack_name: 'enjapan-vpc', region: self.region)
+    def pre_setup
       cfn = cfn_resource(cfn_client(region))
-      stack = cfn.stack(stack_name)
+      stack = cfn.stack(vpc_stack_name)
       vpc_id = get_resource(stack, 'VpcId')
       vpc_private_security_group = get_resource(stack, 'PrivateSecurityGroup')
       vpc_private_route_tables = {'a' => get_resource(stack, 'PrivateRouteTable1'),
@@ -106,8 +103,6 @@ module Enscalator
                   vpc_private_security_group,
                   vpc_private_route_tables
     end
-
-    alias magic_setup pre_setup
 
     # Setup VPC configuration which is required in order to create stack
     #

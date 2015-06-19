@@ -19,6 +19,7 @@ p = Trollop::Parser.new do
   opt :post_run, %q{Use post-run hooks}, default: true, short: 'o'
   opt :expand, %q{Print generated JSON template}, default: false, short: 'x'
   opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
+  opt :vpc_stack_name, %q{VPC stack name}, type: String, short: 'n'
 
   conflicts :list_templates, :create_stack, :update_stack, :expand
 end

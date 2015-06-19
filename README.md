@@ -33,12 +33,14 @@ Usage: enscalator [arguments]
   -r, --region=<s>                 AWS Region (default: us-east-1)
   -p, --parameters=<s>             Parameters 'Key1=Value1;Key2=Value2'
   -s, --stack-name=<s>             Stack name
+  -z, --hosted-zone=<s>            Hosted zone (e.x. 'enjapan.prod.')
   -c, --create-stack               Create the stack
   -u, --update-stack               Update already deployed stack
   -e, --pre-run, --no-pre-run      Use pre-run hooks (default: true)
-  -o, --post-run, --no-post-run    Use post-run hook (default: true)
+  -o, --post-run, --no-post-run    Use post-run hooks (default: true)
   -x, --expand                     Print generated JSON template
   -a, --capabilities=<s>           AWS capabilities (default: CAPABILITY_IAM)
+  -n, --vpc-stack-name=<s>         VPC stack name
   -h, --help                       Show this message
 ```
 
@@ -51,19 +53,19 @@ $> enscalator -t Interaction -r us-west-1 -s Interaction -c -p 'CouchbaseInterac
 Templates are stored in lib/enscalator/templates/.  
 When your template is done you need to `require` it in lib/enscalator.rb.  
 You'll find the list of helpers you can use in lib/richtemplate.rb and lib/enapp.rb.  
-For each template you write you'll automatically get a ResourceSecurityGroup, an ApplicationSecurityGroup, a ResourceSubnetA/ResourceSubnetB, ApplicationSubnetA/ApplicationSubnetB, and a loadBalancer. Everything attached to a VPC called enjapan-vpc.  
-That's why you always need to precise the start_ip_idx as a parameter of magic_setup/basic_setup, it's the starting ip address in the subnet.
+For each template you write you'll automatically get a ResourceSecurityGroup, an ApplicationSecurityGroup, a ResourceSubnetA/ResourceSubnetB, ApplicationSubnetA/ApplicationSubnetB, and a loadBalancer. Everything attached to a VPC, that was created using enjapan_vpc template.
+That's why you always need to precise the start_ip_idx as a parameter of basic_setup, it's the starting ip address in the subnet.
 Check [lib/enscalator/templates/jobposting.rb](lib/enscalator/templates/jobposting.rb) for an example.
 
 
 ### How to write a plugin and include it?
-Plugins are modules and stored in lib/enscalator/plugins/.  
+Plugins are modules and stored in `lib/enscalator/plugins/`.  
 Right now you have a [couchbase plugin](lib/enscalator/plugins/couchbase.rb) available.  
-When you want to use your plugin you just have to `include PluginName` inside your template. See lib/enscalator/template/jobposting.rb for an example.  
-Don't forget to `require` your new plugin in lib/enscalator.rb.
+When you want to use your plugin you just have to `include PluginName` inside your template. See `lib/enscalator/template/jobposting.rb` for an example.  
+Don't forget to `require_relative` your new plugin in `lib/enscalator/plugins.rb`.
 
 ```bash
-$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1  --stack-name jobposting-elasticsearch --parameters 'KeyName=test;WebServerPort=9000'
+$> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-west-1 --stack-name jobposting-elasticsearch --parameters 'KeyName=test;WebServerPort=9000'
 ```
 
 #### What's pre_run and post_run?
@@ -71,8 +73,11 @@ $> ruby jobposting_service_elasticsearch_enscalator.rb create-stack --region us-
 **post_run** is a method called **AFTER** the stack is created. It's a good place to create some DNS records in route53 for instance.
 
 ## Notes
-The ubuntu plugin in [lib/enscalator/plugins/ubuntu.rb](lib/enscalator/plugins/ubuntu.rb) is magic. It'll automatically get the AMIs ID from the ubuntu website.
-CoreOS plugin in [lib/enscalator/plugins/core_os.rb] is pure magic. It would not only fetch AMI IDs, but also can do that from multiple release channels.
+
+There are number of plugins with pure magic:
+
+* Ubuntu plugin in [lib/enscalator/plugins/ubuntu.rb](lib/enscalator/plugins/ubuntu.rb). It'll automatically get the AMIs ID from the ubuntu website.
+* CoreOS plugin in [lib/enscalator/plugins/core_os.rb](lib/enscalator/plugins/core_os.rb). It would not only fetch AMI IDs, but also can do that from multiple release channels.
 
 ## Development
 
