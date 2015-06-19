@@ -5,11 +5,11 @@ module Enscalator
 
       # Create new ELB instance
       #
-      # @param stack_name [String] must be stack name from @options[:stack_name]
-      # @param region [String] must be region from @options[:region]
-      # @param elb_name [String, Hash] ELB instance name - can be either String or Fn::Join
-      # @param web_server_port [Integer] application port to which ELB redirects traffic
-      # @param zone_name [String] zone name attached to the vpc
+      # @param [String] stack_name must be stack name from @options[:stack_name]
+      # @param [String] region must be region from @options[:region]
+      # @param [String, Hash] elb_name ELB instance name - can be either String or Fn::Join
+      # @param [Integer] web_server_port application port to which ELB redirects traffic
+      # @param [String] zone_name zone name attached to the vpc
       # @return [String] ELB resource name
       def elb_init(stack_name,
                    region,
@@ -69,10 +69,12 @@ module Enscalator
           internal ? private_subnets : public_subnets
         }
 
+        # Create list of private subnets
         def private_subnets
           [ref_application_subnet_a, ref_application_subnet_c]
         end
 
+        # Create list of public subnets
         def public_subnets
           cfn = cfn_resource(cfn_client(region))
           stack = wait_stack(cfn, 'enjapan-vpc')

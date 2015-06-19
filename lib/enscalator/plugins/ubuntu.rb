@@ -31,9 +31,9 @@ module Enscalator
 
         # Get mapping for Ubuntu images
         #
-        # @param release [Symbol, String] release codename or version number
-        # @param storage [Symbol] storage kind
-        # @param arch [Symbol] architecture
+        # @param [Symbol, String] release a codename or version number
+        # @param [Symbol] storage storage kind
+        # @param [Symbol] arch architecture
         # @raise [ArgumentError] if release is nil, empty or not one of supported values
         # @raise [ArgumentError] if storage is nil, empty or not one of supported values
         # @raise [ArgumentError] if arch is nil, empty or not one of supported values
@@ -60,10 +60,10 @@ module Enscalator
 
       # Create new Ubuntu instance
       #
-      # @param instance_name [String] instance name
-      # @param storage [String] storage kind (ebs or ephemeral)
-      # @param arch [String] architecture (amd64 or i386)
-      # @param instance_class [String] instance class (type)
+      # @param [String] instance_name instance name
+      # @param [String] storage storage kind (ebs or ephemeral)
+      # @param [String] arch architecture (amd64 or i386)
+      # @param [String] instance_class instance class (type)
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,

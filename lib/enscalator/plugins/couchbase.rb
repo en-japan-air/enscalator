@@ -11,10 +11,10 @@ module Enscalator
 
       # Couchbase instance
       #
-      # @param db_name [String] database name
-      # @param bucket [String] bucket
-      # @param allocated_storage [Integer] size of instance primary storage
-      # @param instance_class [String] instance class (type)
+      # @param [String] db_name database name
+      # @param [String] bucket bucket
+      # @param [Integer] allocated_storage size of instance primary storage
+      # @param [String] instance_class instance class (type)
       def couchbase_init(db_name,
                          bucket: nil,
                          allocated_storage: 5,
@@ -59,7 +59,7 @@ module Enscalator
 
       # Couchbase user data
       #
-      # @param bucket [String] couchbase bucket
+      # @param [String] bucket couchbase bucket
       # @return [String] user data script
       def set_couchbase_user_data(bucket, user, password)
         data =<<-EOG
