@@ -10,22 +10,6 @@ module Enscalator
 
     include Enscalator::Helpers
 
-    # Mapping for subnet index start values
-    START_IP_IDX_MAPPING = {
-      auth_service: 16,
-      cc_landing_page_generator: 20,
-      enslurp: 24,
-      interaction: 28,
-      cc_backend_storage: 32,
-      job_posting_service: 36,
-      elk: 40,
-      waza_backend: 44,
-      payment_service: 48,
-      cc_backend: 52,
-      career_card_ops: 56,
-      test_instance: 252
-    }
-
     attr_reader :app_name
 
     # Create new EnAppTemplateDSL instance
@@ -38,20 +22,18 @@ module Enscalator
       super
     end
 
-    # Get start ip index according to class name
-    def get_start_ip_idx
-      key = self.class.name.demodulize.underscore
-      START_IP_IDX_MAPPING[key.to_sym] || fail('Need to add start ip index to START_IP_IDX_MAPPING for current template')
+    # Get vpc stack
+    #
+    # @return [Aws::CloudFormation::Stack] stack instance of vpc stack
+    def vpc_stack
+      @vpc_stack ||= cfn_resource(cfn_client(region)).stack(vpc_stack_name)
     end
 
-    # Get availability zones
-    def get_availability_zones
-      ec2_client(region)
-        .describe_availability_zones
-        .availability_zones
-        .select { |az| az.state == 'available' }
-        .collect(&:zone_name)
-        .select { |n| n =~ /[ac]$/ } # TODO: support all availability zones
+    # Get vpc
+    #
+    # @return [Aws::EC2::Vpc] vpc instance
+    def vpc
+      @vpc ||= Aws::EC2::Vpc.new(id: get_resource(stack, 'VpcId'), region: region)
     end
 
     # Reference to subnet in availability zone A
@@ -89,115 +71,75 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
-    # Query and pre-configure VPC parameters required for the stack
-    #
-    # @param [String] stack_name name of the cloudformation stack
-    # @param [String] region valid Amazon AWS region
-    def pre_setup(stack_name: 'enjapan-vpc', region: self.region)
-      cfn = cfn_resource(cfn_client(region))
-      stack = cfn.stack(stack_name)
-      vpc_id = get_resource(stack, 'VpcId')
-      vpc_private_security_group = get_resource(stack, 'PrivateSecurityGroup')
-      vpc_private_route_tables = {'a' => get_resource(stack, 'PrivateRouteTable1'),
-                                  'c' => get_resource(stack, 'PrivateRouteTable2')}
+    # Allocate net config dynamically
+    def allocate_net_config
+      all_subnets = IPAddress(EnJapanConfiguration.mapping_vpc_net[region.to_sym]).subnet(24).map(&:to_string)
+      current_max_idx = vpc.subnets.collect(&:cidr_block).map { |subnet| all_subnets.index(subnet) + 1 }.sort.last
+      subnets = all_subnets.drop(current_max_idx).take(2 * availability_zones.size)
 
-      basic_setup vpc_id,
-                  get_start_ip_idx,
-                  vpc_private_security_group,
-                  vpc_private_route_tables
+      availability_zones
+        .map { |suffix, _| %W( application#{suffix.upcase} resource#{suffix.upcase} ) }
+        .flatten
+        .zip(subnets)
+        .to_h
     end
 
-    alias magic_setup pre_setup
-
     # Setup VPC configuration which is required in order to create stack
-    #
-    # @param [String] vpc the vpc_id
-    # @param [Integer] start_ip_idx is the starting ip address inside the vpc subnet for this stack, i.e.
-    #   "10.0.start_ip_idx.0/24"
-    # (see {https://github.com/en-japan/commons/wiki/AWS-Deployment-Guideline#network-configuration})
-    # @param [String] private_security_group the id of the security group with access to the NAT instances
-    # @param [Hash] private_route_tables the route tables to the NAT instances
-    #  private_route_tables is a hash of the form Hash, where keys are 'a' and 'c'
-    #  being the suffixes of the availability zones and values are ids for route tables, e.g
-    #   "{'a' => route_table_id1, 'c' => route_table_id2 }"
-    def basic_setup(vpc,
-                    start_ip_idx,
-                    private_security_group,
-                    private_route_tables)
-
+    def basic_setup
       parameter 'VpcId',
                 :Description => 'The Id of the VPC',
-                :Default => vpc,
+                :Default => vpc.id,
                 :Type => 'String',
                 :AllowedPattern => 'vpc-[a-zA-Z0-9]*',
                 :ConstraintDescription => 'must begin with vpc- followed by numbers and alphanumeric characters.'
 
       parameter 'PrivateSecurityGroup',
                 :Description => 'Security group identifier of private instances',
-                :Default => private_security_group,
+                :Default => get_resource(vpc_stack, 'PrivateSecurityGroup'),
                 :Type => 'String',
                 :AllowedPattern => 'sg-[a-zA-Z0-9]*',
                 :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
 
-      private_route_tables.map do |z, table|
-        parameter "PrivateRouteTable#{z.upcase}",
-                  :Description => "Route table identifier for private instances of zone #{z}",
-                  :Default => table,
+      net_config = allocate_net_config
+
+      availability_zones.each do |suffix, _|
+        parameter "PrivateRouteTable#{suffix.upcase}",
+                  :Description => "Route table identifier for private instances of zone #{suffix}",
+                  :Default => get_resource(vpc_stack, "PrivateRouteTable#{suffix.upcase}"),
                   :Type => 'String',
                   :AllowedPattern => 'rtb-[a-zA-Z0-9]*',
                   :ConstraintDescription => 'must begin with rtb- followed by numbers and alphanumeric characters.'
-      end
 
-      mapping 'AWSRegionNetConfig',
-              (EnJapanConfiguration::mapping_vpc_net.map do |k, v|
-                subs = IPAddress(v[:VPC]).subnet(24).map(&:to_string).drop(start_ip_idx).take(4)
-                {
-                  k => {
-                    :applicationA => subs[0], :applicationC => subs[1],
-                    :resourceA => subs[2], :resourceC => subs[3]
-                  }
-                }
-              end.reduce(:merge).with_indifferent_access)
+        subnet "ApplicationSubnet#{suffix.upcase}",
+               vpc,
+               net_config["application#{suffix.upcase}"],
+               availabilityZone: "#{region}#{suffix}",
+               tags: {
+                 'Network' => 'Private',
+                 'Application' => aws_stack_name,
+                 'immutable_metadata' => join('', '{ "purpose": "', aws_stack_name, '-app" }')
+               }
 
-      private_route_tables.keys.map do |z|
-        subnet(
-          "ApplicationSubnet#{z.upcase}",
-          vpc,
-          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "application#{z.upcase}"),
-          availabilityZone: join('', ref('AWS::Region'), z),
-          tags: {
-            'Network' => 'Private',
-            'Application' => aws_stack_name,
-            'immutable_metadata' => join('', '{ "purpose": "', aws_stack_name, '-app" }')
-          }
-        )
-      end
+        subnet "ResourceSubnet#{suffix.upcase}",
+               vpc,
+               net_config["resource#{suffix.upcase}"],
+               availabilityZone: "#{region}#{suffix}",
+               tags: {
+                 'Network' => 'Private',
+                 'Application' => aws_stack_name
+               }
 
-      private_route_tables.keys.map do |z|
-        subnet(
-          "ResourceSubnet#{z.upcase}",
-          vpc,
-          find_in_map('AWSRegionNetConfig', ref('AWS::Region'), "resource#{z.upcase}"),
-          availabilityZone: join('', ref('AWS::Region'), z),
-          tags: {
-            'Network' => 'Private',
-            'Application' => aws_stack_name
-          }
-        )
-      end
-
-      private_route_tables.keys.map do |z|
-        resource "RouteTableAssociation#{z.upcase}",
+        resource "RouteTableAssociation#{suffix.upcase}",
                  :Type => 'AWS::EC2::SubnetRouteTableAssociation',
                  :Properties => {
-                   :RouteTableId => ref("PrivateRouteTable#{z.upcase}"),
-                   :SubnetId => ref("ApplicationSubnet#{z.upcase}"),
+                   :RouteTableId => ref("PrivateRouteTable#{suffix.upcase}"),
+                   :SubnetId => ref("ApplicationSubnet#{suffix.upcase}"),
                  }
       end
 
       security_group_vpc 'ResourceSecurityGroup',
                          'Enable internal access with ssh',
-                         ref_vpc_id,
+                         vpc.id,
                          securityGroupEgress: [],
                          securityGroupIngress: [
                            {
@@ -218,7 +160,7 @@ module Enscalator
 
       security_group_vpc 'ApplicationSecurityGroup',
                          'Security group of the application servers',
-                         vpc,
+                         vpc.id,
                          securityGroupIngress: [
                            {:IpProtocol => 'tcp',
                             :FromPort => '0',
