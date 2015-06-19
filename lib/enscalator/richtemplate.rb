@@ -46,8 +46,9 @@ module Enscalator
     # Helper method to provide value accessor for `vpc_stack_name`
     #
     # @return [String] vpc_stack_name
+    # @raise [RuntimeError] if vpc-stack-name was not given
     def vpc_stack_name
-      @options[:vpc_stack_name] || fail('Requires ')
+      @options[:vpc_stack_name] || fail('Requires vpc-stack-name')
     end
 
     # Helper method to provide value accessor for `parameters`
@@ -61,8 +62,8 @@ module Enscalator
 
     # Hosted zone accessor
     #
-    # @raise [RuntimeError] if hosted zone is accessed but it's not configured
     # @return [String] hosted zone, and ensure ending with a '.'
+    # @raise [RuntimeError] if hosted zone is accessed but it's not configured
     def hosted_zone
       @options[:hosted_zone] || fail('Hosted zone has to be configured')
       @options[:hosted_zone].ends_with?('.') ? @options[:hosted_zone] : @options[:hosted_zone] + '.'
