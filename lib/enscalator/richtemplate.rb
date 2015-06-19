@@ -20,6 +20,7 @@ module Enscalator
     # @param options [Hash] command-line arguments
     def initialize(options={})
       @options = options
+
       block = Proc.new { tpl }
       super(&block)
     end
@@ -36,6 +37,15 @@ module Enscalator
 
     def parameters
       (@options[:parameters] || '').split(';').map(&->(s) { s.split '=' }).to_h
+    end
+
+    # Hosted zone accessor
+    #
+    # @raise [RuntimeError] if hosted zone is accessed but it's not configured
+    # @return [String] hosted zone, and ensure ending with a '.'
+    def hosted_zone
+      @options[:hosted_zone] || fail('Hosted zone has to be configured')
+      @options[:hosted_zone].ends_with?('.') ? @options[:hosted_zone] : @options[:hosted_zone] + '.'
     end
 
     # Pre-run hook

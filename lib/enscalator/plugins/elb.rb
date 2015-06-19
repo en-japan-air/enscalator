@@ -16,7 +16,7 @@ module Enscalator
                    elb_name: join('-', aws_stack_name, 'elb'),
                    web_server_port: 9000,
                    health_check_path: '/',
-                   zone_name: 'enjapan.local.',
+                   zone_name: nil,
                    ssl: false,
                    internal: true)
 

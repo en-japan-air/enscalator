@@ -31,17 +31,18 @@ module Enscalator
 
     # Create DNS record in given hosted zone
     #
+    # @param region [String] aws region
     # @param zone_name [String] name of the hosted zone
     # @param record_name [String] name of the dns record
     # @param type [String] record type (NS, MX, CNAME and etc.)
     # @param values [Array] list of record values
     # @param ttl [Integer] time to live
-    def upsert_dns_record(zone_name: nil,
+    def upsert_dns_record(region: nil,
+                          zone_name: nil,
                           record_name: nil,
                           type: 'A',
                           values: [],
                           ttl: 300,
-                          region: 'us-east-1',
                           suffix: '')
       client = route53_client(region: region)
       zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
