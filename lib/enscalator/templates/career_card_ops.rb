@@ -49,8 +49,6 @@ module Enscalator
                         }
 
         post_run do
-
-          stack_name = @options[:stack_name]
           cfn = cfn_resource(cfn_client(region))
 
           stack = wait_stack(cfn, stack_name)
