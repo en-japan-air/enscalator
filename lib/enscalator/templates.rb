@@ -12,7 +12,7 @@ require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
-require_relative 'templates/test_instance'
+require_relative '***REMOVED***'
 require_relative 'templates/career_card_ops'
 
 module Enscalator
