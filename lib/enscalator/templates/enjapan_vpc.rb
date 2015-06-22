@@ -4,8 +4,13 @@ module Enscalator
 
     # enJapan Amazon AWS virtual private cloud template
     class EnJapanVPC < Enscalator::RichTemplateDSL
+      include Enscalator::Helpers
 
       def tpl
+
+        nat_key_name = 'vpc-nat'
+
+        pre_run { create_ssh_key nat_key_name, region, force_create: false }
 
         value :AWSTemplateFormatVersion => '2010-09-09'
 
@@ -16,14 +21,6 @@ module Enscalator
                 'bastion host to allow SSH access to the Elastic Beanstalk hosts.',
                 'The second subnet is private and contains the Elastic Beanstalk instances.',
                 'You will be billed for the AWS resources used if you create a stack from this template.'].join(' ')
-
-        parameter 'NatKeyName',
-                  :Description => 'Name of an existing EC2 KeyPair to enable SSH access to the nat host',
-                  :Type => 'String',
-                  :MinLength => '1',
-                  :MaxLength => '64',
-                  :AllowedPattern => '[-_ a-zA-Z0-9]*',
-                  :ConstraintDescription => 'can contain only alphanumeric characters, spaces, dashes and underscores.'
 
         parameter 'NATInstanceType',
                   :Description => 'NAT Device EC2 instance type',
@@ -393,9 +390,9 @@ module Enscalator
                    Type: 'AWS::EC2::Instance',
                    Properties: {
                      InstanceType: ref('NATInstanceType'),
-                     KeyName: ref('NatKeyName'),
+                     KeyName: nat_key_name,
                      SourceDestCheck: 'false',
-                     ImageId: find_in_map('AWSNATAMI', ref('AWSRegion'), 'AMI'),
+                     ImageId: find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
                      NetworkInterfaces: [
                        {
                          AssociatePublicIpAddress: 'true',

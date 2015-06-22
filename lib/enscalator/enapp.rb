@@ -22,6 +22,11 @@ module Enscalator
       super
     end
 
+    # TODO: merge Denis's branch
+    def vpc_stack_name
+      'en-japan-vpc'
+    end
+
     # Get vpc stack
     #
     # @return [Aws::CloudFormation::Stack] stack instance of vpc stack
@@ -33,7 +38,7 @@ module Enscalator
     #
     # @return [Aws::EC2::Vpc] vpc instance
     def vpc
-      @vpc ||= Aws::EC2::Vpc.new(id: get_resource(stack, 'VpcId'), region: region)
+      @vpc ||= Aws::EC2::Vpc.new(id: get_resource(vpc_stack, 'VpcId'), region: region)
     end
 
     # References to application subnets in all availability zones
@@ -102,7 +107,7 @@ module Enscalator
 
         application_subnet_name = "ApplicationSubnet#{suffix.upcase}"
         subnet application_subnet_name,
-               vpc,
+               vpc.id,
                application_cidr_block,
                availabilityZone: availability_zone,
                tags: {
@@ -112,7 +117,7 @@ module Enscalator
                }
 
         subnet "ResourceSubnet#{suffix.upcase}",
-               vpc,
+               vpc.id,
                resource_cidr_block,
                availabilityZone: availability_zone,
                tags: {

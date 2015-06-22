@@ -16,15 +16,9 @@ module Enscalator
         @instance_name = 'TestBox'
 
         pre_run do
-          pre_setup stack_name: 'test-vpc',
-                    region: @options[:region]
-        end
-
-        # create ssh public/private keypair, save private key for the local user
-        pre_run do
-          create_ssh_key @key_name,
-                         @options[:region],
-                         force_create: true
+          basic_setup
+          # create ssh public/private keypair, save private key for the local user
+          create_ssh_key @key_name, region, force_create: true
         end
 
         description 'Instance to test enscalator setup/deployment'
@@ -34,10 +28,7 @@ module Enscalator
                   :Description => 'Keypair name',
                   :Type => 'String'
 
-        ubuntu_init @instance_name,
-                    storage_kind: :'instance-store',
-                    virtualization: :hvm,
-                    allocate_public_ip: true
+        ubuntu_init @instance_name, storage: :'instance-store'
 
         elb_init stack_name,
                  region,
