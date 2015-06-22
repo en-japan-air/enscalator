@@ -82,6 +82,7 @@ module Enscalator
                 :AllowedPattern => 'sg-[a-zA-Z0-9]*',
                 :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
 
+      # allocate application/resource cidr blocks dynamically for all availability zones
       all_cidr_blocks = IPAddress(EnJapanConfiguration.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
       used_cidr_blocks = vpc.subnets.collect(&:cidr_block)
       available_cidr_blocks = all_cidr_blocks - used_cidr_blocks
