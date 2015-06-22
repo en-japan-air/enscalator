@@ -66,19 +66,6 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
-    # Allocate net config dynamically
-    def allocate_net_config
-      all_subnets = IPAddress(EnJapanConfiguration.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
-      current_max_idx = vpc.subnets.collect(&:cidr_block).map { |subnet| all_subnets.index(subnet) + 1 }.sort.last
-      subnets = all_subnets.drop(current_max_idx).take(2 * availability_zones.size)
-
-      availability_zones
-        .map { |suffix, _| %W( application#{suffix.upcase} resource#{suffix.upcase} ) }
-        .flatten
-        .zip(subnets)
-        .to_h
-    end
-
     # Setup VPC configuration which is required in order to create stack
     def basic_setup
       parameter 'VpcId',
@@ -95,20 +82,28 @@ module Enscalator
                 :AllowedPattern => 'sg-[a-zA-Z0-9]*',
                 :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
 
-      net_config = allocate_net_config
+      all_cidr_blocks = IPAddress(EnJapanConfiguration.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
+      used_cidr_blocks = vpc.subnets.collect(&:cidr_block)
+      available_cidr_blocks = all_cidr_blocks - used_cidr_blocks
+      application_cidr_blocks = available_cidr_blocks.take(availability_zones.size)
+      resource_cidr_blocks = (available_cidr_blocks - application_cidr_blocks).take(availability_zones.size)
 
-      availability_zones.each do |suffix, _|
-        parameter "PrivateRouteTable#{suffix.upcase}",
+      availability_zones.zip(application_cidr_blocks, resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
+        suffix, availability_zone = pair
+
+        private_route_table_name = "PrivateRouteTable#{suffix.upcase}"
+        parameter private_route_table_name,
                   Description: "Route table identifier for private instances of zone #{suffix}",
-                  Default: get_resource(vpc_stack, "PrivateRouteTable#{suffix.upcase}"),
+                  Default: get_resource(vpc_stack, private_route_table_name),
                   Type: 'String',
                   AllowedPattern: 'rtb-[a-zA-Z0-9]*',
                   ConstraintDescription: 'must begin with rtb- followed by numbers and alphanumeric characters.'
 
-        subnet "ApplicationSubnet#{suffix.upcase}",
+        application_subnet_name = "ApplicationSubnet#{suffix.upcase}"
+        subnet application_subnet_name,
                vpc,
-               net_config["application#{suffix.upcase}"],
-               availabilityZone: "#{region}#{suffix}",
+               application_cidr_block,
+               availabilityZone: availability_zone,
                tags: {
                  'Network' => 'Private',
                  'Application' => aws_stack_name,
@@ -117,8 +112,8 @@ module Enscalator
 
         subnet "ResourceSubnet#{suffix.upcase}",
                vpc,
-               net_config["resource#{suffix.upcase}"],
-               availabilityZone: "#{region}#{suffix}",
+               resource_cidr_block,
+               availabilityZone: availability_zone,
                tags: {
                  'Network' => 'Private',
                  'Application' => aws_stack_name
@@ -127,8 +122,8 @@ module Enscalator
         resource "RouteTableAssociation#{suffix.upcase}",
                  Type: 'AWS::EC2::SubnetRouteTableAssociation',
                  Properties: {
-                   RouteTableId: ref("PrivateRouteTable#{suffix.upcase}"),
-                   SubnetId: ref("ApplicationSubnet#{suffix.upcase}")
+                   RouteTableId: ref(private_route_table_name),
+                   SubnetId: ref(application_subnet_name)
                  }
       end
 
