@@ -40,6 +40,18 @@ credentials =
     Aws::SharedCredentials.new
   end
 
+# Mock `availability_zones`
+Enscalator::RichTemplateDSL.class_eval do
+  define_method('availability_zones') do
+    {
+      a: 'us-east-1a',
+      b: 'us-east-1b',
+      c: 'us-east-1c',
+      e: 'us-east-1e'
+    }
+  end
+end
+
 VCR.configure do |c|
   c.cassette_library_dir = 'spec/cassettes'
   c.hook_into :webmock
