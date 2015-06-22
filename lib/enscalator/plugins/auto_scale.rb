@@ -42,11 +42,8 @@ module Enscalator
         resource @auto_scale_resource_name,
                  Type: 'AWS::AutoScaling::AutoScalingGroup',
                  Properties: {
-                   AvailabilityZones: get_availability_zones,
-                   VPCZoneIdentifier: [
-                     ref_application_subnet_a,
-                     ref_application_subnet_c
-                   ],
+                   AvailabilityZones: availability_zones.values,
+                   VPCZoneIdentifier: ref_application_subnets,
                    LaunchConfigurationName: ref(@launch_config_resource_name),
                    MinSize: 0,
                    MaxSize: 1,

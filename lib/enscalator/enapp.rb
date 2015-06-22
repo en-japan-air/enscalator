@@ -36,24 +36,19 @@ module Enscalator
       @vpc ||= Aws::EC2::Vpc.new(id: get_resource(stack, 'VpcId'), region: region)
     end
 
-    # Reference to subnet in availability zone A
-    def ref_application_subnet_a
-      ref('ApplicationSubnetA')
+    # References to application subnets in all availability zones
+    def ref_application_subnets
+      availability_zones.map { |suffix, _| ref("ApplicationSubnet#{suffix.upcase}") }
     end
 
-    # Reference to subnet in availability zone C
-    def ref_application_subnet_c
-      ref('ApplicationSubnetC')
+    # References to resource subnets in all availability zones
+    def ref_resource_subnets
+      availability_zones.map { |suffix, _| ref("ResourceSubnet#{suffix.upcase}") }
     end
 
-    # Reference to resource in availability zone A
-    def ref_resource_subnet_a
-      ref('ResourceSubnetA')
-    end
-
-    # Reference to resource in availability zone C
-    def ref_resource_subnet_c
-      ref('ResourceSubnetC')
+    # Public subnets in all availability zones
+    def public_subnets
+      availability_zones.map { |suffix, _| get_resource(vpc_stack, "PublicSubnet#{suffix.upcase}") }
     end
 
     # Reference to private security group

@@ -65,10 +65,7 @@ module Enscalator
                  :Type => 'AWS::RDS::DBSubnetGroup',
                  :Properties => {
                    :DBSubnetGroupDescription => 'Subnet group within VPC',
-                   :SubnetIds => [
-                     ref_resource_subnet_a,
-                     ref_resource_subnet_c
-                   ],
+                   :SubnetIds => ref_resource_subnets,
                    :Tags => [
                      {
                        :Key => 'Name',
