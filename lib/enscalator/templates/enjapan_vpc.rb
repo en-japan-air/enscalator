@@ -354,7 +354,7 @@ module Enscalator
                                .map(&:to_string)
                                .first(availability_zones.size)
         availability_zones.zip(public_cidr_blocks).each do |pair, cidr_block|
-          suffix = pair.first
+          suffix, _ = pair
           public_subnet_name = "PublicSubnet#{suffix.upcase}"
           resource public_subnet_name,
                    DependsOn: ['VPC'],
