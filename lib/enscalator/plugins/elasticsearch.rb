@@ -142,10 +142,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_class "Elasticsearch#{storage_name}",
-                                 default: instance_class,
-                                 allowed_values: %w(t2.micro t2.small t2.medium m3.medium
-                                                 m3.large m3.xlarge m3.2xlarge)
+        parameter_instance_type "Elasticsearch#{storage_name}", default: instance_class
 
         properties[:KeyName] = @key_name
         properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceClass")

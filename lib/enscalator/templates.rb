@@ -1,6 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require_relative 'templates/enjapan_vpc'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'

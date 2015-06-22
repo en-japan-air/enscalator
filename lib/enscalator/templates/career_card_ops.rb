@@ -22,7 +22,7 @@ module Enscalator
 
         description 'Stack for CareerCardOps backend'
 
-        parameter_instance_class app_name,
+        parameter_instance_type app_name,
                                  default: 'm3.medium'
 
         rds_init(@db_name)

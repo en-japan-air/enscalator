@@ -39,10 +39,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_class "Couchbase#{db_name}", default: instance_class,
-                                 allowed_values: %w(m1.medium m1.large m1.xlarge m2.xlarge
-                                m2.2xlarge m2.4xlarge c1.medium c1.xlarge
-                                cc1.4xlarge cc2.8xlarge cg1.4xlarge)
+        parameter_instance_type "Couchbase#{db_name}", default: instance_class
 
         instance_vpc("Couchbase#{db_name}",
                      find_in_map('AWSCouchbaseAMI', ref('AWS::Region'), 'amd64'),
