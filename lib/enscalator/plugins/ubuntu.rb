@@ -63,11 +63,11 @@ module Enscalator
       # @param [String] instance_name instance name
       # @param [String] storage storage kind (ebs or ephemeral)
       # @param [String] arch architecture (amd64 or i386)
-      # @param [String] instance_class instance class (type)
+      # @param [String] instance_type instance class (type)
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,
-                      instance_class: 'm1.medium')
+                      instance_type: 'm1.medium')
 
         mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: arch)
 
@@ -78,7 +78,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_type "Ubuntu#{instance_name}", default: instance_class
+        parameter_instance_type "Ubuntu#{instance_name}", default: instance_type
 
         instance_vpc "Ubuntu#{instance_name}",
                      find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'hvm'),
