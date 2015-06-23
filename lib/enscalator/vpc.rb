@@ -25,7 +25,7 @@ module Enscalator
                   :AllowedPattern => '[-_ a-zA-Z0-9]*',
                   :ConstraintDescription => 'can contain only alphanumeric characters, spaces, dashes and underscores.'
 
-        parameter_instance_type 'NAT', default: 't2.small'
+        parameter_instance_type 'NAT', type: 't2.small'
 
         mapping 'AWSNATAMI',
                 :'us-east-1' => {:AMI => 'ami-303b1458'},
