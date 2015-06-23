@@ -16,14 +16,14 @@ module Enscalator
                   .sort { |a, b| a.creation_date <=> b.creation_date }
                   .last || fail("Cannot find valid image in region: '#{region}'")
 
-        pre_run { pre_setup stack_name: 'enjapan-vpc' }
+        pre_run { load_vpc_params }
 
         @db_name = 'CareerCardOps'
 
         description 'Stack for CareerCardOps backend'
 
-        parameter_instance_class app_name,
-                                 default: 'm3.medium'
+        parameter_instance_type app_name,
+                                default: 'm3.medium'
 
         rds_init(@db_name)
         elb_resource_name = elb_init(stack_name,
@@ -49,8 +49,6 @@ module Enscalator
                         }
 
         post_run do
-
-          stack_name = @options[:stack_name]
           cfn = cfn_resource(cfn_client(region))
 
           stack = wait_stack(cfn, stack_name)

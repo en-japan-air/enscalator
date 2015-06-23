@@ -14,11 +14,11 @@ module Enscalator
       # @param [String] db_name database name
       # @param [String] bucket bucket
       # @param [Integer] allocated_storage size of instance primary storage
-      # @param [String] instance_class instance class (type)
+      # @param [String] instance_type instance type
       def couchbase_init(db_name,
                          bucket: nil,
                          allocated_storage: 5,
-                         instance_class: 'm1.medium')
+                         instance_type: 'm1.medium')
 
         @couchbase_mapping ||=
           mapping 'AWSCouchbaseAMI', {
@@ -39,10 +39,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_class "Couchbase#{db_name}", default: instance_class,
-                                 allowed_values: %w(m1.medium m1.large m1.xlarge m2.xlarge
-                                m2.2xlarge m2.4xlarge c1.medium c1.xlarge
-                                cc1.4xlarge cc2.8xlarge cg1.4xlarge)
+        parameter_instance_type "Couchbase#{db_name}", type: instance_type
 
         instance_vpc("Couchbase#{db_name}",
                      find_in_map('AWSCouchbaseAMI', ref('AWS::Region'), 'amd64'),

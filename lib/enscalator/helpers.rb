@@ -85,6 +85,17 @@ module Enscalator
       Aws::EC2::Client.new(region: region)
     end
 
+    # Route 53 client
+    #
+    # @param [String] region AWS region identifier
+    # @return [Aws::Route53::Client]
+    # @raise [ArgumentError] when region is not given
+    def route53_client(region)
+      raise ArgumentError,
+            'Unable to proceed without region' if region.blank?
+      Aws::Route53::Client.new(region: region)
+    end
+
     # Find ami images registered
     #
     # @param [Aws::EC2::Client] client instance of AWS EC2 client

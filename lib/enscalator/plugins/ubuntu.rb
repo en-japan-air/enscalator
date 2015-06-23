@@ -49,8 +49,7 @@ module Enscalator
               .map { |l| Struct::Ubuntu.new(*l) }
               .select { |r| r.root_storage == storage.to_s && r.arch == arch.to_s }
               .group_by(&:region)
-              .map { |k, v| [k,
-                             v.map { |i| [i.virtualization, i.ami] }.to_h] }
+              .map { |k, v| [k, v.map { |i| [i.virtualization, i.ami] }.to_h] }
               .to_h
               .with_indifferent_access
           end
@@ -63,11 +62,11 @@ module Enscalator
       # @param [String] instance_name instance name
       # @param [String] storage storage kind (ebs or ephemeral)
       # @param [String] arch architecture (amd64 or i386)
-      # @param [String] instance_class instance class (type)
+      # @param [String] instance_type instance class (type)
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,
-                      instance_class: 'm1.medium')
+                      instance_type: 'm1.medium')
 
         mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: arch)
 
@@ -78,11 +77,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_class "Ubuntu#{instance_name}",
-                                 default: instance_class,
-                                 allowed_values: %w(m1.medium m1.large m1.xlarge m2.xlarge
-                                                 m2.2xlarge m2.4xlarge c1.medium c1.xlarge
-                                                 cc1.4xlarge cc2.8xlarge cg1.4xlarge)
+        parameter_instance_type "Ubuntu#{instance_name}", type: instance_type
 
         instance_vpc "Ubuntu#{instance_name}",
                      find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'hvm'),

@@ -4,14 +4,7 @@ module Enscalator
 
   # Collection of methods to work with Route53
   module Route53
-
-    # Route 53 client
-    #
-    # @param [String] region AWS region identifier
-    # @return [Aws::Route53::Client]
-    def route53_client(region: 'us-east-1')
-      Aws::Route53::Client.new(region: region)
-    end
+    include Enscalator::Helpers
 
     # Get existing DNS records
     #

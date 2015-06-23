@@ -43,6 +43,14 @@ module Enscalator
       @options[:stack_name]
     end
 
+    # Helper method to provide value accessor for `vpc_stack_name`
+    #
+    # @return [String] vpc_stack_name
+    # @raise [RuntimeError] if vpc-stack-name was not given
+    def vpc_stack_name
+      @options[:vpc_stack_name] || fail('Requires vpc-stack-name')
+    end
+
     # Helper method to provide value accessor for `parameters`
     #
     # @return [Hash] parameters as key-value pairs
@@ -54,8 +62,8 @@ module Enscalator
 
     # Hosted zone accessor
     #
-    # @raise [RuntimeError] if hosted zone is accessed but it's not configured
     # @return [String] hosted zone, and ensure ending with a '.'
+    # @raise [RuntimeError] if hosted zone is accessed but it's not configured
     def hosted_zone
       @options[:hosted_zone] || fail('Hosted zone has to be configured')
       @options[:hosted_zone].ends_with?('.') ? @options[:hosted_zone] : @options[:hosted_zone] + '.'
@@ -348,27 +356,54 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
-    # Instance class (type) parameter
+    # Current generation instance types
+    #
+    # @return [Array] allowed instance types
+    def instance_type
+      %w(t2.micro t2.small t2.medium m4.large m4.xlarge m4.2xlarge m4.4xlarge
+        m4.10xlarge m3.medium m3.large m3.xlarge m3.2xlarge c4.large c4.xlarge
+        c4.2xlarge c4.4xlarge c4.8xlarge c3.large c3.xlarge c3.2xlarge c3.4xlarge
+        c3.8xlarge r3.large r3.xlarge r3.2xlarge r3.4xlarge r3.8xlarge g2.2xlarge
+        g2.8xlarge i2.xlarge i2.xlarge i2.4xlarge i2.8xlarge d2.xlarge d2.2xlarge
+        d2.4xlarge d2.8xlarge)
+    end
+
+    # @deprecated Will be removed once Amazon fully stops supporting these instances
+    # Previous generation instance types
+    #
+    # @return [Array] allowed instance types
+    def instance_type_obsolete
+      %w(t1.micro m1.small m1.medium m1.large m1.xlarge
+        c1.medium c1.xlarge cc2.8xlarge cg1.4xlarge
+        m2.xlarge m2.2xlarge m2.4xlarge
+        cr1.8xlarge hi1.4xlarge hs1.8xlarge)
+    end
+
+    # Instance type parameter
     #
     # @param [String] instance_name instance name
-    # @param [String] default default instance type
-    # @param [Array] allowed_values list of allowed values
-    def parameter_instance_class(instance_name, default: 't2.micro', allowed_values: [])
-      allowed = allowed_values.any? ? allowed_values :
-        %w(t1.micro t2.micro t2.small t2.medium m1.small m1.medium
-                   m1.large m1.xlarge m2.xlarge m2.2xlarge m2.4xlarge m3.medium
-                   m3.large m3.xlarge m3.2xlarge c1.medium c1.xlarge c3.large
-                   c3.xlarge c3.2xlarge c3.4xlarge c3.8xlarge c4.large c4.xlarge
-                   c4.2xlarge c4.4xlarge c4.8xlarge g2.2xlarge r3.large r3.xlarge
-                   r3.2xlarge r3.4xlarge r3.8xlarge i2.xlarge i2.2xlarge i2.4xlarge
-                   i2.8xlarge hi1.4xlarge hs1.8xlarge cr1.8xlarge cc2.8xlarge cg1.4xlarge)
+    # @param [String] type instance type (default: t2.micro)
+    # @param [Array] allowed_values list used to override built-in instance types
+    def parameter_instance_type(instance_name, type: 't2.micro', allowed_values: [])
 
-      parameter "#{instance_name}InstanceClass",
-                :Default => default,
+      # check overrides first, then stable instances, then obsolete and fail if none matched
+      allowed = if allowed_values.any? && allowed_values.include?(type)
+                  allowed_values
+                elsif instance_type.include?(type)
+                  instance_type
+                elsif instance_type_obsolete.include?(type)
+                  warn('Using obsolete instance types')
+                  instance_type_obsolete
+                else
+                  fail("Found not supported instance type: #{type}")
+                end
+
+      parameter "#{instance_name}InstanceType",
+                :Default => type,
                 :Description => "The #{instance_name} instance type",
                 :Type => 'String',
                 :AllowedValues => allowed,
-                :ConstraintDescription => "must select a valid #{instance_name} instance type."
+                :ConstraintDescription => 'must be valid EC2 instance type.'
     end
 
     # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
