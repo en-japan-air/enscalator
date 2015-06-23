@@ -22,11 +22,6 @@ module Enscalator
       super
     end
 
-    # TODO: merge Denis's branch
-    def vpc_stack_name
-      'en-japan-vpc'
-    end
-
     # Get vpc stack
     #
     # @return [Aws::CloudFormation::Stack] stack instance of vpc stack
@@ -71,8 +66,8 @@ module Enscalator
       ref('ApplicationSecurityGroup')
     end
 
-    # Setup VPC configuration which is required in order to create stack
-    def basic_setup
+    # Query and pre-configure VPC parameters required for the stack
+    def load_vpc_params
       parameter 'VpcId',
                 :Description => 'The Id of the VPC',
                 :Default => vpc.id,

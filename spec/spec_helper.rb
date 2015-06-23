@@ -59,11 +59,11 @@ VCR.configure do |c|
 
   # Filter out AWS access and secret tokens
   c.filter_sensitive_data('<AWS_ACCESS_KEY_ID>', :aws_credentials) do
-    credentials.access_key_id
+    credentials.credentials.access_key_id
   end
 
   c.filter_sensitive_data('<AWS_SECRET_ACCESS_KEY>', :aws_credentials) do
-    credentials.secret_access_key
+    credentials.credentials.secret_access_key
   end
 end
 

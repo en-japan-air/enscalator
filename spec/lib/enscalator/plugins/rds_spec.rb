@@ -27,7 +27,7 @@ describe 'Enscalator::Plugins::RDS' do
 
     expected_parameters = %w{Name AllocatedStorage
                           StorageType Multizone ParameterGroup
-                          InstanceClass Username Password}.map { |p| "RDS#{test_instance_name}#{p}" }
+                          InstanceType Username Password}.map { |p| "RDS#{test_instance_name}#{p}" }
     expect(params_under_test.keys).to include(*expected_parameters)
 
     subnet_res = "RDS#{test_instance_name}SubnetGroup"

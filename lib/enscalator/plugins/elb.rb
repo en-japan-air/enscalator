@@ -65,10 +65,6 @@ module Enscalator
                     :ConstraintDescription => 'must be a string'
         end
 
-        subnets = -> {
-          internal ? ref_application_subnets : public_subnets
-        }
-
         resource @elb_resource_name,
                  :Type => 'AWS::ElasticLoadBalancing::LoadBalancer',
                  :Properties => {
@@ -91,7 +87,7 @@ module Enscalator
                      :Timeout => '5',
                    },
                    :SecurityGroups => [ref('ELBSecurityGroup')],
-                   :Subnets => subnets.(),
+                   :Subnets => internal ? ref_application_subnets : public_subnets,
                    :Tags => [
                      {
                        :Key => 'Name',
