@@ -13,7 +13,7 @@ module Enscalator
       # @param [String] storage_type instance storage type
       # @param [String] multizone deploy as multizone or use only single availability zone
       # @param [String] parameter_group RDS instance parameter group
-      # @param [String] instance_class instance class (type)
+      # @param [String] instance_type instance type
       # @param [Hash] properties additional properties
       def rds_init(db_name,
                    use_snapshot: false,
@@ -21,7 +21,7 @@ module Enscalator
                    storage_type: 'gp2',
                    multizone: 'false',
                    parameter_group: '***REMOVED***',
-                   instance_class: 'db.m1.small',
+                   instance_type: 'db.m1.small',
                    properties: {})
 
         parameter_name "RDS#{db_name}"
@@ -48,7 +48,7 @@ module Enscalator
                   :Description => 'Custom parameter group for an RDS database family',
                   :Type => 'String'
 
-        parameter_instance_type "RDS#{db_name}", default: instance_class
+        parameter_instance_type "RDS#{db_name}", default: instance_type
 
         parameter_username "RDS#{db_name}"
 

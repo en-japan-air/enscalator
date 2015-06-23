@@ -49,8 +49,7 @@ module Enscalator
               .map { |l| Struct::Ubuntu.new(*l) }
               .select { |r| r.root_storage == storage.to_s && r.arch == arch.to_s }
               .group_by(&:region)
-              .map { |k, v| [k,
-                             v.map { |i| [i.virtualization, i.ami] }.to_h] }
+              .map { |k, v| [k, v.map { |i| [i.virtualization, i.ami] }.to_h] }
               .to_h
               .with_indifferent_access
           end

@@ -373,7 +373,6 @@ module Enscalator
     #
     # @return [Array] allowed instance types
     def instance_type_obsolete
-      warn('Using obsolete instance types')
       %w(t1.micro m1.small m1.medium m1.large m1.xlarge
         c1.medium c1.xlarge cc2.8xlarge cg1.4xlarge
         m2.xlarge m2.2xlarge m2.4xlarge
@@ -383,21 +382,24 @@ module Enscalator
     # Instance type parameter
     #
     # @param [String] instance_name instance name
-    # @param [String] default default instance type
-    # @param [Array] allowed_values list of allowed values
-    def parameter_instance_type(instance_name, default: 't2.micro', allowed_values: [])
-      aws_instance_types = instance_type.concat(instance_type_obsolete)
-      allowed = if allowed_values.any?
-                  not_supported_types = allowed_values - (aws_instance_types & new)
-                  msg = 'Found not supported instance types: ' + not_supported_types.join(',')
-                  fail(msg) unless not_supported_types.empty?
+    # @param [String] type instance type (default: t2.micro)
+    # @param [Array] allowed_values list used to override built-in instance types
+    def parameter_instance_type(instance_name, type: 't2.micro', allowed_values: [])
+
+      # check overrides first, then stable instances, then obsolete and fail if none matched
+      allowed = if allowed_values.any? && allowed_values.include?(type)
                   allowed_values
+                elsif instance_type.include?(type)
+                  instance_type
+                elsif instance_type_obsolete.include?(type)
+                  warn('Using obsolete instance types')
+                  instance_type_obsolete
                 else
-                  aws_instance_types
+                  fail("Found not supported instance type: #{type}")
                 end
 
       parameter "#{instance_name}InstanceType",
-                :Default => default,
+                :Default => type,
                 :Description => "The #{instance_name} instance type",
                 :Type => 'String',
                 :AllowedValues => allowed,

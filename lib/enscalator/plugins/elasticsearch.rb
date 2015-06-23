@@ -116,13 +116,13 @@ module Enscalator
       #
       # @param [String] storage_name storage name
       # @param [Integer] allocated_storage size of instance primary storage
-      # @param [String] instance_class instance class (type)
+      # @param [String] instance_type instance class (type)
       # @param [Hash] properties additional properties
       # @param [String] zone_name route53 zone name
       # @param [Integer] ttl time to live value
       def elasticsearch_init(storage_name,
                              allocated_storage: 5,
-                             instance_class: 't2.medium',
+                             instance_type: 't2.medium',
                              properties: {},
                              zone_name: nil,
                              ttl: 300)
@@ -142,7 +142,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_type "Elasticsearch#{storage_name}", default: instance_class
+        parameter_instance_type "Elasticsearch#{storage_name}", default: instance_type
 
         properties[:KeyName] = @key_name
         properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceClass")
