@@ -2,8 +2,8 @@
 
 module Enscalator
 
-  # Configuration specific for enJapan setup
-  class EnJapanConfiguration
+  # Configuration specific for VPC setup
+  class NetworkConfig
 
     # VPC network mapping
     def self.mapping_vpc_net

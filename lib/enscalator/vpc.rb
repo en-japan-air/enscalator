@@ -36,8 +36,7 @@ module Enscalator
                 :'ap-southeast-2' => {:AMI => 'ami-e7ee9edd'},
                 :'sa-east-1' => {:AMI => 'ami-fbfa41e6'}
 
-        mapping 'AWSRegionNetConfig',
-                Enscalator::EnJapanConfiguration::mapping_vpc_net
+        mapping 'AWSRegionNetConfig', NetworkConfig.mapping_vpc_net
 
         resource 'VPC',
                  Type: 'AWS::EC2::VPC',
@@ -278,7 +277,7 @@ module Enscalator
                    ]
                  }
 
-        public_cidr_blocks = IPAddress(EnJapanConfiguration.mapping_vpc_net[region.to_sym][:VPC])
+        public_cidr_blocks = IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC])
                                .subnet(24)
                                .map(&:to_string)
                                .first(availability_zones.size)

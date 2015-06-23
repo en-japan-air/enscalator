@@ -83,7 +83,7 @@ module Enscalator
                 :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
 
       # allocate application/resource cidr blocks dynamically for all availability zones
-      all_cidr_blocks = IPAddress(EnJapanConfiguration.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
+      all_cidr_blocks = IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
       used_cidr_blocks = vpc.subnets.collect(&:cidr_block)
       available_cidr_blocks = all_cidr_blocks - used_cidr_blocks
       application_cidr_blocks = available_cidr_blocks.take(availability_zones.size)
