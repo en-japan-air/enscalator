@@ -116,7 +116,7 @@ module Enscalator
       #
       # @param [String] storage_name storage name
       # @param [Integer] allocated_storage size of instance primary storage
-      # @param [String] instance_type instance class (type)
+      # @param [String] instance_type instance type
       # @param [Hash] properties additional properties
       # @param [String] zone_name route53 zone name
       # @param [Integer] ttl time to live value
@@ -142,7 +142,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_type "Elasticsearch#{storage_name}", default: instance_type
+        parameter_instance_type "Elasticsearch#{storage_name}", type: instance_type
 
         properties[:KeyName] = @key_name
         properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceClass")
