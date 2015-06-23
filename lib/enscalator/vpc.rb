@@ -4,8 +4,8 @@ module Enscalator
 
   module Templates
 
-    # enJapan Amazon AWS virtual private cloud template
-    class EnJapanVPC < Enscalator::RichTemplateDSL
+    # Amazon AWS Virtual Private Cloud template
+    class VPC < Enscalator::RichTemplateDSL
 
       def tpl
 
