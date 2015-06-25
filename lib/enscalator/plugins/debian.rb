@@ -33,17 +33,15 @@ module Enscalator
           raise ArgumentError, 'release can be either codename or version' unless RELEASE.to_a.flatten.include? release
           raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
           raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
-          begin
-            version = RELEASE.keys.include?(release) ? release : RELEASE.invert[release]
-            url = "https://wiki.debian.org/Cloud/AmazonEC2Image/#{version.to_s.capitalize}?action=raw"
-            body = open(url) { |f| f.read }
-            parse_raw_entries(body.split("\r\n").select { |b| b.starts_with?('||') })
-              .select { |r| r.root_storage == storage.to_s && r.arch == arch.to_s }
-              .group_by(&:region)
-              .map { |k, v| [k, v.map { |i| [i.virtualization, i.ami] }.to_h] }
-              .to_h
-              .with_indifferent_access
-          end
+          version = RELEASE.keys.include?(release) ? release : RELEASE.invert[release]
+          url = "https://wiki.debian.org/Cloud/AmazonEC2Image/#{version.capitalize}?action=raw"
+          body = open(url) { |f| f.read }
+          parse_raw_entries(body.split("\r\n").select { |b| b.starts_with?('||') })
+            .select { |r| r.root_storage == storage.to_s && r.arch == arch.to_s }
+            .group_by(&:region)
+            .map { |k, v| [k, v.map { |i| [i.virtualization, i.ami] }.to_h] }
+            .to_h
+            .with_indifferent_access
         end
 
         private
@@ -52,12 +50,11 @@ module Enscalator
         #
         # @param [Array] items in its raw form
         def parse_raw_entries(items)
+
           head, *amis = items.map do |item|
-            item.sub(/^[||]{2}[ ]/, '')
-              .sub(/[ ][||]{2}$/, '')
-              .gsub(/([ ]*(:?[|]{2})[ ]*)/, '||')
-              .gsub(/[']/, '').downcase.split('||')
+            item.downcase.split('||').map(&:strip).map { |i| i.gsub(/[']/, '') }.reject(&:empty?)
           end
+
           kinds = Hash[head.reject { |k| k == 'region' }.map.with_index.to_a]
           pairs = amis.map { |row| head, *tail = row; tail.map { |r| [head, r].join(' ') } }
           kinds.keys.map { |k| Hash[k, pairs.dup.map { |a| a[kinds[k]] }] }
