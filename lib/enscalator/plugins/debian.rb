@@ -63,7 +63,7 @@ module Enscalator
           kinds.keys.map { |k| Hash[k, pairs.dup.map { |a| a[kinds[k]] }] }
             .map { |rw| rw.invert.map { |k, v| k.dup.map { |k| [k, v].join(' ') } } }.flatten
             .map { |l| Struct::Debian.new(*l.split(' ')) }
-            .reject { |a| a.region == 'cn-north-1' || a.region == 'us-gov-west-1'  } # TODO: excluded for now
+            .reject { |a| a.region == 'cn-north-1' || a.region == 'us-gov-west-1' } # TODO: excluded for now
         end
 
       end
