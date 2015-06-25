@@ -23,19 +23,19 @@ module Enscalator
         description 'Stack for CareerCardOps backend'
 
         parameter_instance_type app_name,
-                                default: 'm3.medium'
+                                type: 'm3.medium'
 
         rds_init(@db_name)
         elb_resource_name = elb_init(stack_name,
                                      region,
                                      zone_name: hosted_zone,
-                                     ssl: false,
+                                     ssl: true,
                                      internal: false)
 
         auto_scale_init image.image_id,
                         auto_scale_name: app_name,
                         launch_config_props: {
-                          InstanceType: ref("#{app_name}InstanceClass"),
+                          InstanceType: ref("#{app_name}InstanceType"),
                           # add user data here if necessary
                           UserData: Base64.encode64('')
                         },
