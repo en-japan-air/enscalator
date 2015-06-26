@@ -84,7 +84,7 @@ module Enscalator
                      dependsOn: [],
                      properties: {
                        :KeyName => ref("Ubuntu#{instance_name}KeyName"),
-                       :InstanceType => ref("Ubuntu#{instance_name}InstanceClass")
+                       :InstanceType => ref("Ubuntu#{instance_name}InstanceType")
                      }
       end
 
