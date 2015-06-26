@@ -57,7 +57,7 @@ module Enscalator
 
           amis = entries.map { |entry|
             region, *images = entry
-            images.map.with_index(1).map { |ami, i| [region, ami, header[i]].join(' ').split }
+            images.map.with_index(1).map { |ami, i| [region, ami, header[i].split].flatten }
           }.flatten(1)
 
           amis.map { |a| Struct::Debian.new(*a) }
