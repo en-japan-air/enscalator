@@ -1,0 +1,151 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://wiki.debian.org/Cloud/AmazonEC2Image/Wheezy?action=raw
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Thu, 25 Jun 2015 06:03:07 GMT
+      Server:
+      - Apache
+      Vary:
+      - Cookie,User-Agent,Accept-Language,Accept-Encoding
+      Strict-Transport-Security:
+      - max-age=15552000
+      X-Clacks-Overhead:
+      - GNU Terry Pratchett
+      Content-Length:
+      - '2895'
+      Content-Type:
+      - text/plain; charset=utf-8
+    body:
+      encoding: UTF-8
+      string: "= Debian Wheezy (7.x) on AWS EC2 =\r\n * [[#7.8.aws.1|7.8.aws.1]] (28
+        January 2015)\r\n\r\n\r\n----\r\n== 7.8.aws.1 (28 January 2015) ==\r\n\r\nThis
+        release addresses [[https://security-tracker.debian.org/tracker/CVE-2015-0235|CVE
+        2015-0235]] also known as the \"ghost\" issue with libc6; it contains the
+        updated libc6 in the base image.\r\n\r\n|| '''Region'''  || '''hvm x86_64
+        ebs''' || '''paravirtual i386 ebs''' || '''paravirtual x86_64 ebs''' || '''paravirtual
+        x86_64 instance-store''' ||\r\n|| ap-northeast-1 || ami-b25d44b3 || ami-c05e47c1
+        || ami-e05c45e1 || ami-745c4575 ||\r\n|| ap-southeast-1 || ami-aeb49ffc ||
+        ami-c08ba092 || ami-008ba052 || ami-6a8ba038 ||\r\n|| ap-southeast-2 || ami-6b770351
+        || ami-f17703cb || ami-b777038d || ami-4f770375 ||\r\n|| eu-central-1 || ami-98043785
+        || ami-c80437d5 || ami-b60437ab || ami-8a043797 ||\r\n|| eu-west-1 || ami-61e56916
+        || ami-1be06c6c || ami-e7e66a90 || ami-c9e569be ||\r\n|| sa-east-1 || ami-3d8b3720
+        || ami-6b8b3776 || ami-558b3748 || ami-2f8b3732 ||\r\n|| us-east-1 || ami-e0efab88
+        || ami-e6eeaa8e || ami-baeda9d2 || ami-74efab1c ||\r\n|| us-west-1 || ami-b4869ff1
+        || ami-a8b9a0ed || ami-c0b9a085 || ami-70b9a035 ||\r\n|| us-west-2 || ami-431a4273
+        || ami-051b4335 || ami-f91a42c9 || ami-a31a4293 ||\r\n|| us-gov-west-1 ||ami-d13455f2
+        || ami-d53455f6 || ami-d73455f4 || - ||\r\n|| cn-north-1 || ami-48029071 ||
+        - || ami-5c029065 || - ||\r\n\r\nA [[https://lists.debian.org/debian-cloud/2015/01/msg00006.html
+        | GPG signed email ]] of this list is in the Debian-Cloud mailing list archive
+        for your security.\r\n\r\n\r\n----\r\n\r\n\r\nYou may wish to use a [[#CFTemplate|CloudFormation
+        template]] and add a [[#UserDataExamples|UserData script]]. For some releases
+        are duplicated into ''Amazon Marketplace'' but the same images are shared
+        directly as \"Community Shared AMIs\" (account number 379101102735, but with
+        different AMI IDs to the Marketplace). All AMIs shared from the Debian AWS
+        Account and their corresponding EBS snapshots are marked as public so can
+        be inspected by any AWS user.\r\n\r\n\r\n{{{#!wiki note\r\n'''SSH username'''\r\n\r\nRemote
+        ''root'' SSH is disabled in all images, as is password authentication). You
+        will need to connect to instances from these AMIs as the user '''admin'''
+        using your SSH key, and then '''sudo -i''' to gain root access.\r\n}}}\r\n\r\nPlease
+        note that an ''Amazon Marketplace'' image volume cannot be attached to another
+        running instance (For example, to repair a broken /etc/fstab, or /etc/network/interfaces).
+        This is a limitation of all Marketplace images, as described here: [[http://docs.aws.amazon.com/AWSEC2/latest/APIReference/ApiReference-query-AttachVolume.html|Official
+        AWS documentation]]\r\n\r\n\r\n= Upgrading from previous 6.x.y releases =\r\nAs
+        is standard with Debian, a simple '''apt-get update && apt-get dist-upgrade'''
+        should bring all packages up to date. There is no need to reinstall, but any
+        !CloudFormation templates and !AutoScale Launch Configurations should be tested
+        with and then updated to use the current AMI. It is recommended not to use
+        older point releases.\r\n\r\n\r\n= CloudFormation Template =\r\n<<Anchor(CFTemplate)>>\r\n!CloudFormation
+        is a templating system for defining AWS resources - see http://aws.amazon.com/cloudformation/\r\n\r\n{{{\r\n{\r\n
+        \   \"AWSTemplateFormatVersion\": \"2010-09-09\",\r\n    \"Description\":
+        \"Debian AMI list, generated 2015-02-05 13:35:31.317011 by James Bromberger,
+        jeb@debian.org\",\r\n    \"Mappings\": {\r\n        \"AMImap\": {\r\n            \"ap-northeast-1\":
+        {\r\n                \"Wheezy78basei386paravirtualebs\": \"ami-58b7a659\",\r\n
+        \               \"Wheezy78basex8664hvmebs\": \"ami-48b9a849\",\r\n                \"Wheezy78basex8664paravirtualebs\":
+        \"ami-00b6a701\",\r\n                \"Wheezy78basex8664paravirtualinstancestore\":
+        \"ami-52a3b253\"\r\n            },\r\n            \"ap-southeast-1\": {\r\n
+        \               \"Wheezy78basei386paravirtualebs\": \"ami-c56d4597\",\r\n
+        \               \"Wheezy78basex8664hvmebs\": \"ami-bd6d45ef\",\r\n                \"Wheezy78basex8664paravirtualebs\":
+        \"ami-8d6d45df\",\r\n                \"Wheezy78basex8664paravirtualinstancestore\":
+        \"ami-956149c7\"\r\n            },\r\n            \"ap-southeast-2\": {\r\n
+        \               \"Wheezy78basei386paravirtualebs\": \"ami-6de68c57\",\r\n
+        \               \"Wheezy78basex8664hvmebs\": \"ami-d3e68ce9\",\r\n                \"Wheezy78basex8664paravirtualebs\":
+        \"ami-efe68cd5\",\r\n                \"Wheezy78basex8664paravirtualinstancestore\":
+        \"ami-15e58f2f\"\r\n            },\r\n            \"eu-west-1\": {\r\n                \"Wheezy78basei386paravirtualebs\":
+        \"ami-5d46c02a\",\r\n                \"Wheezy78basex8664hvmebs\": \"ami-a345c3d4\",\r\n
+        \               \"Wheezy78basex8664paravirtualebs\": \"ami-cb47c1bc\",\r\n
+        \               \"Wheezy78basex8664paravirtualinstancestore\": \"ami-8153d5f6\"\r\n
+        \           },\r\n            \"sa-east-1\": {\r\n                \"Wheezy78basei386paravirtualebs\":
+        \"ami-dd0cbec0\",\r\n                \"Wheezy78basex8664hvmebs\": \"ami-b90dbfa4\",\r\n
+        \               \"Wheezy78basex8664paravirtualebs\": \"ami-750dbf68\",\r\n
+        \               \"Wheezy78basex8664paravirtualinstancestore\": \"ami-4ffb4652\"\r\n
+        \           },\r\n            \"us-east-1\": {\r\n                \"Wheezy78basei386paravirtualebs\":
+        \"ami-e895e580\",\r\n                \"Wheezy78basex8664hvmebs\": \"ami-f295e59a\",\r\n
+        \               \"Wheezy78basex8664paravirtualebs\": \"ami-3695e55e\",\r\n
+        \               \"Wheezy78basex8664paravirtualinstancestore\": \"ami-363a495e\"\r\n
+        \           },\r\n            \"us-west-1\": {\r\n                \"Wheezy78basei386paravirtualebs\":
+        \"ami-f9fbe4bc\",\r\n                \"Wheezy78basex8664hvmebs\": \"ami-c7fae582\",\r\n
+        \               \"Wheezy78basex8664paravirtualebs\": \"ami-7ffae53a\",\r\n
+        \               \"Wheezy78basex8664paravirtualinstancestore\": \"ami-d7f5ea92\"\r\n
+        \           },\r\n            \"us-west-2\": {\r\n                \"Wheezy78basei386paravirtualebs\":
+        \"ami-9f623eaf\",\r\n                \"Wheezy78basex8664hvmebs\": \"ami-3d9cc00d\",\r\n
+        \               \"Wheezy78basex8664paravirtualebs\": \"ami-01633f31\",\r\n
+        \               \"Wheezy78basex8664paravirtualinstancestore\": \"ami-2995c919\"\r\n
+        \           }\r\n        }\r\n    },\r\n    \"Parameters\": {\r\n        \"InstanceType\":
+        {\r\n            \"AllowedPattern\": \"[a-z]+[0-9].[a-z0-9]+\",\r\n            \"Default\":
+        \"m3.medium\",\r\n            \"Description\": \"Type of EC2 Instance\",\r\n
+        \           \"Type\": \"String\"\r\n        },\r\n        \"KeyName\": {\r\n
+        \           \"Description\": \"SSH Key Name\",\r\n            \"Type\": \"String\"\r\n
+        \       },\r\n        \"Release\": {\r\n            \"AllowedValues\": [\r\n
+        \               \"Wheezy78basex8664hvmebs\",\r\n                \"Wheezy78basex8664paravirtualinstancestore\",\r\n
+        \               \"Wheezy78basex8664paravirtualebs\",\r\n                \"Wheezy78basei386paravirtualebs\"\r\n
+        \           ],\r\n            \"Default\": \"Wheezy75basex8664paravirtualebs\",\r\n
+        \           \"Description\": \"Release, arch and root filesystem type\",\r\n
+        \           \"Type\": \"String\"\r\n        }\r\n    },\r\n    \"Resources\":
+        {\r\n        \"MyInstance\": {\r\n            \"Properties\": {\r\n                \"ImageId\":
+        {\r\n                    \"Fn::FindInMap\": [\r\n                        \"AMImap\",\r\n
+        \                       {\r\n                            \"Ref\": \"AWS::Region\"\r\n
+        \                       },\r\n                        {\r\n                            \"Ref\":
+        \"Release\"\r\n                        }\r\n                    ]\r\n                },\r\n
+        \               \"InstanceType\": {\r\n                    \"Ref\": \"InstanceType\"\r\n
+        \               },\r\n                \"KeyName\": {\r\n                    \"Ref\":
+        \"KeyName\"\r\n                },\r\n                \"SecurityGroups\": [\r\n
+        \                   {\r\n                        \"Ref\": \"MySecurityGroup\"\r\n
+        \                   }\r\n                ]\r\n            },\r\n            \"Type\":
+        \"AWS::EC2::Instance\"\r\n        },\r\n        \"MySecurityGroup\": {\r\n
+        \           \"Properties\": {\r\n                \"GroupDescription\": \"Permit
+        inbound SSH\",\r\n                \"SecurityGroupIngress\": [\r\n                    {\r\n
+        \                       \"CidrIp\": \"0.0.0.0/0\",\r\n                        \"FromPort\":
+        \"22\",\r\n                        \"IpProtocol\": \"tcp\",\r\n                        \"ToPort\":
+        \"22\"\r\n                    }\r\n                ]\r\n            },\r\n
+        \           \"Type\": \"AWS::EC2::SecurityGroup\"\r\n        }\r\n    }\r\n}\r\n}}}\r\n\r\n=
+        Suggested UserData scripts =\r\n<<Anchor(UserDataExamples)>>\r\nDebian !AMIs
+        use cloud-init. This gives you a choice when crafting your !UserData to configure
+        your instance. Simple shell scripts continue to be supported by starting with
+        {{{#!/bin/sh}}}, such as:\r\n\r\n{{{#!highlight bash\r\n#!/bin/sh\r\napt-get
+        update && apt-get upgrade -y && apt-get install -y unattended-upgrades python-pip\r\n}}}\r\n\r\nHowever
+        [[http://cloudinit.readthedocs.org/en/latest/topics/examples.html|other formats]]
+        for !UserData are also supported, such as:\r\n\r\n{{{\r\ncloud-config:\r\npackages:\r\n
+        - pwgen\r\npackage_upgrade: true\r\nssh_keys:\r\n  rsa_public: ssh-rsa ***REMOVED***\r\n
+        \ rsa_public: ssh-rsa ***REMOVED***\r\n}}}\r\n\r\nThe
+        {{{unattended-upgrades}}} package is described on UnattendedUpgrades.\r\n\r\n\r\n----\r\nSee
+        also [[Cloud]] and [[Teams/Cloud]].\r\n"
+    http_version: 
+  recorded_at: Thu, 25 Jun 2015 06:03:07 GMT
+recorded_with: VCR 2.9.3

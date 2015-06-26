@@ -1,9 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'open-uri'
-require 'nokogiri'
-require 'semantic'
-
 module Enscalator
 
   module Plugins

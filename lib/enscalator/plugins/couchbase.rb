@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'shellwords'
-
 module Enscalator
 
   module Plugins

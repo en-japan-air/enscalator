@@ -1,5 +1,3 @@
-require 'open-uri'
-
 module Enscalator
 
   module Plugins
@@ -62,7 +60,7 @@ module Enscalator
       # @param [String] instance_name instance name
       # @param [String] storage storage kind (ebs or ephemeral)
       # @param [String] arch architecture (amd64 or i386)
-      # @param [String] instance_type instance class (type)
+      # @param [String] instance_type instance type
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,
