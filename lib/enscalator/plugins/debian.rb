@@ -46,20 +46,21 @@ module Enscalator
 
         private
 
-        # Parse raw entries and convert them to structs
+        # Parse raw entries and convert them to meaningful structs
         #
         # @param [Array] items in its raw form
         def parse_raw_entries(items)
 
-          head, *amis = items.map do |item|
+          header, *entries = items.map do |item|
             item.downcase.split('||').map(&:strip).map { |i| i.gsub(/[']/, '') }.reject(&:empty?)
           end
 
-          kinds = Hash[head.reject { |k| k == 'region' }.map.with_index.to_a]
-          pairs = amis.map { |row| head, *tail = row; tail.map { |r| [head, r].join(' ') } }
-          kinds.keys.map { |k| Hash[k, pairs.dup.map { |a| a[kinds[k]] }] }
-            .map { |rw| rw.invert.map { |k, v| k.dup.map { |k| [k, v].join(' ') } } }.flatten
-            .map { |l| Struct::Debian.new(*l.split(' ')) }
+          amis = entries.map { |entry|
+            region, *images = entry
+            images.map.with_index(1).map { |ami, i| [region, ami, header[i]].join(' ').split }
+          }.flatten(1)
+
+          amis.map { |a| Struct::Debian.new(*a) }
             .reject { |a| a.region == 'cn-north-1' || a.region == 'us-gov-west-1' } # TODO: excluded for now
         end
 
