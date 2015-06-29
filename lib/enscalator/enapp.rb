@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 require 'cloudformation-ruby-dsl/cfntemplate'
 require_relative 'richtemplate'
 

@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 module Enscalator
 
   # Configuration specific for enJapan setup

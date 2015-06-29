@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 module Enscalator
 
   # Collection of methods to work with Route53
