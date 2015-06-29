@@ -1,6 +1,7 @@
 module Enscalator
 
   module Plugins
+
     # Auto scaling group plugin
     module AutoScale
 
