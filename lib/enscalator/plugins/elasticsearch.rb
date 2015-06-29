@@ -1,9 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'open-uri'
-require 'nokogiri'
-require 'semantic'
-
 module Enscalator
 
   module Plugins
@@ -145,7 +141,7 @@ module Enscalator
         parameter_instance_type "Elasticsearch#{storage_name}", type: instance_type
 
         properties[:KeyName] = @key_name
-        properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceClass")
+        properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceType")
 
         version_tag = {
           Key: 'Version',

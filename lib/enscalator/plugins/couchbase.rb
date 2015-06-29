@@ -1,7 +1,5 @@
 # -*- encoding : utf-8 -*-
 
-require 'shellwords'
-
 module Enscalator
 
   module Plugins
@@ -47,7 +45,7 @@ module Enscalator
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [], properties: {
             :KeyName => ref("Couchbase#{db_name}KeyName"),
-            :InstanceType => ref("Couchbase#{db_name}InstanceClass"),
+            :InstanceType => ref("Couchbase#{db_name}InstanceType"),
             :UserData => Base64.encode64(
               set_couchbase_user_data(bucket, 'Administrator', '3fA76JWtzYbm')
             )

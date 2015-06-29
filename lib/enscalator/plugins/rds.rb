@@ -108,7 +108,7 @@ module Enscalator
           :MultiAZ => ref("RDS#{db_name}Multizone"),
           :MasterUsername => ref("RDS#{db_name}Username"),
           :MasterUserPassword => ref("RDS#{db_name}Password"),
-          :DBInstanceClass => ref("RDS#{db_name}InstanceClass"),
+          :DBInstanceClass => ref("RDS#{db_name}InstanceType"),
           :VPCSecurityGroups => [ref_resource_security_group],
           :DBSubnetGroupName => ref("RDS#{db_name}SubnetGroup"),
           :DBParameterGroupName => ref("RDS#{db_name}ParameterGroup"),

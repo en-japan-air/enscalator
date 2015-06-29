@@ -1,5 +1,7 @@
 module Enscalator
+
   module Plugins
+
     # Internet facing ELB instance
     module Elb
 
