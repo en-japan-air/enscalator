@@ -189,7 +189,10 @@ module Enscalator
                    :RuleAction => 'allow',
                    :Egress => 'false',
                    :CidrBlock => '0.0.0.0/0',
-                   :PortRange => {:From => '0', :To => '65535'},
+                   :PortRange => {
+                     :From => '0',
+                     :To => '65535'
+                   },
                  }
 
         resource 'OutboundHTTPPublicNetworkAclEntry',
@@ -202,7 +205,10 @@ module Enscalator
                    :RuleAction => 'allow',
                    :Egress => 'true',
                    :CidrBlock => '0.0.0.0/0',
-                   :PortRange => {:From => '0', :To => '65535'},
+                   :PortRange => {
+                     :From => '0',
+                     :To => '65535'
+                   },
                  }
 
         resource 'PublicSubnetNetworkAclAssociation1',
@@ -300,7 +306,10 @@ module Enscalator
                    :RuleAction => 'allow',
                    :Egress => 'false',
                    :CidrBlock => '0.0.0.0/0',
-                   :PortRange => {:From => '0', :To => '65535'},
+                   :PortRange => {
+                     :From => '0',
+                     :To => '65535'
+                   },
                  }
 
         resource 'OutBoundPrivateNetworkAclEntry',
@@ -313,7 +322,10 @@ module Enscalator
                    :RuleAction => 'allow',
                    :Egress => 'true',
                    :CidrBlock => '0.0.0.0/0',
-                   :PortRange => {:From => '0', :To => '65535'},
+                   :PortRange => {
+                     :From => '0',
+                     :To => '65535'
+                   },
                  }
 
         resource 'NATDevice1',
@@ -386,12 +398,12 @@ module Enscalator
                    ],
                    :SecurityGroupEgress => [
                      {
-                       :IpProtocol => 'tcp',
+                       :IpProtocol => '-1',
                        :FromPort => '0',
                        :ToPort => '65535',
                        :CidrIp => '0.0.0.0/0'
                      }
-                   ],
+                   ]
                  }
 
         resource 'PrivateSecurityGroup',

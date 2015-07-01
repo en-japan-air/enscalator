@@ -180,7 +180,6 @@ module Enscalator
       end
     end
 
-
     # Call script
     #
     # @param [String] region AWS region identifier
