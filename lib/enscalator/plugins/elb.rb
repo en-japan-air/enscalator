@@ -67,22 +67,6 @@ module Enscalator
                     :ConstraintDescription => 'must be a string'
         end
 
-        subnets = -> {
-          internal ? private_subnets : public_subnets
-        }
-
-        # Create list of private subnets
-        def private_subnets
-          [ref_application_subnet_a, ref_application_subnet_c]
-        end
-
-        # Create list of public subnets
-        def public_subnets
-          cfn = cfn_resource(cfn_client(region))
-          stack = wait_stack(cfn, vpc_stack_name )
-          [get_resource(stack, 'PublicSubnet1'), get_resource(stack, 'PublicSubnet2')]
-        end
-
         resource @elb_resource_name,
                  :Type => 'AWS::ElasticLoadBalancing::LoadBalancer',
                  :Properties => {
@@ -105,7 +89,7 @@ module Enscalator
                      :Timeout => '5',
                    },
                    :SecurityGroups => [ref('ELBSecurityGroup')],
-                   :Subnets => subnets.(),
+                   :Subnets => internal ? ref_application_subnets : public_subnets,
                    :Tags => [
                      {
                        :Key => 'Name',

@@ -170,7 +170,7 @@ module Enscalator
 
         instance_vpc "Elasticsearch#{storage_name}",
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
-                     ref_application_subnet_a,
+                     ref_application_subnets.first,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: properties

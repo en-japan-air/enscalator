@@ -67,6 +67,17 @@ module Enscalator
       @options[:hosted_zone].ends_with?('.') ? @options[:hosted_zone] : @options[:hosted_zone] + '.'
     end
 
+    # Availability zones accessor
+    def availability_zones
+      @availability_zones ||= ec2_client(region)
+                                .describe_availability_zones
+                                .availability_zones
+                                .select { |az| az.state == 'available' }
+                                .collect(&:zone_name)
+                                .map { |n| [n.last.to_sym, n] }
+                                .to_h
+    end
+
     # Pre-run hook
     #
     # @param [Proc] block hook body

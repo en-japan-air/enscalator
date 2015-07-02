@@ -39,7 +39,7 @@ module Enscalator
 
         instance_vpc("Couchbase#{db_name}",
                      find_in_map('AWSCouchbaseAMI', ref('AWS::Region'), 'amd64'),
-                     ref_resource_subnet_a,
+                     ref_resource_subnets.first,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [], properties: {
             :KeyName => ref("Couchbase#{db_name}KeyName"),
