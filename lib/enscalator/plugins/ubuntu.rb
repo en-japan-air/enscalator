@@ -79,7 +79,7 @@ module Enscalator
 
         instance_vpc "Ubuntu#{instance_name}",
                      find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'hvm'),
-                     ref_application_subnet_a,
+                     ref_application_subnets.first,
                      [ref_private_security_group, ref_application_security_group],
                      dependsOn: [],
                      properties: {
