@@ -19,7 +19,7 @@ require 'vcr'
 require 'webmock/rspec'
 
 # Configuration for CI servers
-credentials =
+aws_credentials =
   if ENV['CI'].eql?('true') || ENV['TRAVIS'].eql?('true')
     profile = YAML.load_file('spec/assets/aws/credentials.yml')[:default]
     creds = Aws::Credentials.new(profile[:aws_access_key_id],
@@ -59,11 +59,11 @@ VCR.configure do |c|
 
   # Filter out AWS access and secret tokens
   c.filter_sensitive_data('<AWS_ACCESS_KEY_ID>', :aws_credentials) do
-    credentials.credentials.access_key_id
+    aws_credentials.credentials.access_key_id
   end
 
   c.filter_sensitive_data('<AWS_SECRET_ACCESS_KEY>', :aws_credentials) do
-    credentials.credentials.secret_access_key
+    aws_credentials.credentials.secret_access_key
   end
 end
 

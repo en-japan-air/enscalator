@@ -13,6 +13,8 @@ Gem::Specification.new do |spec|
     spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
   end
 
+  spec.required_ruby_version = '~> 2.0'
+
   spec.summary       = %q{Make enjapan apps webscale}
   spec.description   = %q{Make them really webscale}
   spec.homepage      = 'https://www.github.com/en-japan/enscalator'

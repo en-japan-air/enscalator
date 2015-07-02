@@ -1,5 +1,3 @@
-# -*- encoding : utf-8 -*-
-
 require 'shellwords'
 require 'open-uri'
 require 'nokogiri'
