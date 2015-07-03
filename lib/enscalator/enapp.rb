@@ -50,18 +50,67 @@ module Enscalator
     end
 
     # Reference to private security group
+    # @return [Hash]
     def ref_private_security_group
       ref('PrivateSecurityGroup')
     end
 
     # Reference to resource security group
+    # @return [Hash]
     def ref_resource_security_group
       ref('ResourceSecurityGroup')
     end
 
     # Reference to application security group
+    # @return [Hash]
     def ref_application_security_group
       ref('ApplicationSecurityGroup')
+    end
+
+    # Get all CIRD blocks for current VPC
+    # @return [Hash]
+    def get_all_cidr_blocks
+      IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
+    end
+
+    # Get currently used CIDR blocks
+    # @return [Array]
+    def get_used_cidr_blocks
+      vpc.subnets.collect(&:cidr_block)
+    end
+
+    # Get non-used CIDR blocks
+    # @return [Array]
+    def get_available_cidr_blocks
+      get_all_cidr_blocks - get_used_cidr_blocks
+    end
+
+    # TODO: fix mapping to have suffix, availability_zone included
+
+    # Get application CIDR blocks availability zones mapping
+    # @return [Hash]
+    def get_application_to_az_mapping
+      cidr_blocks = get_available_cidr_blocks.dup
+      availability_zones.keys.map { |az| [az, cidr_blocks.shift] }.to_h
+    end
+
+    # CIDR blocks allocated for application subnets
+    # @return [Array]
+    def get_application_cidr_blocks
+      get_application_to_az_mapping.values
+    end
+
+    # Get resource CIDR blocks availability zones mapping
+    # @return [Array]
+    def get_resource_to_az_mapping
+      cidr_blocks = (get_available_cidr_blocks - get_application_cidr_blocks).dup
+      availability_zones.keys.map { |az| [az, cidr_blocks.shift] }.to_h
+    end
+
+    # CIDR blocks allocated for resource subnets
+    # @return [Array]
+    def get_resource_cidr_blocks
+      get_resource_to_az_mapping.values
     end
 
     # Query and pre-configure VPC parameters required for the stack
@@ -81,13 +130,7 @@ module Enscalator
                 :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
 
       # allocate application/resource cidr blocks dynamically for all availability zones
-      all_cidr_blocks = IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
-      used_cidr_blocks = vpc.subnets.collect(&:cidr_block)
-      available_cidr_blocks = all_cidr_blocks - used_cidr_blocks
-      application_cidr_blocks = available_cidr_blocks.take(availability_zones.size)
-      resource_cidr_blocks = (available_cidr_blocks - application_cidr_blocks).take(availability_zones.size)
-
-      availability_zones.zip(application_cidr_blocks, resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
+      availability_zones.zip(get_application_cidr_blocks, get_resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
         suffix, availability_zone = pair
 
         private_route_table_name = "PrivateRouteTable#{suffix.upcase}"

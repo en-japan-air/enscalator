@@ -1,6 +1,5 @@
 require 'open3'
 require 'ruby-progressbar'
-require 'aws-sdk'
 
 module Enscalator
 
