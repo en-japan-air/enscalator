@@ -10,6 +10,8 @@ module Enscalator
 
     attr_reader :app_name
 
+    Struct.new('Subnet', :availability_zone, :suffix, :cidr_block)
+
     # Create new EnAppTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
@@ -85,32 +87,30 @@ module Enscalator
       get_all_cidr_blocks - get_used_cidr_blocks
     end
 
-    # TODO: fix mapping to have suffix, availability_zone included
-
     # Get application CIDR blocks availability zones mapping
     # @return [Hash]
     def get_application_to_az_mapping
       cidr_blocks = get_available_cidr_blocks.dup
-      availability_zones.keys.map { |az| [az, cidr_blocks.shift] }.to_h
+      availability_zones.map { |suffix, az| Struct::Subnet.new(az, suffix, cidr_blocks.shift) }
     end
 
     # CIDR blocks allocated for application subnets
     # @return [Array]
     def get_application_cidr_blocks
-      get_application_to_az_mapping.values
+      get_application_to_az_mapping.map(&:cidr_block)
     end
 
     # Get resource CIDR blocks availability zones mapping
     # @return [Array]
     def get_resource_to_az_mapping
       cidr_blocks = (get_available_cidr_blocks - get_application_cidr_blocks).dup
-      availability_zones.keys.map { |az| [az, cidr_blocks.shift] }.to_h
+      availability_zones.map { |suffix, az| Struct::Subnet.new(az, suffix, cidr_blocks.shift) }
     end
 
     # CIDR blocks allocated for resource subnets
     # @return [Array]
     def get_resource_cidr_blocks
-      get_resource_to_az_mapping.values
+      get_resource_to_az_mapping.map(&:cidr_block)
     end
 
     # Query and pre-configure VPC parameters required for the stack
