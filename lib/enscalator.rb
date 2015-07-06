@@ -1,3 +1,4 @@
+require 'ipaddr'
 require 'ipaddress'
 require 'aws-sdk'
 require 'active_support'
