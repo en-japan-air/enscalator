@@ -116,18 +116,18 @@ module Enscalator
     # Query and pre-configure VPC parameters required for the stack
     def load_vpc_params
       parameter 'VpcId',
-                :Description => 'The Id of the VPC',
-                :Default => vpc.id,
-                :Type => 'String',
-                :AllowedPattern => 'vpc-[a-zA-Z0-9]*',
-                :ConstraintDescription => 'must begin with vpc- followed by numbers and alphanumeric characters.'
+                Description: 'The Id of the VPC',
+                Default: vpc.id,
+                Type: 'String',
+                AllowedPattern: 'vpc-[a-zA-Z0-9]*',
+                ConstraintDescription: 'must begin with vpc- followed by numbers and alphanumeric characters.'
 
       parameter 'PrivateSecurityGroup',
-                :Description => 'Security group identifier of private instances',
-                :Default => get_resource(vpc_stack, 'PrivateSecurityGroup'),
-                :Type => 'String',
-                :AllowedPattern => 'sg-[a-zA-Z0-9]*',
-                :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
+                Description: 'Security group identifier of private instances',
+                Default: get_resource(vpc_stack, 'PrivateSecurityGroup'),
+                Type: 'String',
+                AllowedPattern: 'sg-[a-zA-Z0-9]*',
+                ConstraintDescription: 'must begin with sg- followed by numbers and alphanumeric characters.'
 
       # allocate application/resource cidr blocks dynamically for all availability zones
       availability_zones.zip(get_application_cidr_blocks, get_resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
@@ -147,9 +147,9 @@ module Enscalator
                application_cidr_block,
                availabilityZone: availability_zone,
                tags: {
-                 'Network' => 'Private',
-                 'Application' => aws_stack_name,
-                 'immutable_metadata' => join('', '{ "purpose": "', aws_stack_name, '-app" }')
+                 Network: 'Private',
+                 Application: aws_stack_name,
+                 immutable_metadata: join('', '{ "purpose": "', aws_stack_name, '-app" }')
                }
 
         subnet "ResourceSubnet#{suffix.upcase}",
@@ -157,8 +157,8 @@ module Enscalator
                resource_cidr_block,
                availabilityZone: availability_zone,
                tags: {
-                 'Network' => 'Private',
-                 'Application' => aws_stack_name
+                 Network: 'Private',
+                 Application: aws_stack_name
                }
 
         resource "RouteTableAssociation#{suffix.upcase}",
@@ -187,8 +187,8 @@ module Enscalator
                            }
                          ],
                          tags: {
-                           'Name' => join('-', aws_stack_name, 'res', 'sg'),
-                           'Application' => aws_stack_name
+                           Name: join('-', aws_stack_name, 'res', 'sg'),
+                           Application: aws_stack_name
                          }
 
       security_group_vpc 'ApplicationSecurityGroup',
@@ -203,8 +203,8 @@ module Enscalator
                            }
                          ],
                          tags: {
-                           'Name' => join('-', aws_stack_name, 'app', 'sg'),
-                           'Application' => aws_stack_name
+                           Name: join('-', aws_stack_name, 'app', 'sg'),
+                           Application: aws_stack_name
                          }
 
     end
