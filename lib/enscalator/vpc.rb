@@ -13,13 +13,11 @@ module Enscalator
 
         pre_run { create_ssh_key nat_key_name, region, force_create: false }
 
-        value :Description => [
+        value Description: [
                 'AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.',
-                'The stack contains 2 subnets: the first subnet is public and contains the',
-                'load balancer, a NAT device for internet access from the private subnet and a',
-                'bastion host to allow SSH access to the Elastic Beanstalk hosts.',
-                'The second subnet is private and contains the Elastic Beanstalk instances.',
-                'You will be billed for the AWS resources used if you create a stack from this template.'
+                'The stack contains for each availability zone: the public subnet, NAT device for',
+                'internet access from the private subnets, internet gateway, routing configuration for',
+                'corresponding subnets and security groups.'
               ].join(' ')
 
         parameter_instance_type 'NAT', type: 't2.small'
