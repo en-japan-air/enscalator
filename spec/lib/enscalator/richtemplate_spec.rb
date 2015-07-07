@@ -55,9 +55,9 @@ describe 'Enscalator::RichTemplateDSL' do
     test_instance_type = 'z5.superbig'
     test_allowed_values = %w(z5.extrasmall z5.supersmall z4.extrahard)
     expect {
-      template_under_test = gen_instance_type_template(test_instance_name,
-                                                       type: test_instance_type,
-                                                       allowed_values: test_allowed_values)
+      gen_instance_type_template(test_instance_name,
+                                 type: test_instance_type,
+                                 allowed_values: test_allowed_values)
     }.to raise_exception RuntimeError
   end
 
