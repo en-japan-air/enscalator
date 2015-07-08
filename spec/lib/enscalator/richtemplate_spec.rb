@@ -51,7 +51,7 @@ describe 'Enscalator::RichTemplateDSL' do
   end
 
   it 'should fail if instance type is not within range of allowed values' do
-    test_instance_name = 'test_allowed'
+    test_instance_name = 'test_failing_allowed_values'
     test_instance_type = 'z5.superbig'
     test_allowed_values = %w(z5.extrasmall z5.supersmall z4.extrahard)
     expect {
