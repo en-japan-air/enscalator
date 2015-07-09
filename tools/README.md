@@ -81,8 +81,8 @@ persist-tun
 mtu-test
 
 ca ca.crt
-cert client-test.crt
-key client-test.key
+cert user6ecef2d4.crt
+key user6ecef2d4.key
 tls-auth ta.key 1
 
 comp-lzo
