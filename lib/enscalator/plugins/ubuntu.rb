@@ -64,7 +64,7 @@ module Enscalator
       def ubuntu_init(instance_name,
                       storage: :'ebs',
                       arch: :amd64,
-                      instance_type: 'm1.medium')
+                      instance_type: 't2.medium')
 
         mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: arch)
 

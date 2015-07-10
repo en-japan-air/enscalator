@@ -10,6 +10,8 @@ module Enscalator
 
     attr_reader :app_name
 
+    Struct.new('Subnet', :availability_zone, :suffix, :cidr_block)
+
     # Create new EnAppTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
@@ -50,44 +52,85 @@ module Enscalator
     end
 
     # Reference to private security group
+    # @return [Hash]
     def ref_private_security_group
       ref('PrivateSecurityGroup')
     end
 
     # Reference to resource security group
+    # @return [Hash]
     def ref_resource_security_group
       ref('ResourceSecurityGroup')
     end
 
     # Reference to application security group
+    # @return [Hash]
     def ref_application_security_group
       ref('ApplicationSecurityGroup')
+    end
+
+    # Get all CIRD blocks for current VPC
+    # @return [Hash]
+    def get_all_cidr_blocks
+      IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
+    end
+
+    # Get currently used CIDR blocks
+    # @return [Array]
+    def get_used_cidr_blocks
+      vpc.subnets.collect(&:cidr_block)
+    end
+
+    # Get non-used CIDR blocks
+    # @return [Array]
+    def get_available_cidr_blocks
+      get_all_cidr_blocks - get_used_cidr_blocks
+    end
+
+    # Get application CIDR blocks availability zones mapping
+    # @return [Hash]
+    def get_application_to_az_mapping
+      cidr_blocks = get_available_cidr_blocks.dup
+      availability_zones.map { |suffix, az| Struct::Subnet.new(az, suffix, cidr_blocks.shift) }
+    end
+
+    # CIDR blocks allocated for application subnets
+    # @return [Array]
+    def get_application_cidr_blocks
+      get_application_to_az_mapping.map(&:cidr_block)
+    end
+
+    # Get resource CIDR blocks availability zones mapping
+    # @return [Array]
+    def get_resource_to_az_mapping
+      cidr_blocks = (get_available_cidr_blocks - get_application_cidr_blocks).dup
+      availability_zones.map { |suffix, az| Struct::Subnet.new(az, suffix, cidr_blocks.shift) }
+    end
+
+    # CIDR blocks allocated for resource subnets
+    # @return [Array]
+    def get_resource_cidr_blocks
+      get_resource_to_az_mapping.map(&:cidr_block)
     end
 
     # Query and pre-configure VPC parameters required for the stack
     def load_vpc_params
       parameter 'VpcId',
-                :Description => 'The Id of the VPC',
-                :Default => vpc.id,
-                :Type => 'String',
-                :AllowedPattern => 'vpc-[a-zA-Z0-9]*',
-                :ConstraintDescription => 'must begin with vpc- followed by numbers and alphanumeric characters.'
+                Description: 'The Id of the VPC',
+                Default: vpc.id,
+                Type: 'String',
+                AllowedPattern: 'vpc-[a-zA-Z0-9]*',
+                ConstraintDescription: 'must begin with vpc- followed by numbers and alphanumeric characters.'
 
       parameter 'PrivateSecurityGroup',
-                :Description => 'Security group identifier of private instances',
-                :Default => get_resource(vpc_stack, 'PrivateSecurityGroup'),
-                :Type => 'String',
-                :AllowedPattern => 'sg-[a-zA-Z0-9]*',
-                :ConstraintDescription => 'must begin with sg- followed by numbers and alphanumeric characters.'
+                Description: 'Security group identifier of private instances',
+                Default: get_resource(vpc_stack, 'PrivateSecurityGroup'),
+                Type: 'String',
+                AllowedPattern: 'sg-[a-zA-Z0-9]*',
+                ConstraintDescription: 'must begin with sg- followed by numbers and alphanumeric characters.'
 
       # allocate application/resource cidr blocks dynamically for all availability zones
-      all_cidr_blocks = IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
-      used_cidr_blocks = vpc.subnets.collect(&:cidr_block)
-      available_cidr_blocks = all_cidr_blocks - used_cidr_blocks
-      application_cidr_blocks = available_cidr_blocks.take(availability_zones.size)
-      resource_cidr_blocks = (available_cidr_blocks - application_cidr_blocks).take(availability_zones.size)
-
-      availability_zones.zip(application_cidr_blocks, resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
+      availability_zones.zip(get_application_cidr_blocks, get_resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
         suffix, availability_zone = pair
 
         private_route_table_name = "PrivateRouteTable#{suffix.upcase}"
@@ -104,9 +147,9 @@ module Enscalator
                application_cidr_block,
                availabilityZone: availability_zone,
                tags: {
-                 'Network' => 'Private',
-                 'Application' => aws_stack_name,
-                 'immutable_metadata' => join('', '{ "purpose": "', aws_stack_name, '-app" }')
+                 Network: 'Private',
+                 Application: aws_stack_name,
+                 immutable_metadata: join('', '{ "purpose": "', aws_stack_name, '-app" }')
                }
 
         subnet "ResourceSubnet#{suffix.upcase}",
@@ -114,8 +157,8 @@ module Enscalator
                resource_cidr_block,
                availabilityZone: availability_zone,
                tags: {
-                 'Network' => 'Private',
-                 'Application' => aws_stack_name
+                 Network: 'Private',
+                 Application: aws_stack_name
                }
 
         resource "RouteTableAssociation#{suffix.upcase}",
@@ -144,8 +187,8 @@ module Enscalator
                            }
                          ],
                          tags: {
-                           'Name' => join('-', aws_stack_name, 'res', 'sg'),
-                           'Application' => aws_stack_name
+                           Name: join('-', aws_stack_name, 'res', 'sg'),
+                           Application: aws_stack_name
                          }
 
       security_group_vpc 'ApplicationSecurityGroup',
@@ -160,8 +203,8 @@ module Enscalator
                            }
                          ],
                          tags: {
-                           'Name' => join('-', aws_stack_name, 'app', 'sg'),
-                           'Application' => aws_stack_name
+                           Name: join('-', aws_stack_name, 'app', 'sg'),
+                           Application: aws_stack_name
                          }
 
     end

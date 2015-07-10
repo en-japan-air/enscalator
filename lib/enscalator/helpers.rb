@@ -1,6 +1,5 @@
 require 'open3'
 require 'ruby-progressbar'
-require 'aws-sdk'
 
 module Enscalator
 
@@ -179,7 +178,6 @@ module Enscalator
         {:parameter_key => k, :parameter_value => v}
       end
     end
-
 
     # Call script
     #

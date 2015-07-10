@@ -6,33 +6,50 @@ module Enscalator
     class VPC < Enscalator::RichTemplateDSL
       include Enscalator::Helpers
 
+      # Template method
       def tpl
 
         nat_key_name = 'vpc-nat'
 
         pre_run { create_ssh_key nat_key_name, region, force_create: false }
 
-        value :Description => [
+        value Description: [
                 'AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.',
-                'The stack contains 2 subnets: the first subnet is public and contains the',
-                'load balancer, a NAT device for internet access from the private subnet and a',
-                'bastion host to allow SSH access to the Elastic Beanstalk hosts.',
-                'The second subnet is private and contains the Elastic Beanstalk instances.',
-                'You will be billed for the AWS resources used if you create a stack from this template.'
+                'The stack contains for each availability zone: the public subnet, NAT device for',
+                'internet access from the private subnets, internet gateway, routing configuration for',
+                'corresponding subnets and security groups.'
               ].join(' ')
 
         parameter_instance_type 'NAT', type: 't2.small'
 
         mapping 'AWSNATAMI',
-                :'us-east-1' => {:AMI => 'ami-303b1458'},
-                :'us-west-1' => {:AMI => 'ami-7da94839'},
-                :'us-west-2' => {:AMI => 'ami-69ae8259'},
-                :'eu-west-1' => {:AMI => 'ami-6975eb1e'},
-                :'eu-central-1' => {:AMI => 'ami-46073a5b'},
-                :'ap-northeast-1' => {:AMI => 'ami-03cf3903'},
-                :'ap-southeast-1' => {:AMI => 'ami-b49dace6'},
-                :'ap-southeast-2' => {:AMI => 'ami-e7ee9edd'},
-                :'sa-east-1' => {:AMI => 'ami-fbfa41e6'}
+                :'us-east-1' => {
+                  :AMI => 'ami-303b1458'
+                },
+                :'us-west-1' => {
+                  :AMI => 'ami-7da94839'
+                },
+                :'us-west-2' => {
+                  :AMI => 'ami-69ae8259'
+                },
+                :'eu-west-1' => {
+                  :AMI => 'ami-6975eb1e'
+                },
+                :'eu-central-1' => {
+                  :AMI => 'ami-46073a5b'
+                },
+                :'ap-northeast-1' => {
+                  :AMI => 'ami-03cf3903'
+                },
+                :'ap-southeast-1' => {
+                  :AMI => 'ami-b49dace6'
+                },
+                :'ap-southeast-2' => {
+                  :AMI => 'ami-e7ee9edd'
+                },
+                :'sa-east-1' => {
+                  :AMI => 'ami-fbfa41e6'
+                }
 
         mapping 'AWSRegionNetConfig', NetworkConfig.mapping_vpc_net
 
@@ -231,7 +248,7 @@ module Enscalator
                    ],
                    SecurityGroupEgress: [
                      {
-                       IpProtocol: 'tcp',
+                       IpProtocol: '-1',
                        FromPort: '0',
                        ToPort: '65535',
                        CidrIp: '0.0.0.0/0'
