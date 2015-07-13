@@ -423,7 +423,7 @@ module Enscalator
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
     def parameter_ec2_instance_type(instance_name, type)
-      ec2_inst = InstanceType.ec2_instance_type
+      InstanceType.ec2_instance_type.verify(type)
     end
 
     # RDS Instance type parameter
@@ -431,7 +431,7 @@ module Enscalator
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
     def parameter_rds_instance_type(instance_name, type)
-      rds_inst = InstanceType.rds_instance_type
+      InstanceType.rds_instance_type.verify(type)
     end
 
     # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
