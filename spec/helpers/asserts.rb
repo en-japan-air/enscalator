@@ -24,5 +24,13 @@ module Helpers
       expect(str).to match /ami[-][a-z0-9]{8}/
     end
 
+    def assert_ec2_instance_type(type)
+      expect(type).to match /^[\w\d]{1,3}[.][\w]*$/
+    end
+
+    def assert_rds_instance_type(type)
+      expect(type).to match /^db[.][\w\d]{1,3}[.][\w]*$/
+    end
+
   end # Asserts
 end # Helpers

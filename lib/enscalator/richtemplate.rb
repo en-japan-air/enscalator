@@ -55,7 +55,7 @@ module Enscalator
     # (since there is an instance variable with same name, it will be modified in `super` initializer,
     # thus `attr_reader` is not available)
     def parameters
-      (@options[:parameters] || '').split(';').map(&->(s) { s.split '=' }).to_h
+      (@options[:parameters] || '').split(';').map { |s| s.split '=' }.to_h
     end
 
     # Hosted zone accessor
@@ -365,6 +365,7 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
+    # TODO: under refactoring
     # Current generation instance types
     #
     # @return [Array] allowed instance types
@@ -377,6 +378,7 @@ module Enscalator
         d2.4xlarge d2.8xlarge)
     end
 
+    # TODO: under refactoring
     # @deprecated Will be removed once Amazon fully stops supporting these instances
     # Previous generation instance types
     #
@@ -388,6 +390,7 @@ module Enscalator
         cr1.8xlarge hi1.4xlarge hs1.8xlarge)
     end
 
+    # TODO: under refactoring
     # Instance type parameter
     #
     # @param [String] instance_name instance name
@@ -413,6 +416,22 @@ module Enscalator
                 :Type => 'String',
                 :AllowedValues => allowed,
                 :ConstraintDescription => 'must be valid EC2 instance type.'
+    end
+
+    # EC2 Instance type parameter
+    #
+    # @param [String] instance_name name of the instance
+    # @param [String] type instance type
+    def parameter_ec2_instance_type(instance_name, type)
+      ec2_inst = InstanceType.ec2_instance_type
+    end
+
+    # RDS Instance type parameter
+    #
+    # @param [String] instance_name name of the instance
+    # @param [String] type instance type
+    def parameter_rds_instance_type(instance_name, type)
+      rds_inst = InstanceType.rds_instance_type
     end
 
     # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
@@ -463,17 +482,20 @@ module Enscalator
     # @param [String] network_interfaces network interfaces
     # @param [Hash] properties other properties
     def instance_with_network(name, image_id, network_interfaces, properties: {})
-      raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups" if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
-      properties[:ImageId] = image_id
-      properties[:NetworkInterfaces] = network_interfaces
-      if properties[:Tags] && !properties[:Tags].any? { |x| x[:Key] == 'Name' }
-        properties[:Tags] << {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+      if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
+        raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups"
+      else
+        properties[:ImageId] = image_id
+        properties[:NetworkInterfaces] = network_interfaces
+        if properties[:Tags] && !properties[:Tags].any? { |x| x[:Key] == 'Name' }
+          properties[:Tags] << {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+        end
+        options = {
+          :Type => 'AWS::EC2::Instance',
+          :Properties => properties
+        }
+        resource name, options
       end
-      options = {
-        :Type => 'AWS::EC2::Instance',
-        :Properties => properties
-      }
-      resource name, options
     end
 
     # Dynamically define methods to access related parameters
