@@ -34,6 +34,45 @@ describe 'Enscalator::InstanceType::AwsInstance' do
     expect(instance.previous_generation).to be_empty
   end
 
+  it 'should verify if given instance type is within given range' do
+    test_current_gen = {general: %w{ gen1.small gen2.big }}
+    instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen)
+    expect(instance.supported?(test_current_gen.values.flatten.first)).to be(true)
+    expect(instance.supported?('false_type')).to be(false)
+  end
+
+  it 'should check if given instance type is obsolete (previous generation)' do
+    test_current_gen = {general: %w{ gen1.fast gen2.big }}
+    test_previous_gen = {micro: %w{ micro1.slow }}
+    instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
+    expect(instance.obsolete?('micro1.slow')).to be(true)
+    expect(instance.obsolete?('gen1.fast')).to be(false)
+    expect(instance.obsolete?('false_type')).to be(false)
+  end
+
+  it 'should return allowed values for current generation instance types' do
+    test_current_gen = {general: %w{ gen1.fast gen2.big }}
+    test_previous_gen = {micro: %w{ micro1.slow }}
+    instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
+    expect(instance.allowed_values('gen1.fast')).to include(*test_current_gen.values.flatten)
+    expect(instance.allowed_values('gen1.fast')).not_to include(*test_previous_gen.values.flatten)
+  end
+
+  it 'should return allowed values for previous generation instance types' do
+    test_current_gen = {general: %w{ gen1.fast gen2.big }}
+    test_previous_gen = {micro: %w{ micro1.slow }}
+    instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
+    expect(instance.allowed_values('micro1.slow')).to include(*test_previous_gen.values.flatten)
+    expect(instance.allowed_values('micro1.slow')).not_to include(*test_current_gen.values.flatten)
+  end
+
+  it 'should return empty array for allowed values if instance type is not supported' do
+    test_current_gen = {general: %w{ gen1.fast gen2.big }}
+    test_previous_gen = {micro: %w{ micro1.slow }}
+    instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
+    expect(instance.allowed_values('superbig10.superfast')).to eq([])
+    expect(instance.allowed_values('micro1.slow')).not_to eq([])
+  end
 end
 
 describe 'Enscalator::InstanceType::EC2' do

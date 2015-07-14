@@ -365,7 +365,7 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
-    # TODO: under refactoring
+    # TODO: remove
     # Current generation instance types
     #
     # @return [Array] allowed instance types
@@ -378,7 +378,7 @@ module Enscalator
         d2.4xlarge d2.8xlarge)
     end
 
-    # TODO: under refactoring
+    # TODO: remove
     # @deprecated Will be removed once Amazon fully stops supporting these instances
     # Previous generation instance types
     #
@@ -398,14 +398,14 @@ module Enscalator
     # @param [Array] allowed_values list used to override built-in instance types
     def parameter_instance_type(instance_name, type: 't2.micro', allowed_values: [])
 
-      # check overrides first, then stable instances, then obsolete and fail if none matched
+      # check if given type is included in allowed_values and fails if none matched
       allowed = if allowed_values.any? && allowed_values.include?(type)
                   allowed_values
-                elsif instance_type.include?(type)
-                  instance_type
-                elsif instance_type_obsolete.include?(type)
-                  warn('Using obsolete instance types')
-                  instance_type_obsolete
+                  # elsif instance_type.include?(type)
+                  #   instance_type
+                  # elsif instance_type_obsolete.include?(type)
+                  #   warn('Using obsolete instance types')
+                  #   instance_type_obsolete
                 else
                   fail("Found not supported instance type: #{type}")
                 end
@@ -422,16 +422,26 @@ module Enscalator
     #
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
-    def parameter_ec2_instance_type(instance_name, type)
-      InstanceType.ec2_instance_type.verify(type)
+    def parameter_ec2_instance_type(instance_name,
+                                    type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
+      fail("Not supported instance type: #{type}") unless InstanceType.ec2_instance_type.supported?(type)
+      warn("Using obsolete instance type: #{type}") unless InstanceType.ec2_instance_type.obsolete?(type)
+      parameter_instance_type(instance_name,
+                              type: type,
+                              allowed_values: InstanceType.ec2_instance_type.allowed_values(type))
     end
 
     # RDS Instance type parameter
     #
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
-    def parameter_rds_instance_type(instance_name, type)
-      InstanceType.rds_instance_type.verify(type)
+    def parameter_rds_instance_type(instance_name,
+                                    type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
+      fail("Not supported instance type: #{type}") unless InstanceType.rds_instance_type.supported?(type)
+      warn("Using obsolete instance type: #{type}") unless InstanceType.rds_instance_type.obsolete?(type)
+      parameter_instance_type(instance_name,
+                              type: type,
+                              allowed_values: InstanceType.rds_instance_type.allowed_values(type))
     end
 
     # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
