@@ -405,7 +405,7 @@ module Enscalator
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
     def parameter_rds_instance_type(instance_name,
-                                    type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
+                                    type: InstanceType.rds_instance_type.current_generation[:general_purpose].first)
       fail("Not supported instance type: #{type}") unless InstanceType.rds_instance_type.supported?(type)
       warn("Using obsolete instance type: #{type}") if InstanceType.rds_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
