@@ -396,7 +396,7 @@ module Enscalator
     # @param [String] instance_name instance name
     # @param [String] type instance type (default: t2.micro)
     # @param [Array] allowed_values list used to override built-in instance types
-    def parameter_instance_type(instance_name, type: 't2.micro', allowed_values: [])
+    def parameter_instance_type(instance_name, type, allowed_values: [])
 
       # check if given type is included in allowed_values and fails if none matched
       allowed = if allowed_values.any? && allowed_values.include?(type)
@@ -407,7 +407,7 @@ module Enscalator
                   #   warn('Using obsolete instance types')
                   #   instance_type_obsolete
                 else
-                  fail("Found not supported instance type: #{type}")
+                  fail("Instance type \"#{type}\" is not in allowed values: #{allowed_values.join(' ')}")
                 end
 
       parameter "#{instance_name}InstanceType",
@@ -425,9 +425,9 @@ module Enscalator
     def parameter_ec2_instance_type(instance_name,
                                     type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
       fail("Not supported instance type: #{type}") unless InstanceType.ec2_instance_type.supported?(type)
-      warn("Using obsolete instance type: #{type}") unless InstanceType.ec2_instance_type.obsolete?(type)
+      warn("Using obsolete instance type: #{type}") if InstanceType.ec2_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
-                              type: type,
+                              type,
                               allowed_values: InstanceType.ec2_instance_type.allowed_values(type))
     end
 
@@ -438,9 +438,9 @@ module Enscalator
     def parameter_rds_instance_type(instance_name,
                                     type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
       fail("Not supported instance type: #{type}") unless InstanceType.rds_instance_type.supported?(type)
-      warn("Using obsolete instance type: #{type}") unless InstanceType.rds_instance_type.obsolete?(type)
+      warn("Using obsolete instance type: #{type}") if InstanceType.rds_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
-                              type: type,
+                              type,
                               allowed_values: InstanceType.rds_instance_type.allowed_values(type))
     end
 
