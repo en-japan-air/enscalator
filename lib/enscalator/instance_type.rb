@@ -22,7 +22,7 @@ module Enscalator
       # @param [String] type instance type
       # @return [Boolean]
       def supported?(type)
-        current_generation.values.dup.concat(previous_generation.values).flatten.include? type
+        @current_generation.values.dup.concat(@previous_generation.values).flatten.include? type
       end
 
       # Checks if given instance type is in previous generation
@@ -30,7 +30,7 @@ module Enscalator
       # @param [String] type instance type
       # @return [Boolean]
       def obsolete?(type)
-        previous_generation.values.flatten.include? type
+        @previous_generation.values.flatten.include? type
       end
 
       # List of all allowed values
@@ -39,7 +39,7 @@ module Enscalator
       # @return [Array]
       def allowed_values(type)
         return [] unless self.supported?(type)
-        self.obsolete?(type) ? previous_generation.values.flatten : current_generation.values.flatten
+        self.obsolete?(type) ? @previous_generation.values.flatten : @current_generation.values.flatten
       end
     end
 
