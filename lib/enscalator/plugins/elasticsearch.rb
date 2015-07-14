@@ -136,7 +136,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_type "Elasticsearch#{storage_name}", type: instance_type
+        parameter_ec2_instance_type "Elasticsearch#{storage_name}", type: instance_type
 
         properties[:KeyName] = @key_name
         properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceType")

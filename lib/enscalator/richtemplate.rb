@@ -55,7 +55,7 @@ module Enscalator
     # (since there is an instance variable with same name, it will be modified in `super` initializer,
     # thus `attr_reader` is not available)
     def parameters
-      (@options[:parameters] || '').split(';').map(&->(s) { s.split '=' }).to_h
+      (@options[:parameters] || '').split(';').map { |s| s.split '=' }.to_h
     end
 
     # Hosted zone accessor
@@ -365,46 +365,18 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
-    # Current generation instance types
-    #
-    # @return [Array] allowed instance types
-    def instance_type
-      %w(t2.micro t2.small t2.medium m4.large m4.xlarge m4.2xlarge m4.4xlarge
-        m4.10xlarge m3.medium m3.large m3.xlarge m3.2xlarge c4.large c4.xlarge
-        c4.2xlarge c4.4xlarge c4.8xlarge c3.large c3.xlarge c3.2xlarge c3.4xlarge
-        c3.8xlarge r3.large r3.xlarge r3.2xlarge r3.4xlarge r3.8xlarge g2.2xlarge
-        g2.8xlarge i2.xlarge i2.xlarge i2.4xlarge i2.8xlarge d2.xlarge d2.2xlarge
-        d2.4xlarge d2.8xlarge)
-    end
-
-    # @deprecated Will be removed once Amazon fully stops supporting these instances
-    # Previous generation instance types
-    #
-    # @return [Array] allowed instance types
-    def instance_type_obsolete
-      %w(t1.micro m1.small m1.medium m1.large m1.xlarge
-        c1.medium c1.xlarge cc2.8xlarge cg1.4xlarge
-        m2.xlarge m2.2xlarge m2.4xlarge
-        cr1.8xlarge hi1.4xlarge hs1.8xlarge)
-    end
-
     # Instance type parameter
     #
     # @param [String] instance_name instance name
     # @param [String] type instance type (default: t2.micro)
     # @param [Array] allowed_values list used to override built-in instance types
-    def parameter_instance_type(instance_name, type: 't2.micro', allowed_values: [])
+    def parameter_instance_type(instance_name, type, allowed_values: [])
 
-      # check overrides first, then stable instances, then obsolete and fail if none matched
+      # check if given type is included in allowed_values and fails if none matched
       allowed = if allowed_values.any? && allowed_values.include?(type)
                   allowed_values
-                elsif instance_type.include?(type)
-                  instance_type
-                elsif instance_type_obsolete.include?(type)
-                  warn('Using obsolete instance types')
-                  instance_type_obsolete
                 else
-                  fail("Found not supported instance type: #{type}")
+                  fail("Instance type \"#{type}\" is not in allowed values: #{allowed_values.join(' ')}")
                 end
 
       parameter "#{instance_name}InstanceType",
@@ -413,6 +385,32 @@ module Enscalator
                 :Type => 'String',
                 :AllowedValues => allowed,
                 :ConstraintDescription => 'must be valid EC2 instance type.'
+    end
+
+    # EC2 Instance type parameter
+    #
+    # @param [String] instance_name name of the instance
+    # @param [String] type instance type
+    def parameter_ec2_instance_type(instance_name,
+                                    type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
+      fail("Not supported instance type: #{type}") unless InstanceType.ec2_instance_type.supported?(type)
+      warn("Using obsolete instance type: #{type}") if InstanceType.ec2_instance_type.obsolete?(type)
+      parameter_instance_type(instance_name,
+                              type,
+                              allowed_values: InstanceType.ec2_instance_type.allowed_values(type))
+    end
+
+    # RDS Instance type parameter
+    #
+    # @param [String] instance_name name of the instance
+    # @param [String] type instance type
+    def parameter_rds_instance_type(instance_name,
+                                    type: InstanceType.rds_instance_type.current_generation[:general_purpose].first)
+      fail("Not supported instance type: #{type}") unless InstanceType.rds_instance_type.supported?(type)
+      warn("Using obsolete instance type: #{type}") if InstanceType.rds_instance_type.obsolete?(type)
+      parameter_instance_type(instance_name,
+                              type,
+                              allowed_values: InstanceType.rds_instance_type.allowed_values(type))
     end
 
     # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
@@ -463,17 +461,20 @@ module Enscalator
     # @param [String] network_interfaces network interfaces
     # @param [Hash] properties other properties
     def instance_with_network(name, image_id, network_interfaces, properties: {})
-      raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups" if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
-      properties[:ImageId] = image_id
-      properties[:NetworkInterfaces] = network_interfaces
-      if properties[:Tags] && !properties[:Tags].any? { |x| x[:Key] == 'Name' }
-        properties[:Tags] << {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+      if ([:SubnetId, :SecurityGroups, :SecurityGroupIds] & properties).any?
+        raise "Instance with NetworkInterfaces #{name} can not contain instance subnet or security_groups"
+      else
+        properties[:ImageId] = image_id
+        properties[:NetworkInterfaces] = network_interfaces
+        if properties[:Tags] && !properties[:Tags].any? { |x| x[:Key] == 'Name' }
+          properties[:Tags] << {:Key => 'Name', :Value => join('-', aws_stack_name, name)}
+        end
+        options = {
+          :Type => 'AWS::EC2::Instance',
+          :Properties => properties
+        }
+        resource name, options
       end
-      options = {
-        :Type => 'AWS::EC2::Instance',
-        :Properties => properties
-      }
-      resource name, options
     end
 
     # Dynamically define methods to access related parameters

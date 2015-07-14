@@ -75,7 +75,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_type "Ubuntu#{instance_name}", type: instance_type
+        parameter_ec2_instance_type "Ubuntu#{instance_name}", type: instance_type
 
         instance_vpc "Ubuntu#{instance_name}",
                      find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'hvm'),

@@ -21,10 +21,12 @@ module Enscalator
                    storage_type: 'gp2',
                    multizone: 'false',
                    parameter_group: '***REMOVED***',
-                   instance_type: 'db.m1.small',
+                   instance_type: 'db.t2.small',
                    properties: {})
 
         parameter_name "RDS#{db_name}"
+
+        parameter_rds_instance_type "RDS#{db_name}", type: instance_type
 
         parameter_allocated_storage "RDS#{db_name}",
                                     default: allocated_storage,
@@ -47,15 +49,6 @@ module Enscalator
                   :Default => parameter_group,
                   :Description => 'Custom parameter group for an RDS database family',
                   :Type => 'String'
-
-        parameter_instance_type "RDS#{db_name}",
-                                type: instance_type,
-                                allowed_values: %w(db.t1.micro db.m1.small db.m3.medium db.m3.large
-                                                db.m3.xlarge db.m3.2xlarge db.r3.large db.r3.xlarge
-                                                db.r3.2xlarge db.r3.4xlarge db.r3.8xlarge db.t2.micro
-                                                db.t2.small db.t2.medium db.m2.xlarge db.m2.2xlarge
-                                                db.m2.4xlarge db.cr1.8xlarge db.m1.medium db.m1.large
-                                                db.m1.xlarge)
 
         parameter_username "RDS#{db_name}"
 

@@ -35,7 +35,7 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-        parameter_instance_type "Couchbase#{db_name}", type: instance_type
+        parameter_ec2_instance_type "Couchbase#{db_name}", type: instance_type
 
         instance_vpc("Couchbase#{db_name}",
                      find_in_map('AWSCouchbaseAMI', ref('AWS::Region'), 'amd64'),

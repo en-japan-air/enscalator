@@ -20,7 +20,7 @@ module Enscalator
                 'corresponding subnets and security groups.'
               ].join(' ')
 
-        parameter_instance_type 'NAT', type: 't2.small'
+        parameter_ec2_instance_type 'NAT', type: 't2.small'
 
         mapping 'AWSNATAMI',
                 :'us-east-1' => {

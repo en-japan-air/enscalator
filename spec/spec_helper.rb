@@ -11,7 +11,7 @@ Coveralls.wear!
 
 require 'enscalator'
 
-# Debugging
+# Debugging (use binding.pry to directly inspect in given scope)
 require 'pry'
 
 # Recording and mocking web requests
