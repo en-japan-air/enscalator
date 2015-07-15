@@ -33,7 +33,7 @@ module Enscalator
         :'sa-east-1' => {
           VPC: '10.64.0.0/16'
         }
-      }
+      }.with_indifferent_access
     end # mapping_vpc_net
   end # class NetworkConfig
 end # module Enscalator
