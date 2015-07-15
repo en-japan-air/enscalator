@@ -30,6 +30,14 @@ OPTS = Trollop::with_standard_exception_handling p do
   p.parse ARGV
 end
 
+if OPTS[:availability_zone_given]
+  valid_values = ('a'..'e').to_a << 'all'
+  unless valid_values.include? OPTS[:availability_zone]
+    STDERR.puts %Q{Availability zone can be only one off "#{valid_values.join(',')}"}
+    exit
+  end
+end
+
 templates = Enscalator::Templates.constants.map(&:to_s)
 
 if OPTS[:list_templates]
