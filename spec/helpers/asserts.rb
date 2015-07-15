@@ -17,9 +17,9 @@ module Helpers
       end
 
       mapping.values.each do |v|
-        expected = fields && fields.empty? ? AWS_VIRTUALIZATION.keys : fields
-        expect(v.keys).to start_with(expected.first).or end_with(expected.last)
-        expect(v.keys).to start_with(expected.last).or end_with(expected.first)
+        expected = fields && fields.empty? ? AWS_VIRTUALIZATION.keys.map(&:to_s) : fields
+        expect(v.keys.size).to be <= expected.size
+        expect(v.keys).to include(expected.first).or include(expected.last)
       end
 
       mapping.values.map(&:values).flatten.each do |ami|

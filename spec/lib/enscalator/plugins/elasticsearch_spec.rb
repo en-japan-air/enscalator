@@ -17,7 +17,7 @@ describe 'Enscalator::Plugins::Elasticsearch' do
       dict = elasticsearch_template.instance_variable_get(:@dict)
 
       mapping_under_test = dict[:Mappings]['AWSElasticsearchAMI']
-      assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.keys
+      assert_mapping mapping_under_test
 
       resource_under_test = dict[:Resources]
       expect(resource_under_test.keys).to include('Elasticsearchtest_server')
