@@ -10,26 +10,30 @@ describe 'Enscalator::RichTemplateDSL' do
   end
 
   # Helpers to generate template that can be used for testing
+  def gen_template
+    RichTemplateFixture.new
+  end
+
   def gen_template_with_options(options={})
     RichTemplateFixture.new(options)
   end
 
   def gen_instance_type_template(name, type, allowed_values: [])
-    test_fixture = RichTemplateFixture.new
+    test_fixture = gen_template
     test_fixture.parameter_instance_type(name, type, allowed_values: allowed_values)
     generated_template = test_fixture.instance_variable_get(:@dict)
     generated_template[:Parameters]["#{name}InstanceType"]
   end
 
   def gen_ec2_instance_type_tpl(instance_name, type)
-    ec2_test_fixture = RichTemplateFixture.new
+    ec2_test_fixture = gen_template
     ec2_test_fixture.parameter_ec2_instance_type(instance_name, type: type)
     generated_template = ec2_test_fixture.instance_variable_get(:@dict)
     generated_template[:Parameters]["#{instance_name}InstanceType"]
   end
 
   def gen_rds_instance_type_tpl(instance_name, type)
-    rds_test_fixture = RichTemplateFixture.new
+    rds_test_fixture = gen_template
     rds_test_fixture.parameter_rds_instance_type(instance_name, type: type)
     generated_template = rds_test_fixture.instance_variable_get(:@dict)
     generated_template[:Parameters]["#{instance_name}InstanceType"]
@@ -87,7 +91,10 @@ describe 'Enscalator::RichTemplateDSL' do
   it 'should return availability zones using provided accessor method' do
     VCR.use_cassette 'richtemplate_all_availability_zones', allow_playback_repeats: true do
       test_fixture = gen_template_with_options(default_cmd_opts)
-      expect(test_fixture.get_availability_zones).to eq(test_fixture.availability_zones)
+      value1 = test_fixture.get_availability_zones
+      value2 = test_fixture.availability_zones
+      expect(value1).to eq(value2)
+      expect(value2).to eq(value1)
     end
   end
 
@@ -116,20 +123,10 @@ describe 'Enscalator::RichTemplateDSL' do
   end
 
   it 'should add description to template dict' do
-
-    class TestFixture < Enscalator::RichTemplateDSL
-      define_method :descr_text do
-        'sometest'
-      end
-
-      define_method :tpl do
-        description(self.send(:descr_text))
-      end
-    end
-
-    test_fixture = TestFixture.new
-    test_template = test_fixture.instance_variable_get(:@dict)
-    expect(test_template[:Description]).to eq(test_fixture.send(:descr_text))
+    test_fixture = gen_template
+    test_description = 'sometext'
+    expect(test_fixture.description(test_description)[:Description]).to eq(test_description)
+    expect(test_fixture.instance_variable_get(:@dict)[:Description]).to eq(test_description)
   end
 
   it 'should use current generation ec2 instance type' do
