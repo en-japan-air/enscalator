@@ -35,6 +35,24 @@ describe 'Enscalator::RichTemplateDSL' do
     generated_template[:Parameters]["#{instance_name}InstanceType"]
   end
 
+  it 'should return valid values for region, stack and vpc name using provided accessors' do
+    opts = default_cmd_opts
+    test_fixture = gen_template_with_options(opts)
+    expect(test_fixture.region).to eq(opts[:region])
+    expect(test_fixture.stack_name).to eq(opts[:stack_name])
+    expect(test_fixture.vpc_stack_name).to eq(opts[:vpc_stack_name])
+  end
+
+  it 'should parse parameters option into valid Hash format' do
+    test_params = {
+      :SomeKey1 => 'SomeValue1',
+      :SomeKey2 => 'SomeValue2'
+    }.with_indifferent_access
+    opts = default_cmd_opts.merge({parameters: test_params.map { |k,v| "#{k.to_s}=#{v}" }.join(';')})
+    test_fixture = gen_template_with_options(opts)
+    expect(test_fixture.parameters).to eq(test_params)
+  end
+
   it 'should return all availability zones by default' do
     VCR.use_cassette 'richtemplate_all_availability_zones' do
       test_fixture = gen_template_with_options(default_cmd_opts)
