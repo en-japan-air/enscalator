@@ -102,6 +102,19 @@ describe 'Enscalator::RichTemplateDSL' do
     end
   end
 
+  it 'should convert Hash to cloudformation template tags format' do
+    test_fixture = gen_template_with_options(default_cmd_opts)
+    test_tags = {
+      tagkey1: 'TagValue1',
+      tagkey2: 'TagValue2'
+    }
+    properties = test_fixture.tags_to_properties(test_tags)
+    test_tags.each do |k,v|
+      expect(properties.select { |p| p[:Key] == k }.first[:Key]).to eq(k)
+      expect(properties.select { |p| p[:Value] == v }.first[:Value]).to eq(v)
+    end
+  end
+
   it 'should use current generation ec2 instance type' do
     test_instance_name = 'test_ec2'
     test_instance_type = 't2.small'
