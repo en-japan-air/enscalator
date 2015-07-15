@@ -42,6 +42,7 @@ Usage: enscalator [arguments]
   -x, --expand                     Print generated JSON template
   -a, --capabilities=<s>           AWS capabilities (default: CAPABILITY_IAM)
   -n, --vpc-stack-name=<s>         VPC stack name (default: enjapan-vpc)
+  -d, --availability-zone=<s>      Deploy to specific availability zone (default: all)
   -h, --help                       Show this message
 ```
 
