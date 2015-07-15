@@ -48,9 +48,31 @@ describe 'Enscalator::RichTemplateDSL' do
       :SomeKey1 => 'SomeValue1',
       :SomeKey2 => 'SomeValue2'
     }.with_indifferent_access
-    opts = default_cmd_opts.merge({parameters: test_params.map { |k,v| "#{k.to_s}=#{v}" }.join(';')})
+    opts = default_cmd_opts.merge({parameters: test_params.map { |k, v| "#{k.to_s}=#{v}" }.join(';')})
     test_fixture = gen_template_with_options(opts)
     expect(test_fixture.parameters).to eq(test_params)
+  end
+
+  it 'should properly handle provided hosted zone option' do
+    test_zone = 'somezone'
+    opts = default_cmd_opts.merge({hosted_zone: test_zone})
+    test_fixture = gen_template_with_options(opts)
+    expect(test_fixture.hosted_zone).to eq(test_zone << '.')
+  end
+
+  it 'should properly handle provided hosted zone option with trailing dot' do
+    test_zone = 'somezone' << '.'
+    opts = default_cmd_opts.merge({hosted_zone: test_zone})
+    test_fixture = gen_template_with_options(opts)
+    expect(test_fixture.hosted_zone).to eq(test_zone)
+  end
+
+  it 'should fail if hosted zone is not given, but its accessor was called' do
+    test_zone = nil
+    opts = default_cmd_opts.merge({hosted_zone: test_zone})
+    expect {
+      gen_template_with_options(opts).hosted_zone
+    }.to raise_error RuntimeError
   end
 
   it 'should return all availability zones by default' do
