@@ -4,11 +4,16 @@ describe 'Enscalator::RichTemplateDSL' do
 
   class RichTemplateFixture < Enscalator::RichTemplateDSL
     define_method :tpl do
+      @app_name = self.class.name.demodulize
       value Description: 'test template'
     end
   end
 
   # Helpers to generate template that can be used for testing
+  def gen_template_with_options(options={})
+    RichTemplateFixture.new(options)
+  end
+
   def gen_instance_type_template(name, type, allowed_values: [])
     test_fixture = RichTemplateFixture.new
     test_fixture.parameter_instance_type(name, type, allowed_values: allowed_values)
@@ -28,6 +33,33 @@ describe 'Enscalator::RichTemplateDSL' do
     rds_test_fixture.parameter_rds_instance_type(instance_name, type: type)
     generated_template = rds_test_fixture.instance_variable_get(:@dict)
     generated_template[:Parameters]["#{instance_name}InstanceType"]
+  end
+
+  it 'should return all availability zones by default' do
+    VCR.use_cassette 'richtemplate_all_availability_zones' do
+      test_fixture = gen_template_with_options(default_cmd_opts)
+      az_list = test_fixture.get_availability_zones
+      expect(az_list).not_to be_nil
+      expect(az_list.size > 1).to be(true)
+    end
+  end
+
+  it 'should return availability zones using provided accessor method' do
+    VCR.use_cassette 'richtemplate_all_availability_zones', allow_playback_repeats: true do
+      test_fixture = gen_template_with_options(default_cmd_opts)
+      expect(test_fixture.get_availability_zones).to eq(test_fixture.availability_zones)
+    end
+  end
+
+  it 'should return availability zones specified in command-line options' do
+    VCR.use_cassette 'richtemplate_specific_availability_zone' do
+      test_opts = default_cmd_opts.merge({availability_zone: 'a'})
+      test_fixture = gen_template_with_options(test_opts)
+      az_list = test_fixture.get_availability_zones
+      expect(az_list).not_to be_nil
+      expect(az_list.size).to eq(1)
+      expect(az_list.keys.first).to eq(test_opts[:availability_zone].to_sym)
+    end
   end
 
   it 'should use current generation ec2 instance type' do

@@ -2,14 +2,18 @@ require 'spec_helper'
 
 describe 'Enscalator::Plugins::Ubuntu' do
 
+
+
   it 'should create mapping template for Ubuntu using default parameters' do
     VCR.use_cassette 'ubuntu_mapping_default_options' do
       class UbuntuTestTemplate < Enscalator::EnAppTemplateDSL
         include Enscalator::Plugins::Ubuntu
         define_method :tpl do
+          mock_availability_zones
           ubuntu_init('test_server')
         end
       end
+
       ubuntu_template = UbuntuTestTemplate.new
       dict = ubuntu_template.instance_variable_get(:@dict)
 

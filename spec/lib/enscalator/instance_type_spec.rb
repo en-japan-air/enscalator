@@ -93,10 +93,10 @@ describe 'Enscalator::InstanceType::RDS' do
   it 'should create RDS instance type' do
     rds = Enscalator::InstanceType::RDS.new
     common_entries = [:standard, :memory_optimized]
-    rds_current_generation_families = common_entries.dup.concat([:burstable_performance])
-    rds_previous_generation_families = common_entries.dup.concat([:micro])
-    expect(rds.current_generation.keys).to include(*rds_current_generation_families)
-    expect(rds.previous_generation.keys).to include(*rds_previous_generation_families)
+    rds_current_families = common_entries.dup.concat([:burstable_performance])
+    rds_previous_families = common_entries.dup.concat([:micro])
+    expect(rds.current_generation.keys).to include(*rds_current_families)
+    expect(rds.previous_generation.keys).to include(*rds_previous_families)
   end
 
 end
