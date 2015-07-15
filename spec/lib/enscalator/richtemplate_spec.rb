@@ -115,6 +115,23 @@ describe 'Enscalator::RichTemplateDSL' do
     end
   end
 
+  it 'should add description to template dict' do
+
+    class TestFixture < Enscalator::RichTemplateDSL
+      define_method :descr_text do
+        'sometest'
+      end
+
+      define_method :tpl do
+        description(self.send(:descr_text))
+      end
+    end
+
+    test_fixture = TestFixture.new
+    test_template = test_fixture.instance_variable_get(:@dict)
+    expect(test_template[:Description]).to eq(test_fixture.send(:descr_text))
+  end
+
   it 'should use current generation ec2 instance type' do
     test_instance_name = 'test_ec2'
     test_instance_type = 't2.small'
