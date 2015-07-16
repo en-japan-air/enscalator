@@ -2,13 +2,6 @@ require 'spec_helper'
 
 describe 'Enscalator::RichTemplateDSL' do
 
-  class RichTemplateFixture < Enscalator::RichTemplateDSL
-    define_method :tpl do
-      @app_name = self.class.name.demodulize
-      value Description: 'test template'
-    end
-  end
-
   # Helpers to generate template that can be used for testing
   def gen_template
     RichTemplateFixture.new
@@ -91,10 +84,8 @@ describe 'Enscalator::RichTemplateDSL' do
   it 'should return availability zones using provided accessor method' do
     VCR.use_cassette 'richtemplate_all_availability_zones', allow_playback_repeats: true do
       test_fixture = gen_template_with_options(default_cmd_opts)
-      value1 = test_fixture.get_availability_zones
-      value2 = test_fixture.availability_zones
-      expect(value1).to eq(value2)
-      expect(value2).to eq(value1)
+      az = test_fixture.send(:availability_zones) # should call `get_availability_zones` method internally
+      expect(test_fixture.availability_zones).to eq(az)
     end
   end
 

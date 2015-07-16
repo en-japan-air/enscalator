@@ -1,6 +1,13 @@
 module Helpers
 
-  module CommandLine
+  module Mocks
+
+    class RichTemplateFixture < Enscalator::RichTemplateDSL
+      define_method :tpl do
+        @app_name = self.class.name.demodulize
+        value Description: 'test template'
+      end
+    end
 
     # default testing command-line options
     def default_cmd_opts
@@ -22,9 +29,9 @@ module Helpers
       }
     end
 
-    # mock `availability_zones`
+    # should be called from within template mock
     def mock_availability_zones
-      Enscalator::RichTemplateDSL.class_eval do
+      self.class_eval do
         define_method('availability_zones') do
           {
             a: 'us-east-1a',

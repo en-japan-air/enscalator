@@ -57,6 +57,6 @@ end
 
 # Methods common for multiple tests
 require_relative 'helpers/asserts'
-require_relative 'helpers/cmd'
+require_relative 'helpers/mocks'
 include Helpers::Asserts
-include Helpers::CommandLine
+include Helpers::Mocks
