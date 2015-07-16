@@ -77,7 +77,16 @@ module Enscalator
                   .collect(&:zone_name)
                   .map { |n| [n.last.to_sym, n] }
                   .to_h
-      az.equal?(:all) ? az_list : az_list.select { |k, _| k == az }
+
+      # use all zones, specific one, or fail if zone is not supported in given region
+      if az.equal?(:all)
+        az_list
+      elsif az_list.keys.include?(az.to_sym)
+        az_list.select { |k, _| k == az }
+      else
+        fail("Requested zone #{az} is not supported in #{region}, supported ones are #{az_list.keys.join(',')}")
+      end
+
     end
 
     # Availability zones accessor

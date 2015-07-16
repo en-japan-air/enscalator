@@ -69,7 +69,7 @@ describe 'Enscalator::RichTemplateDSL' do
     opts = default_cmd_opts.merge({hosted_zone: test_zone})
     expect {
       gen_template_with_options(opts).hosted_zone
-    }.to raise_error RuntimeError
+    }.to raise_exception RuntimeError
   end
 
   it 'should return all availability zones by default' do
@@ -97,6 +97,16 @@ describe 'Enscalator::RichTemplateDSL' do
       expect(az_list).not_to be_nil
       expect(az_list.size).to eq(1)
       expect(az_list.keys.first).to eq(test_opts[:availability_zone].to_sym)
+    end
+  end
+
+  it 'should fail if specified availability zones is valid, but not supported in given region' do
+    VCR.use_cassette 'richtemplate_specific_availability_zone', allow_playback_repeats: true do
+      test_opts = default_cmd_opts.merge({availability_zone: 'd'})
+      test_fixture = gen_template_with_options(test_opts)
+      expect {
+        test_fixture.get_availability_zones
+      }.to raise_exception RuntimeError
     end
   end
 
