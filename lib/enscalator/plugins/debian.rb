@@ -37,6 +37,7 @@ module Enscalator
           url = "https://wiki.debian.org/Cloud/AmazonEC2Image/#{version.capitalize}?action=raw"
           body = open(url) { |f| f.read }
           parse_raw_entries(body.split("\r\n").select { |b| b.starts_with?('||') })
+            .select { |i| i.ami =~ /ami[-][a-z0-9]{8}/ }
             .select { |r| r.root_storage == storage.to_s && r.arch == arch.to_s }
             .group_by(&:region)
             .map { |k, v| [k, v.map { |i| [i.virtualization, i.ami] }.to_h] }
@@ -61,7 +62,6 @@ module Enscalator
           }.flatten(1)
 
           amis.map { |a| Struct::Debian.new(*a) }
-            .reject { |a| a.region == 'cn-north-1' || a.region == 'us-gov-west-1' } # TODO: excluded for now
         end
 
       end

@@ -20,6 +20,7 @@ p = Trollop::Parser.new do
   opt :expand, %q{Print generated JSON template}, default: false, short: 'x'
   opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
   opt :vpc_stack_name, %q{VPC stack name}, default: 'enjapan-vpc', short: 'n'
+  opt :availability_zone, %q{Deploy to specific availability zone}, default: 'all', short: 'd'
 
   conflicts :list_templates, :create_stack, :update_stack, :expand
 end
@@ -27,6 +28,14 @@ end
 OPTS = Trollop::with_standard_exception_handling p do
   raise Trollop::HelpNeeded if ARGV.empty?
   p.parse ARGV
+end
+
+if OPTS[:availability_zone_given]
+  valid_values = ('a'..'e').to_a << 'all'
+  unless valid_values.include? OPTS[:availability_zone]
+    STDERR.puts %Q{Availability zone can be only one off "#{valid_values.join(',')}"}
+    exit
+  end
 end
 
 templates = Enscalator::Templates.constants.map(&:to_s)

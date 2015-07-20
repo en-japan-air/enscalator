@@ -10,11 +10,18 @@ module Helpers
     }
 
     def assert_mapping(mapping, fields: [])
-      expect(mapping.keys).to include(*AWS_REGIONS)
-      mapping.values.each do |v|
-        expected = fields && fields.empty? ? AWS_VIRTUALIZATION.keys : fields
-        expect(v).to include(*expected)
+      if mapping.keys.map(&:class).uniq.shift == Symbol
+        expect(mapping.keys).to include(*AWS_REGIONS.map(&:to_sym))
+      elsif mapping.keys.map(&:class).uniq.shift == String
+        expect(mapping.keys).to include(*AWS_REGIONS)
       end
+
+      mapping.values.each do |v|
+        expected = fields && fields.empty? ? AWS_VIRTUALIZATION.keys.map(&:to_s) : fields
+        expect(v.keys.size).to be <= expected.size
+        expect(v.keys).to include(expected.first).or include(expected.last)
+      end
+
       mapping.values.map(&:values).flatten.each do |ami|
         assert_ami(ami)
       end

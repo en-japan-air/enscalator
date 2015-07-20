@@ -15,6 +15,7 @@ describe 'Enscalator::Plugins::RDS' do
     class RDSTestDefaultTemplate < Enscalator::EnAppTemplateDSL
       include Enscalator::Plugins::RDS
       define_method :tpl do
+        mock_availability_zones
         rds_init(TestRDSInstance)
       end
     end
@@ -50,6 +51,7 @@ describe 'Enscalator::Plugins::RDS' do
     class RDSTestTagsTemplate < Enscalator::EnAppTemplateDSL
       include Enscalator::Plugins::RDS
       define_method :tpl do
+        mock_availability_zones
         rds_init(TestRDSInstance,
                  properties: TestTags.deep_dup)
       end
@@ -76,6 +78,7 @@ describe 'Enscalator::Plugins::RDS' do
     class RDSTestSnapshotTemplate < Enscalator::EnAppTemplateDSL
       include Enscalator::Plugins::RDS
       define_method :tpl do
+        mock_availability_zones
         rds_init(TestRDSInstance,
                  use_snapshot: true)
       end

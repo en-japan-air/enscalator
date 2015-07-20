@@ -2,11 +2,13 @@ require 'spec_helper'
 
 # Tests for public interfaces
 describe 'Enscalator::Plugins::Elasticsearch' do
+
   it 'should create mapping template for Elasticsearch' do
     VCR.use_cassette 'elasticsearch_init_mapping_in_template' do
       class ElasticsearchTestTemplate < Enscalator::EnAppTemplateDSL
         include Enscalator::Plugins::Elasticsearch
         define_method :tpl do
+          mock_availability_zones
           elasticsearch_init('test_server')
         end
       end
@@ -15,7 +17,7 @@ describe 'Enscalator::Plugins::Elasticsearch' do
       dict = elasticsearch_template.instance_variable_get(:@dict)
 
       mapping_under_test = dict[:Mappings]['AWSElasticsearchAMI']
-      assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.keys
+      assert_mapping mapping_under_test
 
       resource_under_test = dict[:Resources]
       expect(resource_under_test.keys).to include('Elasticsearchtest_server')
@@ -27,6 +29,7 @@ describe 'Enscalator::Plugins::Elasticsearch' do
       class ElasticsearchTestTagsTemplate < Enscalator::EnAppTemplateDSL
         include Enscalator::Plugins::Elasticsearch
         define_method :tpl do
+          mock_availability_zones
           elasticsearch_init('test_server',
                              properties: {
                                Tags: [
@@ -54,10 +57,12 @@ describe 'Enscalator::Plugins::Elasticsearch' do
       expect(version.split('.').size).to eq(3)
     end
   end
+
 end
 
 # Tests for internal private methods
 describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
+
   it 'should fetch mapping for the most recent version' do
     VCR.use_cassette 'elasticsearch_most_recent_version_mapping' do
       mapping = Enscalator::Plugins::Elasticsearch.send(:fetch_mapping, :ebs, :amd64)
@@ -98,4 +103,5 @@ describe 'Enscalator::Plugins::Elasticsearch.private_methods' do
     version_str = Enscalator::Plugins::Elasticsearch.send(:fix_entry, test_str)
     expect(version_str).to match(test_str)
   end
+
 end

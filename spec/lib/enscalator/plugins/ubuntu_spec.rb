@@ -7,9 +7,11 @@ describe 'Enscalator::Plugins::Ubuntu' do
       class UbuntuTestTemplate < Enscalator::EnAppTemplateDSL
         include Enscalator::Plugins::Ubuntu
         define_method :tpl do
+          mock_availability_zones
           ubuntu_init('test_server')
         end
       end
+
       ubuntu_template = UbuntuTestTemplate.new
       dict = ubuntu_template.instance_variable_get(:@dict)
 

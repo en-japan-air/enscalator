@@ -83,8 +83,8 @@ module Enscalator
                      [ref_private_security_group, ref_application_security_group],
                      dependsOn: [],
                      properties: {
-                       :KeyName => ref("Ubuntu#{instance_name}KeyName"),
-                       :InstanceType => ref("Ubuntu#{instance_name}InstanceType")
+                       KeyName: ref("Ubuntu#{instance_name}KeyName"),
+                       InstanceType: ref("Ubuntu#{instance_name}InstanceType")
                      }
       end
 

@@ -67,15 +67,31 @@ module Enscalator
       @options[:hosted_zone].ends_with?('.') ? @options[:hosted_zone] : @options[:hosted_zone] + '.'
     end
 
+    # Get a list of availability zones for the given region
+    def get_availability_zones
+      az = @options[:availability_zone].to_sym
+      az_list = ec2_client(region)
+                  .describe_availability_zones
+                  .availability_zones
+                  .select { |az| az.state == 'available' }
+                  .collect(&:zone_name)
+                  .map { |n| [n.last.to_sym, n] }
+                  .to_h
+
+      # use all zones, specific one, or fail if zone is not supported in given region
+      if az.equal?(:all)
+        az_list
+      elsif az_list.keys.include?(az.to_sym)
+        az_list.select { |k, _| k == az }
+      else
+        fail("Requested zone #{az} is not supported in #{region}, supported ones are #{az_list.keys.join(',')}")
+      end
+
+    end
+
     # Availability zones accessor
     def availability_zones
-      @availability_zones ||= ec2_client(region)
-                                .describe_availability_zones
-                                .availability_zones
-                                .select { |az| az.state == 'available' }
-                                .collect(&:zone_name)
-                                .map { |n| [n.last.to_sym, n] }
-                                .to_h
+      @availability_zones ||= get_availability_zones
     end
 
     # Pre-run hook
