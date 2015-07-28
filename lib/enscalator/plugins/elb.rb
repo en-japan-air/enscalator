@@ -52,6 +52,11 @@ module Enscalator
                               :FromPort => '443',
                               :ToPort => '443',
                               :CidrIp => '0.0.0.0/0'
+                             },
+                             {:IpProtocol => 'tcp',
+                              :FromPort => '465',
+                              :ToPort => '465',
+                              :CidrIp => '0.0.0.0/0'
                              }
                            ]),
                            tags: {
