@@ -244,6 +244,12 @@ module Enscalator
                        FromPort: '443',
                        ToPort: '443',
                        SourceSecurityGroupId: ref('PrivateSecurityGroup'),
+                     },
+                     {
+                       IpProtocol: 'tcp',
+                       FromPort: '465',
+                       ToPort: '465',
+                       SourceSecurityGroupId: ref('PrivateSecurityGroup'),
                      }
                    ],
                    SecurityGroupEgress: [
