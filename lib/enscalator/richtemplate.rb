@@ -13,6 +13,9 @@ module Enscalator
     include Enscalator::Helpers
     include Enscalator::Route53
 
+    # Cloudformation limit when sending template body directly
+    TEMPLATE_BODY_LIMIT = 51200
+
     # Create new RichTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
@@ -550,9 +553,13 @@ module Enscalator
         command.concat(%W{--parameters '#{params.to_json}'})
       end
 
-      command.concat(%W{--template-body '#{template.to_json}'})
-
-      run_cmd(command)
+      template_body = template.to_json
+      if template_body.bytesize < TEMPLATE_BODY_LIMIT
+        command.concat(%W{--template-body '#{template_body}'})
+        run_cmd(command)
+      else
+        fail("Unable to deploy template exceeding #{TEMPLATE_BODY_LIMIT} limit: #{template_body.bytesize}")
+      end
     end
 
   end

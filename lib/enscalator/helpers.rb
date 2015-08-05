@@ -175,7 +175,10 @@ module Enscalator
     def generate_parameters(stack, keys)
       keys.map do |k|
         v = get_resource(stack, k)
-        {:parameter_key => k, :parameter_value => v}
+        {
+          parameter_key: k,
+          parameter_value: v
+        }
       end
     end
 
@@ -230,16 +233,19 @@ module Enscalator
 
       extra_parameters_cleaned = extra_parameters.map do |x|
         if x.has_key? 'ParameterKey'
-          {:parameter_key => x['ParameterKey'], :parameter_value => x['ParameterValue']}
+          {
+            parameter_key: x['ParameterKey'],
+            parameter_value: x['ParameterValue']
+          }
         else
           x
         end
       end
 
       options = {
-        :stack_name => stack_name,
-        :template_body => template,
-        :parameters => generate_parameters(stack, keys) + extra_parameters_cleaned
+        stack_name: stack_name,
+        template_body: template,
+        parameters: generate_parameters(stack, keys) + extra_parameters_cleaned
       }
 
       cfn.create_stack(options)
