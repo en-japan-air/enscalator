@@ -2,13 +2,6 @@ module Helpers
 
   module Mocks
 
-    class RichTemplateFixture < Enscalator::RichTemplateDSL
-      define_method :tpl do
-        @app_name = self.class.name.demodulize
-        value Description: 'test template'
-      end
-    end
-
     # richtemplate class generator
     def gen_richtemplate(superclass = Enscalator::RichTemplateDSL,
                          includes = [],
@@ -16,6 +9,14 @@ module Helpers
       Class.new(superclass) do
         includes.each { |mod| include mod } unless includes.empty?
         define_method(:tpl, &block)
+      end
+    end
+
+    # TODO: remove in favor of gen_richtemplate method
+    class RichTemplateFixture < Enscalator::RichTemplateDSL
+      define_method :tpl do
+        @app_name = self.class.name.demodulize
+        value Description: 'test template'
       end
     end
 

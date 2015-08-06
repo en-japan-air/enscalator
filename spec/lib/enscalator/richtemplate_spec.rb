@@ -117,7 +117,7 @@ describe 'Enscalator::RichTemplateDSL' do
       tagkey2: 'TagValue2'
     }
     properties = test_fixture.tags_to_properties(test_tags)
-    test_tags.each do |k,v|
+    test_tags.each do |k, v|
       expect(properties.select { |p| p[:Key] == k }.first[:Key]).to eq(k)
       expect(properties.select { |p| p[:Value] == v }.first[:Value]).to eq(v)
     end
@@ -194,6 +194,38 @@ describe 'Enscalator::RichTemplateDSL' do
                                  test_instance_type,
                                  allowed_values: test_allowed_values)
     }.to raise_exception RuntimeError
+  end
+
+  it 'should dynamically create parameter accessor' do
+    test_fixture = gen_template_with_options(default_cmd_opts)
+    test_method_name, test_params = {
+      some: {
+        SomeKey1: 'SomeValue1',
+        SomeKey2: 'SomeValue2'
+      }
+    }.with_indifferent_access.first
+
+    # method should not be defined
+    expect { test_fixture.send("ref_#{test_method_name}".to_sym) }.to raise_exception NoMethodError
+
+    test_fixture.parameter(test_method_name, test_params)
+
+    # method should be defined
+    expect { test_fixture.send("ref_#{test_method_name}".to_sym) }.not_to raise_exception
+    expect(test_fixture.send("ref_#{test_method_name}".to_sym)).to eq({Ref: test_method_name})
+    expect(test_fixture.instance_variable_get(:@dict)[:Parameters]).to eq({"#{test_method_name}" => test_params})
+
+  end
+
+  it 'should add given list of blocks to the run_queue' do
+    test_fixture = gen_template_with_options(default_cmd_opts)
+    test_str = 'this is test'
+    test_items = [] << Proc.new { test_str.dup }
+
+    expect(test_fixture.instance_variable_get(:@run_queue)).to be_nil
+    test_fixture.enqueue(test_items)
+    expect(test_fixture.instance_variable_get(:@run_queue)).to eq(test_items)
+    expect(test_fixture.instance_variable_get(:@run_queue).map(&:call)).to include(test_str)
   end
 
 end
