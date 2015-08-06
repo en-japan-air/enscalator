@@ -9,11 +9,23 @@ module Helpers
       end
     end
 
+    # richtemplate class generator
+    def gen_richtemplate(superclass = Enscalator::RichTemplateDSL,
+                         includes = [],
+                         &block)
+      Class.new(superclass) do
+        includes.each { |mod| include mod } unless includes.empty?
+        define_method(:tpl, &block)
+      end
+    end
+
+    # TODO: remove dependency on RichTemplateFixture
     # default testing command-line options
-    def default_cmd_opts
+    def default_cmd_opts(template = RichTemplateFixture.name.demodulize,
+                         stack_name = RichTemplateFixture.name.downcase.demodulize)
       {
-        template: RichTemplateFixture.name.demodulize,
-        stack_name: RichTemplateFixture.name.downcase,
+        template: template,
+        stack_name: stack_name,
         vpc_stack_name: 'enjapan-vpc',
         region: 'us-east-1',
         hosted_zone: 'test',

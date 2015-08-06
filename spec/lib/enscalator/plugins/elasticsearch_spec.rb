@@ -3,48 +3,75 @@ require 'spec_helper'
 # Tests for public interfaces
 describe 'Enscalator::Plugins::Elasticsearch' do
 
+  let(:app_name) {
+    'es_test'
+  }
+
+  let(:description) {
+    'This is test template for elasticsearch'
+  }
+
+  # dynamically classes for template fixtures
+
+  # template with default settings
+  let(:template_fixture) {
+    es_test_app_name = app_name
+    es_test_description = description
+    gen_richtemplate(Enscalator::EnAppTemplateDSL,
+                     [Enscalator::Plugins::Elasticsearch]) do
+      @app_name = es_test_app_name
+      value(Description: es_test_description)
+      mock_availability_zones
+      elasticsearch_init(es_test_app_name)
+    end
+  }
+
+  # template properties with tags
+  let(:template_properties) {
+    {
+      Tags: [
+        {
+          Key: 'TestKey',
+          Value: 'TestValue'
+        }
+      ]
+    }
+  }
+
+  let(:template_fixture_with_props) {
+    es_test_app_name = app_name
+    es_test_description = description
+    es_test_properties = template_properties
+    gen_richtemplate(Enscalator::EnAppTemplateDSL,
+                     [Enscalator::Plugins::Elasticsearch]) do
+      @app_name = es_test_app_name
+      value(Description: es_test_description)
+      mock_availability_zones
+      elasticsearch_init(es_test_app_name,
+                         properties: es_test_properties)
+    end
+  }
+
   it 'should create mapping template for Elasticsearch' do
     VCR.use_cassette 'elasticsearch_init_mapping_in_template' do
-      class ElasticsearchTestTemplate < Enscalator::EnAppTemplateDSL
-        include Enscalator::Plugins::Elasticsearch
-        define_method :tpl do
-          mock_availability_zones
-          elasticsearch_init('test_server')
-        end
-      end
-
-      elasticsearch_template = ElasticsearchTestTemplate.new(default_cmd_opts)
+      ESTestFixture = template_fixture
+      elasticsearch_template = ESTestFixture.new(default_cmd_opts)
       dict = elasticsearch_template.instance_variable_get(:@dict)
 
       mapping_under_test = dict[:Mappings]['AWSElasticsearchAMI']
       assert_mapping mapping_under_test
-
       resource_under_test = dict[:Resources]
-      expect(resource_under_test.keys).to include('Elasticsearchtest_server')
+      expect(resource_under_test.keys).to include("Elasticsearch#{app_name}")
     end
   end
 
   it 'should properly combine tags when they supplied in both plugin and template' do
     VCR.use_cassette 'elasticsearch_template_and_plugin_with_tags' do
-      class ElasticsearchTestTagsTemplate < Enscalator::EnAppTemplateDSL
-        include Enscalator::Plugins::Elasticsearch
-        define_method :tpl do
-          mock_availability_zones
-          elasticsearch_init('test_server',
-                             properties: {
-                               Tags: [
-                                 {
-                                   Key: 'TestKey',
-                                   Value: 'TestValue'
-                                 }
-                               ]
-                             })
-        end
-      end
-
-      elasticsearch_tags_template = ElasticsearchTestTagsTemplate.new(default_cmd_opts)
+      ESTestFixture = template_fixture_with_props
+      elasticsearch_tags_template = ESTestFixture.new(default_cmd_opts)
       dict = elasticsearch_tags_template.instance_variable_get(:@dict)
-      tags = dict[:Resources]['Elasticsearchtest_server'][:Properties][:Tags]
+
+      tags = dict[:Resources]["Elasticsearch#{app_name}"][:Properties][:Tags]
       keys = tags.map { |t| t[:Key] }
       expect(keys).to include(*%w{TestKey Version ClusterName Name})
       expect(tags.select { |t| t[:Key] == 'TestKey' }.first[:Value]).to eq('TestValue')
