@@ -32,7 +32,7 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
         resource_under_test = dict[:Resources]
         expect(resource_under_test.keys).to include("Elasticsearch#{app_name}")
       end
-   end
+    end
   end
 
   context 'when properties parameter is set to given value' do
@@ -82,21 +82,21 @@ end
 describe 'Enscalator::Plugins::Elasticsearch.get_mapping' do
 
   context 'when invoked with default parameters' do
-    it {
+    it 'should return mapping for amd64 and ebs instances' do
       VCR.use_cassette 'elasticsearch_mapping', allow_playback_repeats: true do
         mapping = Enscalator::Plugins::Elasticsearch.get_mapping
         assert_mapping(mapping)
       end
-    }
+    end
   end
 
   context 'when invoked with custom parameters' do
-    it {
+    it 'should return mapping corresponding to them' do
       VCR.use_cassette 'elasticsearch_mapping', allow_playback_repeats: true do
         mapping = Enscalator::Plugins::Elasticsearch.get_mapping(storage: :'instance-store', arch: :i386)
         assert_mapping(mapping, fields: ['pv'])
       end
-    }
+    end
   end
 
 end
