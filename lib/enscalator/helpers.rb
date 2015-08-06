@@ -175,7 +175,10 @@ module Enscalator
     def generate_parameters(stack, keys)
       keys.map do |k|
         v = get_resource(stack, k)
-        {:parameter_key => k, :parameter_value => v}
+        {
+          parameter_key: k,
+          parameter_value: v
+        }
       end
     end
 
@@ -230,19 +233,31 @@ module Enscalator
 
       extra_parameters_cleaned = extra_parameters.map do |x|
         if x.has_key? 'ParameterKey'
-          {:parameter_key => x['ParameterKey'], :parameter_value => x['ParameterValue']}
+          {
+            parameter_key: x['ParameterKey'],
+            parameter_value: x['ParameterValue']
+          }
         else
           x
         end
       end
 
       options = {
-        :stack_name => stack_name,
-        :template_body => template,
-        :parameters => generate_parameters(stack, keys) + extra_parameters_cleaned
+        stack_name: stack_name,
+        template_body: template,
+        parameters: generate_parameters(stack, keys) + extra_parameters_cleaned
       }
 
       cfn.create_stack(options)
+    end
+
+    # Generate ssh keyname from app_name, region and stack name
+    #
+    # @param [String] app_name application name
+    # @param [String] region aws region
+    # @param [String] stack_name cloudformation stack name
+    def gen_ssh_key_name(app_name, region, stack_name)
+      [app_name, region, stack_name].map(&:underscore).join('_')
     end
 
     # Create ssh public/private key pair, save private key for current user
@@ -266,6 +281,7 @@ module Enscalator
         File.open(private_key, 'w') do |wfile|
           wfile.write(key_pair.key_material)
         end
+        STDERR.puts "Saved created key to: #{private_key}"
         File.chmod(0600, private_key)
       else
         key_pair = Aws::EC2::KeyPair.new(key_name, client: client)

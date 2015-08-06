@@ -52,4 +52,17 @@ describe 'Enscalator::Helpers' do
     expect { test_fixture.find_ami('') }.to raise_exception ArgumentError
     expect { test_fixture.find_ami(test_fixture.cfn_client('us-east-1')) }.to raise_exception ArgumentError
   end
+
+  it 'should generate ssh key name from app_name, region and stack_name' do
+    test_app_name = 'TestBox'
+    test_region = 'africa-1'
+    test_stack_name = 'BatchProcessing'
+    generated_key_name = test_fixture.gen_ssh_key_name(test_app_name,
+                                                       test_region,
+                                                       test_stack_name)
+    expect(generated_key_name).to include(test_app_name.underscore)
+    expect(generated_key_name).to include(test_region.underscore)
+    expect(generated_key_name).to include(test_stack_name.underscore)
+    expect(generated_key_name).to match /[a-z0-9_]+/
+  end
 end
