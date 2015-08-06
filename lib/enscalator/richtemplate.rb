@@ -432,21 +432,6 @@ module Enscalator
                               allowed_values: InstanceType.rds_instance_type.allowed_values(type))
     end
 
-    # @deprecated calling instance method directly is deprecated, use instance_vpc or instance_with_network instead
-    # Create ec2 instance
-    #
-    # @param [String] name instance name
-    # @param [String] image_id instance ami_id
-    # @param [String] subnet instance subnet id
-    # @param [String] security_groups instance security_groups (string of Security Groups IDs)
-    # @param [Array] dependsOn resources necessary to be create prior to this instance
-    # @param [Hash] properties other properties
-    def instance(name, image_id, subnet, security_groups, dependsOn: [], properties: {})
-      warn '[Deprecated] Use instance_vpc or instance_with_network instead'
-      raise "Non VPC instance #{name} can not contain NetworkInterfaces" if properties.include?(:NetworkInterfaces)
-      raise "Non VPC instance #{name} can not contain VPC SecurityGroups" if properties.include?(:SecurityGroupIds)
-    end
-
     # Create ec2 instance in given vpc
     #
     # @param [String] name instance name
