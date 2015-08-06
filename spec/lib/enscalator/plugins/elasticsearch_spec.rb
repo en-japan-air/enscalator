@@ -22,8 +22,9 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
 
     it 'should create mapping template for Elasticsearch' do
       VCR.use_cassette 'elasticsearch_init_mapping_in_template', allow_playback_repeats: true do
-        ESTestFixture = template_fixture
-        elasticsearch_template = ESTestFixture.new(default_cmd_opts)
+        ESTestDefault = template_fixture
+        cmd_opts = default_cmd_opts(ESTestDefault.name, ESTestDefault.name.underscore)
+        elasticsearch_template = ESTestDefault.new(cmd_opts)
         dict = elasticsearch_template.instance_variable_get(:@dict)
 
         mapping_under_test = dict[:Mappings]['AWSElasticsearchAMI']
@@ -31,7 +32,7 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
         resource_under_test = dict[:Resources]
         expect(resource_under_test.keys).to include("Elasticsearch#{app_name}")
       end
-    end
+   end
   end
 
   context 'when properties parameter is set to given value' do
@@ -63,8 +64,9 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
 
     it 'should properly combine tags from both plugin and template' do
       VCR.use_cassette 'elasticsearch_template_and_plugin_with_tags' do
-        ESTestFixture = template_fixture_with_props
-        elasticsearch_tags_template = ESTestFixture.new(default_cmd_opts)
+        ESTestWithParams = template_fixture_with_props
+        cmd_opts = default_cmd_opts(ESTestWithParams.name, ESTestWithParams.name.underscore)
+        elasticsearch_tags_template = ESTestWithParams.new(cmd_opts)
         dict = elasticsearch_tags_template.instance_variable_get(:@dict)
 
         tags = dict[:Resources]["Elasticsearch#{app_name}"][:Properties][:Tags]
