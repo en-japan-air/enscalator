@@ -25,8 +25,11 @@ module Enscalator
         @auto_scale_resource_name = 'AutoScale'
         @auto_scale_name = "#{auto_scale_name || aws_stack_name}AutoScale"
 
+        @auto_scale_key_name = gen_ssh_key_name @auto_scale_name.underscore,
+                                               region,
+                                               stack_name
         pre_run do
-          create_ssh_key @auto_scale_name.underscore,
+          create_ssh_key @auto_scale_key_name,
                          region,
                          force_create: false
         end
@@ -36,7 +39,7 @@ module Enscalator
                  Properties: {
                    ImageId: image_id,
                    InstanceType: 'm3.medium',
-                   KeyName: @auto_scale_name.underscore,
+                   KeyName: @auto_scale_key_name,
                    AssociatePublicIpAddress: false,
                    SecurityGroups: [ref_private_security_group, ref_application_security_group]
                  }.merge(launch_config_props)

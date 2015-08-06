@@ -121,10 +121,11 @@ module Enscalator
                              zone_name: nil,
                              ttl: 300)
 
-        @key_name = "Elasticsearch#{storage_name}".underscore
-
+        @es_key_name = gen_ssh_key_name "Elasticsearch#{storage_name}",
+                                        region,
+                                        stack_name
         pre_run do
-          create_ssh_key @key_name,
+          create_ssh_key @es_key_name,
                          region,
                          force_create: false
         end
@@ -138,7 +139,7 @@ module Enscalator
 
         parameter_ec2_instance_type "Elasticsearch#{storage_name}", type: instance_type
 
-        properties[:KeyName] = @key_name
+        properties[:KeyName] = @es_key_name
         properties[:InstanceType] = ref("Elasticsearch#{storage_name}InstanceType")
 
         version_tag = {

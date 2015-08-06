@@ -13,7 +13,7 @@ describe 'Enscalator::Plugins::Elasticsearch' do
         end
       end
 
-      elasticsearch_template = ElasticsearchTestTemplate.new
+      elasticsearch_template = ElasticsearchTestTemplate.new(default_cmd_opts)
       dict = elasticsearch_template.instance_variable_get(:@dict)
 
       mapping_under_test = dict[:Mappings]['AWSElasticsearchAMI']
@@ -42,7 +42,7 @@ describe 'Enscalator::Plugins::Elasticsearch' do
         end
       end
 
-      elasticsearch_tags_template = ElasticsearchTestTagsTemplate.new
+      elasticsearch_tags_template = ElasticsearchTestTagsTemplate.new(default_cmd_opts)
       dict = elasticsearch_tags_template.instance_variable_get(:@dict)
       tags = dict[:Resources]['Elasticsearchtest_server'][:Properties][:Tags]
       keys = tags.map { |t| t[:Key] }
