@@ -11,9 +11,9 @@ module Helpers
 
     def assert_mapping(mapping, fields: [])
       if mapping.keys.map(&:class).uniq.shift == Symbol
-        expect(mapping.keys).to include(*AWS_REGIONS.map(&:to_sym))
+        assert_regions(mapping.keys, AWS_REGIONS.map(&:to_sym))
       elsif mapping.keys.map(&:class).uniq.shift == String
-        expect(mapping.keys).to include(*AWS_REGIONS)
+        assert_regions(mapping.keys, AWS_REGIONS)
       end
 
       mapping.values.each do |v|
@@ -25,6 +25,10 @@ module Helpers
       mapping.values.map(&:values).flatten.each do |ami|
         assert_ami(ami)
       end
+    end
+
+    def assert_regions(actual, valid)
+      expect(actual).to satisfy { |a| (valid - a).size >= 0 }
     end
 
     def assert_ami(str)
