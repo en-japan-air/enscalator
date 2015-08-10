@@ -6,19 +6,19 @@ describe 'Enscalator::Route53.create_healthcheck' do
   let(:app_name) { 'route53_test' }
   let(:description) { 'This is a template for route53 entries' }
 
+  let(:template_fixture_default) {
+    route53_test_app_name = app_name
+    route53_test_description = description
+    gen_richtemplate(Enscalator::EnAppTemplateDSL) do
+      @app_name = route53_test_app_name
+      value(Description: route53_test_description)
+      mock_availability_zones
+    end
+  }
+
   context 'when invoked with default parameters and fqdn' do
 
-    let(:template_fixture_default) {
-      route53_test_app_name = app_name
-      route53_test_description = description
-      gen_richtemplate(Enscalator::EnAppTemplateDSL) do
-        @app_name = route53_test_app_name
-        value(Description: route53_test_description)
-        mock_availability_zones
-      end
-    }
-
-    it do
+    it 'should generate template with fqdn and empty ip address' do
       Route53TestDefault = template_fixture_default
       cmd_opts = default_cmd_opts(Route53TestDefault.name, Route53TestDefault.name.underscore)
       route53_template = Route53TestDefault.new(cmd_opts)
@@ -39,6 +39,20 @@ describe 'Enscalator::Route53.create_healthcheck' do
       expect(tags).to include({Key: 'Application', Value: app_name}) and
         include({Key: 'Stack', Value: cmd_opts[:stack_name]})
     end
+  end
 
+  context 'when invoked with not supported healthcheck type' do
+
+    it 'should raise Runtime exception' do
+      Route53TestNonValidType = template_fixture_default
+      cmd_opts = default_cmd_opts(Route53TestNonValidType.name, Route53TestNonValidType.name.underscore)
+      route53_template = Route53TestNonValidType.new(cmd_opts)
+      test_fqdn = 'nonvalid.type.japan.en'
+
+      expect { route53_template.create_healthcheck(app_name,
+                                                   cmd_opts[:stack_name],
+                                                   fqdn: test_fqdn,
+                                                   type: 'UDP') }.to raise_exception(RuntimeError)
+    end
   end
 end
