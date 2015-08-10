@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-# Testing for public interfaces
 describe 'Enscalator::Route53.create_healthcheck' do
 
   let(:app_name) { 'route53_test' }
@@ -18,10 +17,11 @@ describe 'Enscalator::Route53.create_healthcheck' do
 
   context 'when invoked with default parameters and fqdn' do
 
-    it 'should generate template with fqdn and empty ip address' do
-      Route53TestDefault = template_fixture_default
-      cmd_opts = default_cmd_opts(Route53TestDefault.name, Route53TestDefault.name.underscore)
-      route53_template = Route53TestDefault.new(cmd_opts)
+    it 'should generate valid template with fqdn and empty ip address' do
+      Route53TestDefaultFQDN = template_fixture_default
+      cmd_opts = default_cmd_opts(Route53TestDefaultFQDN.name,
+                                  Route53TestDefaultFQDN.name.underscore)
+      route53_template = Route53TestDefaultFQDN.new(cmd_opts)
 
       test_fqdn = 'somedomain.test.japan.en'
       route53_template.create_healthcheck(app_name,
@@ -38,6 +38,27 @@ describe 'Enscalator::Route53.create_healthcheck' do
       tags = test_resources[:Properties][:HealthCheckTags]
       expect(tags).to include({Key: 'Application', Value: app_name}) and
         include({Key: 'Stack', Value: cmd_opts[:stack_name]})
+    end
+  end
+
+  context 'when invoked with default parameters and ip address' do
+    it 'should generate valid template with ip address and without fqdn' do
+      Route53TestDefaultIPAddr = template_fixture_default
+      cmd_opts = default_cmd_opts(Route53TestDefaultIPAddr.name,
+                                  Route53TestDefaultIPAddr.name.underscore)
+      route53_template = Route53TestDefaultIPAddr.new(cmd_opts)
+
+      test_ip_addr = '172.0.0.55'
+      route53_template.create_healthcheck(app_name,
+                                          cmd_opts[:stack_name],
+                                          ip_address: test_ip_addr)
+
+      dict = route53_template.instance_variable_get(:@dict)
+      expect(dict[:Resources]["#{app_name}Healthcheck"].empty?).to be_falsey
+      test_resources = dict[:Resources]["#{app_name}Healthcheck"]
+      config = test_resources[:Properties][:HealthCheckConfig]
+      expect(config[:FullyQualifiedDomainName]).to be_nil
+      expect(config[:IPAddress]).to eq(test_ip_addr)
     end
   end
 
