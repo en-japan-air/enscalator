@@ -4,6 +4,77 @@ module Enscalator
   module Route53
     include Enscalator::Helpers
 
+    # Cloudformation template DSL
+
+    # Valid types for Route53 healthcheck
+    HealthCheckType = %w{HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP}
+
+    # Create new Route 53 record set
+    #
+    def create_single_dns_record(app_name,
+                                 stack_name)
+      resource "#{app_name}Hostname",
+               Type: 'AWS::Route53::RecordSet',
+               Properties: {
+                 Name: %W{fumanbatch #{public_hosted_zone}}.join('.'),
+                 HostedZoneName: public_hosted_zone,
+                 Comment: 'A record for fumanbatch',
+                 TTL: 300,
+                 Type: 'A',
+                 ResourceRecords: [
+                   ref("#{app_name}PublicIpAddress",)
+                 ]
+               }
+    end
+
+    def create_multiple_dns_records(app_name)
+    end
+
+    def create_healthcheck(app_name,
+                           stack_name,
+                           fqdn: nil,
+                           ip_address: nil,
+                           port: 80,
+                           type: 'HTTP',
+                           resource_path: '/',
+                           request_interval: 30,
+                           failure_threshold: 3,
+                           tags: [])
+      fail("Route53 healthcheck type can only be one of the following: #{HealthCheckType.join(',')}") unless HealthCheckType.include?(type)
+      fail("Route53 healthcheck requires either fqdn or ip address") if [fqdn, ip_address].compact.empty?
+
+      properties = {
+        HealthCheckConfig: {
+          IPAddress: ip_address,
+          FullyQualifiedDomainName: fqdn,
+          Port: port,
+          Type: type,
+          ResourcePath: resource_path,
+          RequestInterval: request_interval,
+          FailureThreshold: failure_threshold
+        }
+      }
+
+      properties[:HealthCheckTags] = [
+        {
+          Key: 'Application',
+          Value: app_name
+        },
+        {
+          Key: 'Stack',
+          Value: stack_name
+        }
+      ]
+
+      properties[:HealthCheckTags].concat(tags) if tags && !tags.empty?
+
+      resource "#{app_name}Healthcheck",
+               Type: 'AWS::Route53::HealthCheck',
+               Properties: properties
+    end
+
+    # API calls
+
     # Get existing DNS records
     #
     # @param [String] zone_name name of the hosted zone
