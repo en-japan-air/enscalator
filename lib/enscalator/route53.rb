@@ -4,8 +4,6 @@ module Enscalator
   module Route53
     include Enscalator::Helpers
 
-    # Cloudformation template DSL
-
     # Valid types for Route53 healthcheck
     HealthCheckType = %w{HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP}
 
@@ -30,6 +28,18 @@ module Enscalator
     def create_multiple_dns_records(app_name)
     end
 
+    # Create Route53 healthcheck for given fqdn/ip address
+    #
+    # @param [String] app_name application name
+    # @param [String] stack_name stack name
+    # @param [String] fqdn fully qualified domain name (FQDN)
+    # @param [String] ip_address ip address
+    # @param [Integer] port number
+    # @param [String] type healthcheck type
+    # @param [String] resource_path uri path healthcheck backend would query
+    # @param [Integer] request_interval query intervals for healthcheck backend
+    # @param [Integer] failure_threshold number of accumulated failures to consider endpoint not healthy
+    # @param [Array] tags additional tags
     def create_healthcheck(app_name,
                            stack_name,
                            fqdn: nil,
