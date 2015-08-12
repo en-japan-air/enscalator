@@ -11,7 +11,7 @@ require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
-require_relative 'templates/fuman_batch_processing'
+require_relative '***REMOVED***'
 
 module Enscalator
 
