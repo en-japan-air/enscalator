@@ -9,9 +9,13 @@ module Enscalator
       # Template method
       def tpl
 
-        nat_key_name = 'vpc-nat'
+        @nat_key_name = gen_ssh_key_name 'vpc-nat',
+                                         region,
+                                         stack_name
 
-        pre_run { create_ssh_key nat_key_name, region, force_create: false }
+        pre_run do
+          create_ssh_key @nat_key_name, region, force_create: false
+        end
 
         value Description: [
                 'AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.',
@@ -342,7 +346,7 @@ module Enscalator
                    Type: 'AWS::EC2::Instance',
                    Properties: {
                      InstanceType: ref('NATInstanceType'),
-                     KeyName: nat_key_name,
+                     KeyName: @nat_key_name,
                      SourceDestCheck: 'false',
                      ImageId: find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
                      NetworkInterfaces: [
