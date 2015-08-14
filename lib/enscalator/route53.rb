@@ -126,7 +126,7 @@ module Enscalator
     # @param [String] zone_name name of the hosted zone
     def get_dns_records(zone_name: nil)
       client = route53_client
-      zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
+      zone = client.list_hosted_zones[:hosted_zones].find { |x| x.name == zone_name }
       records = client.list_resource_record_sets(hosted_zone_id: zone.id)
       records.values.flatten.map do |x|
         {
@@ -154,7 +154,7 @@ module Enscalator
                           ttl: 300,
                           suffix: '')
       client = route53_client(region: region)
-      zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
+      zone = client.list_hosted_zones[:hosted_zones].find { |x| x.name == zone_name }
 
       record_tokens = [].concat([record_name.gsub(zone_name, ''), region])
       record_tokens << suffix if suffix && !suffix.empty?
@@ -170,7 +170,7 @@ module Enscalator
               resource_record_set: {
                 name: record_name,
                 type: type,
-                resource_records: values.map { |x| {value: x} },
+                resource_records: values.map { |x| { value: x } },
                 ttl: ttl
               }
             }
