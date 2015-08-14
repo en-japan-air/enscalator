@@ -4,7 +4,6 @@ describe 'Enscalator::Route53.create_single_dns_record' do
 
   let(:app_name) { 'route53_dns_record_test' }
   let(:description) { 'This is a template for route53 test dns records' }
-
   let(:dns_record_template_fixture_default) {
     route53_test_app_name = app_name
     route53_test_description = description
@@ -44,6 +43,42 @@ describe 'Enscalator::Route53.create_single_dns_record' do
 
   end
 
+  context 'when invoked with healthcheck parameter with non-default value' do
+    it 'should include valid healthcheck reference in generated template' do
+      Route53TestDefaultValidHealthCheck = dns_record_template_fixture_default
+      cmd_opts =
+        default_cmd_opts(Route53TestDefaultValidHealthCheck.name,
+                         Route53TestDefaultValidHealthCheck.name.underscore)
+          .merge({hosted_zone: 'private.enjapan.test'})
+      route53_template = Route53TestDefaultValidHealthCheck.new(cmd_opts)
+      test_record_name = 'test-entry-healthy-default'
+      test_healthcheck = "#{app_name}Healthcheck"
+      route53_template.create_single_dns_record(app_name,
+                                                cmd_opts[:stack_name],
+                                                cmd_opts[:hosted_zone],
+                                                test_record_name,
+                                                healthcheck: ref(test_healthcheck))
+      dict = route53_template.instance_variable_get(:@dict)
+      test_resources = dict[:Resources]["#{app_name}Hostname"]
+      expect(test_resources[:Properties][:HealthCheckId]).to eq(ref(test_healthcheck))
+    end
+
+    it 'should raise Runtime exception if its not valid' do
+      Route53TestDefaultNonValidHealthCheck = dns_record_template_fixture_default
+      cmd_opts =
+        default_cmd_opts(Route53TestDefaultNonValidHealthCheck.name,
+                         Route53TestDefaultNonValidHealthCheck.name.underscore)
+          .merge({hosted_zone: 'private.enjapan.test'})
+      route53_template = Route53TestDefaultNonValidHealthCheck.new(cmd_opts)
+      test_record_name = 'test-entry-nonhealthy-default'
+      expect {
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  healthcheck: []) }.to raise_exception(RuntimeError)
+    end
+  end
 end
 
 
@@ -51,7 +86,6 @@ describe 'Enscalator::Route53.create_healthcheck' do
 
   let(:app_name) { 'route53_healthcheck_test' }
   let(:description) { 'This is a template for route53 healthcheck test entries' }
-
   let(:healthcheck_template_fixture_default) {
     route53_test_app_name = app_name
     route53_test_description = description
@@ -63,7 +97,6 @@ describe 'Enscalator::Route53.create_healthcheck' do
   }
 
   context 'when invoked with default parameters and fqdn' do
-
     it 'should generate valid template with fqdn and empty ip address' do
       Route53TestDefaultFQDN = healthcheck_template_fixture_default
       cmd_opts = default_cmd_opts(Route53TestDefaultFQDN.name,
@@ -110,7 +143,6 @@ describe 'Enscalator::Route53.create_healthcheck' do
   end
 
   context 'when invoked with not supported healthcheck type' do
-
     it 'should raise Runtime exception' do
       Route53TestNonValidType = healthcheck_template_fixture_default
       cmd_opts = default_cmd_opts(Route53TestNonValidType.name, Route53TestNonValidType.name.underscore)

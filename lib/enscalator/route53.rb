@@ -20,7 +20,7 @@ module Enscalator
     # @param [String] record_name dns record name
     # @param [Integer] ttl time to live
     # @param [String] type dns record type
-    # @param [Hash] healthcheck_ref reference to the healthcheck resource
+    # @param [Hash] healthcheck reference to the healthcheck resource
     # @param [Array] resource_records resources associated with record_name
     def create_single_dns_record(app_name,
                                  stack_name,
@@ -28,11 +28,11 @@ module Enscalator
                                  record_name,
                                  ttl: 300,
                                  type: 'A',
-                                 healthcheck_ref: nil,
+                                 healthcheck: nil,
                                  resource_records: [])
       fail("Route53 record type can only be one of the following: #{RecordType.join(',')}") unless RecordType.include?(type)
-      if healthcheck_ref && !healthcheck_ref.nil
-        fail('healthcheck_ref must be valid cloud formation ref function') unless healthcheck_ref.include?(:Ref)
+      if healthcheck && (!healthcheck.kind_of?(Hash) || !healthcheck.include?(:Ref) )
+        fail('healthcheck must be a valid cloud formation ref function')
       end
 
       properties = {
@@ -43,7 +43,7 @@ module Enscalator
         Comment: "#{type} record for #{app_name} in #{stack_name} stack"
       }
 
-      properties[:HealthCheckId] = healthcheck_ref if healthcheck_ref
+      properties[:HealthCheckId] = healthcheck if healthcheck
       properties[:ResourceRecords] = resource_records.empty? ? ref("#{app_name}PublicIpAddress") : resource_records
 
       resource "#{app_name}Hostname",
@@ -73,8 +73,10 @@ module Enscalator
                            request_interval: 30,
                            failure_threshold: 3,
                            tags: [])
-      fail("Route53 healthcheck type can only be one of the following: #{HealthCheckType.join(',')}") unless HealthCheckType.include?(type)
-      fail("Route53 healthcheck requires either fqdn or ip address") if [fqdn, ip_address].compact.empty?
+      unless HealthCheckType.include?(type)
+        fail("Route53 healthcheck type can only be one of the following: #{HealthCheckType.join(',')}")
+      end
+      fail('Route53 healthcheck requires either fqdn or ip address') if [fqdn, ip_address].compact.empty?
 
       properties = {
         HealthCheckConfig: {
