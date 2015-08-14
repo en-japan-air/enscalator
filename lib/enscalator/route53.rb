@@ -1,55 +1,13 @@
 module Enscalator
-
   # Collection of methods to work with Route53
   module Route53
     include Enscalator::Helpers
 
     # Valid types for Route53 healthcheck
-    HealthCheckType = %w{HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP}
+    HEALTH_CHECK_TYPE = %w(HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP)
 
     # Valid types for dns records
-    RecordType = %w{A AAAA CNAME MX NS PTR SOA SPF SRV TXT}
-
-    # TODO: fully comply with http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
-
-    # Create new Route 53 record set
-    #
-    # @param [String] app_name application name
-    # @param [String] stack_name stack name
-    # @param [String] zone_name hosted zone name
-    # @param [String] record_name dns record name
-    # @param [Integer] ttl time to live
-    # @param [String] type dns record type
-    # @param [Hash] healthcheck reference to the healthcheck resource
-    # @param [Array] resource_records resources associated with record_name
-    def create_single_dns_record(app_name,
-                                 stack_name,
-                                 zone_name,
-                                 record_name,
-                                 ttl: 300,
-                                 type: 'A',
-                                 healthcheck: nil,
-                                 resource_records: [])
-      fail("Route53 record type can only be one of the following: #{RecordType.join(',')}") unless RecordType.include?(type)
-      if healthcheck && (!healthcheck.kind_of?(Hash) || !healthcheck.include?(:Ref) )
-        fail('healthcheck must be a valid cloud formation ref function')
-      end
-
-      properties = {
-        Name: record_name,
-        HostedZoneName: zone_name,
-        TTL: ttl,
-        Type: type,
-        Comment: "#{type} record for #{app_name} in #{stack_name} stack"
-      }
-
-      properties[:HealthCheckId] = healthcheck if healthcheck
-      properties[:ResourceRecords] = resource_records.empty? ? ref("#{app_name}PublicIpAddress") : resource_records
-
-      resource "#{app_name}Hostname",
-               Type: 'AWS::Route53::RecordSet',
-               Properties: properties
-    end
+    RECORD_TYPE = %w(A AAAA CNAME MX NS PTR SOA SPF SRV TXT)
 
     # Create Route53 healthcheck for given fqdn/ip address
     #
@@ -73,8 +31,8 @@ module Enscalator
                            request_interval: 30,
                            failure_threshold: 3,
                            tags: [])
-      unless HealthCheckType.include?(type)
-        fail("Route53 healthcheck type can only be one of the following: #{HealthCheckType.join(',')}")
+      unless HEALTH_CHECK_TYPE.include?(type)
+        fail("Route53 healthcheck type can only be one of the following: #{HEALTH_CHECK_TYPE.join(',')}")
       end
       fail('Route53 healthcheck requires either fqdn or ip address') if [fqdn, ip_address].compact.empty?
 
@@ -108,6 +66,59 @@ module Enscalator
                Properties: properties
     end
 
+    # [RESERVED] Create multiple record sets for a hosted zone
+    def create_hosted_zone
+      fail('method "create_hosted_zone" is not implemented yet')
+    end
+
+    # TODO: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+
+    # Create new single record set for given hosted zone
+    #
+    # @param [String] app_name application name
+    # @param [String] stack_name stack name
+    # @param [String] zone_name hosted zone name
+    # @param [String] record_name dns record name
+    # @param [Integer] ttl time to live
+    # @param [String] type dns record type
+    # @param [Hash] healthcheck reference to the healthcheck resource
+    # @param [Array] resource_records resources associated with record_name
+    def create_single_dns_record(app_name,
+                                 stack_name,
+                                 zone_name,
+                                 record_name,
+                                 ttl: 300,
+                                 type: 'A',
+                                 healthcheck: nil,
+                                 resource_records: [])
+      if type && !RECORD_TYPE.include?(type)
+        fail("Route53 record type can only be one of the following: #{RECORD_TYPE.join(',')}")
+      end
+      if healthcheck && (!healthcheck.is_a?(Hash) || !healthcheck.include?(:Ref))
+        fail('healthcheck must be a valid cloud formation ref function')
+      end
+
+      properties = {
+        Name: record_name,
+        HostedZoneName: zone_name,
+        TTL: ttl,
+        Type: type,
+        Comment: "#{type} record for #{app_name} in #{stack_name} stack"
+      }
+
+      properties[:HealthCheckId] = healthcheck if healthcheck
+      properties[:ResourceRecords] = resource_records.empty? ? ref("#{app_name}PublicIpAddress") : resource_records
+
+      resource "#{app_name}Hostname",
+               Type: 'AWS::Route53::RecordSet',
+               Properties: properties
+    end
+
+    # [RESERVED] Create multiple record sets for given hosted zone
+    def create_multiple_dns_records
+      fail('method "create_multiple_dns_records" is not implemented')
+    end
+
     # API calls
 
     # Get existing DNS records
@@ -117,13 +128,13 @@ module Enscalator
       client = route53_client
       zone = client.list_hosted_zones[:hosted_zones].select { |x| x.name == zone_name }.first
       records = client.list_resource_record_sets(hosted_zone_id: zone.id)
-      records.values.flatten.map { |x|
+      records.values.flatten.map do |x|
         {
           name: x.name,
           type: x.type,
           records: x.resource_records.map(&:value)
         } if x.is_a?(Aws::Structure)
-      }.compact
+      end.compact
     end
 
     # Create DNS record in given hosted zone
@@ -155,7 +166,7 @@ module Enscalator
           comment: "dns record for #{record_name}",
           changes: [
             {
-              action: "UPSERT",
+              action: 'UPSERT',
               resource_record_set: {
                 name: record_name,
                 type: type,
@@ -167,6 +178,5 @@ module Enscalator
         }
       )
     end
-
   end # module Route53
 end # module Enscalator
