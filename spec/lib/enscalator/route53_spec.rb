@@ -15,7 +15,6 @@ describe 'Enscalator::Route53.create_single_dns_record' do
   }
 
   context 'when invoked with default parameters' do
-
     it 'should generate resource template for single dns A record entry' do
       Route53TestDefaultDNSRecord = dns_record_template_fixture_default
       cmd_opts = default_cmd_opts(Route53TestDefaultDNSRecord.name,
@@ -40,7 +39,57 @@ describe 'Enscalator::Route53.create_single_dns_record' do
       expect(properties[:Type]).to eq('A')
       expect(properties[:ResourceRecords]).to eq(ref("#{app_name}PublicIpAddress"))
     end
+  end
 
+  context 'when invoked with type parameter set to non-default value' do
+    it 'should include valid dns record type in generated template' do
+      Route53TestDefaultValidRecordType = dns_record_template_fixture_default
+      cmd_opts =
+        default_cmd_opts(Route53TestDefaultValidRecordType.name,
+                         Route53TestDefaultValidRecordType.name.underscore)
+          .merge({hosted_zone: 'private.enjapan.test'})
+      route53_template = Route53TestDefaultValidRecordType.new(cmd_opts)
+
+      test_record_name = 'test-entry-valid-type-default'
+      test_record_type = 'CNAME'
+
+      route53_template.create_single_dns_record(app_name,
+                                                cmd_opts[:stack_name],
+                                                cmd_opts[:hosted_zone],
+                                                test_record_name,
+                                                type: test_record_type)
+      dict = route53_template.instance_variable_get(:@dict)
+      test_resources = dict[:Resources]["#{app_name}Hostname"]
+      expect(test_resources[:Properties][:Type]).to eq(test_record_type)
+    end
+
+    it 'should raise Runtime exception if supplied value is not valid' do
+      Route53TestDefaultNonValidRecordType = dns_record_template_fixture_default
+      cmd_opts =
+        default_cmd_opts(Route53TestDefaultNonValidRecordType.name,
+                         Route53TestDefaultNonValidRecordType.name.underscore)
+          .merge({hosted_zone: 'private.enjapan.test'})
+      route53_template = Route53TestDefaultNonValidRecordType.new(cmd_opts)
+      test_record_name = 'test-entry-wrong-type-default'
+      expect {
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  type: 'MMX') }.to raise_exception(RuntimeError)
+      expect {
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  type: '') }.to raise_exception(RuntimeError)
+      expect {
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  type: {}) }.to raise_exception(RuntimeError)
+    end
   end
 
   context 'when invoked with healthcheck parameter with non-default value' do
