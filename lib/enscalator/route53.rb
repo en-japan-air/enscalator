@@ -7,25 +7,46 @@ module Enscalator
     # Valid types for Route53 healthcheck
     HealthCheckType = %w{HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP}
 
+    # Valid types for dns records
+    RecordType = %w{A AAAA CNAME MX NS PTR SOA SPF SRV TXT}
+
+    # TODO: fully comply with http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
+
     # Create new Route 53 record set
     #
+    # @param [String] app_name application name
+    # @param [String] stack_name stack name
+    # @param [String] zone_name hosted zone name
+    # @param [String] record_name dns record name
+    # @param [Integer] ttl time to live
+    # @param [String] type dns record type
+    # @param [Hash] healthcheck_ref reference to the healthcheck resource
+    # @param [Array] resource_records resources associated with record_name
     def create_single_dns_record(app_name,
-                                 stack_name)
+                                 stack_name,
+                                 zone_name,
+                                 record_name,
+                                 ttl: 300,
+                                 type: 'A',
+                                 healthcheck_ref: nil,
+                                 resource_records: [])
+      fail("Route53 record type can only be one of the following: #{RecordType.join(',')}") unless RecordType.include?(type)
+      fail("healthcheck_ref must be valid cloud formation ref function") unless (healthcheck_ref.nil? && !healthcheck_ref.include?(:Ref))
+
+      properties = {
+        Name: zone_name,
+        HostedZoneName: record_name,
+        TTL: ttl,
+        Type: type,
+        Comment: "#{type} record for #{app_name} in #{stack_name} stack"
+      }
+
+      properties[:HealthCheckId] = healthcheck_ref if healthcheck_ref
+      properties[:ResourceRecords] = resource_records.empty? ? ref("#{app_name}PublicIpAddress") : resource_records
+
       resource "#{app_name}Hostname",
                Type: 'AWS::Route53::RecordSet',
-               Properties: {
-                 Name: %W{fumanbatch #{public_hosted_zone}}.join('.'),
-                 HostedZoneName: public_hosted_zone,
-                 Comment: 'A record for fumanbatch',
-                 TTL: 300,
-                 Type: 'A',
-                 ResourceRecords: [
-                   ref("#{app_name}PublicIpAddress",)
-                 ]
-               }
-    end
-
-    def create_multiple_dns_records(app_name)
+               Properties: properties
     end
 
     # Create Route53 healthcheck for given fqdn/ip address
