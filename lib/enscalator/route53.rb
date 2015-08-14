@@ -31,11 +31,13 @@ module Enscalator
                                  healthcheck_ref: nil,
                                  resource_records: [])
       fail("Route53 record type can only be one of the following: #{RecordType.join(',')}") unless RecordType.include?(type)
-      fail("healthcheck_ref must be valid cloud formation ref function") unless (healthcheck_ref.nil? && !healthcheck_ref.include?(:Ref))
+      if healthcheck_ref && !healthcheck_ref.nil
+        fail('healthcheck_ref must be valid cloud formation ref function') unless healthcheck_ref.include?(:Ref)
+      end
 
       properties = {
-        Name: zone_name,
-        HostedZoneName: record_name,
+        Name: record_name,
+        HostedZoneName: zone_name,
         TTL: ttl,
         Type: type,
         Comment: "#{type} record for #{app_name} in #{stack_name} stack"
