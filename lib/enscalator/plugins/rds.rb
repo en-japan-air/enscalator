@@ -1,10 +1,7 @@
 module Enscalator
-
   module Plugins
-
     # Amazon RDS instance
     module RDS
-
       # Create new Amazon RDS instance
       #
       # @param [String] db_name database name
@@ -33,36 +30,35 @@ module Enscalator
                                     min: 5,
                                     max: 1024
 
-
         parameter "RDS#{db_name}StorageType",
-                  :Default => storage_type,
-                  :Description => 'Storage type to be associated with the DB instance',
-                  :Type => 'String',
-                  :AllowedValues => %w{ gp2 standard io1 }
+                  Default: storage_type,
+                  Description: 'Storage type to be associated with the DB instance',
+                  Type: 'String',
+                  AllowedValues: %w( gp2 standard io1 )
 
         parameter "RDS#{db_name}Multizone",
-                  :Default => multizone,
-                  :Description => 'Multizone deployment',
-                  :Type => 'String'
+                  Default: multizone,
+                  Description: 'Multizone deployment',
+                  Type: 'String'
 
         parameter "RDS#{db_name}ParameterGroup",
-                  :Default => parameter_group,
-                  :Description => 'Custom parameter group for an RDS database family',
-                  :Type => 'String'
+                  Default: parameter_group,
+                  Description: 'Custom parameter group for an RDS database family',
+                  Type: 'String'
 
         parameter_username "RDS#{db_name}"
 
         parameter_password "RDS#{db_name}"
 
         resource "RDS#{db_name}SubnetGroup",
-                 :Type => 'AWS::RDS::DBSubnetGroup',
-                 :Properties => {
-                   :DBSubnetGroupDescription => 'Subnet group within VPC',
-                   :SubnetIds => ref_resource_subnets,
-                   :Tags => [
+                 Type: 'AWS::RDS::DBSubnetGroup',
+                 Properties: {
+                   DBSubnetGroupDescription: 'Subnet group within VPC',
+                   SubnetIds: ref_resource_subnets,
+                   Tags: [
                      {
-                       :Key => 'Name',
-                       :Value => "RDS#{db_name}SubnetGroup"
+                       Key: 'Name',
+                       Value: "RDS#{db_name}SubnetGroup"
                      }
                    ]
                  }
@@ -72,10 +68,10 @@ module Enscalator
         props = properties.deep_dup
         if use_snapshot
           parameter "RDS#{db_name}SnapshotId",
-                    :Description => 'Identifier for the DB snapshot to restore from',
-                    :Type => 'String',
-                    :MinLength => '1',
-                    :MaxLength => '64'
+                    Description: 'Identifier for the DB snapshot to restore from',
+                    Type: 'String',
+                    MinLength: '1',
+                    MaxLength: '64'
           props[:DBSnapshotIdentifier] = ref("RDS#{db_name}SnapshotId")
         else
           props[:DBName] = ref("RDS#{db_name}Name")
@@ -83,42 +79,40 @@ module Enscalator
 
         rds_instance_tags = [
           {
-            :Key => 'Name',
-            :Value => "RDS#{db_name}Instance"
+            Key: 'Name',
+            Value: "RDS#{db_name}Instance"
           }
         ]
 
         # Set instance tags
-        if props.has_key?(:Tags) && !props[:Tags].empty?
+        if props.key?(:Tags) && !props[:Tags].empty?
           props[:Tags].concat(rds_instance_tags)
         else
           props[:Tags] = rds_instance_tags
         end
 
         rds_props = {
-          :Engine => 'MySQL',
-          :PubliclyAccessible => 'false',
-          :MultiAZ => ref("RDS#{db_name}Multizone"),
-          :MasterUsername => ref("RDS#{db_name}Username"),
-          :MasterUserPassword => ref("RDS#{db_name}Password"),
-          :DBInstanceClass => ref("RDS#{db_name}InstanceType"),
-          :VPCSecurityGroups => [ref_resource_security_group],
-          :DBSubnetGroupName => ref("RDS#{db_name}SubnetGroup"),
-          :DBParameterGroupName => ref("RDS#{db_name}ParameterGroup"),
-          :AllocatedStorage => ref("RDS#{db_name}AllocatedStorage"),
-          :StorageType => ref("RDS#{db_name}StorageType")
+          Engine: 'MySQL',
+          PubliclyAccessible: 'false',
+          MultiAZ: ref("RDS#{db_name}Multizone"),
+          MasterUsername: ref("RDS#{db_name}Username"),
+          MasterUserPassword: ref("RDS#{db_name}Password"),
+          DBInstanceClass: ref("RDS#{db_name}InstanceType"),
+          VPCSecurityGroups: [ref_resource_security_group],
+          DBSubnetGroupName: ref("RDS#{db_name}SubnetGroup"),
+          DBParameterGroupName: ref("RDS#{db_name}ParameterGroup"),
+          AllocatedStorage: ref("RDS#{db_name}AllocatedStorage"),
+          StorageType: ref("RDS#{db_name}StorageType")
         }
 
         resource "RDS#{db_name}Instance",
-                 :Type => 'AWS::RDS::DBInstance',
-                 :Properties => props.merge(rds_props)
+                 Type: 'AWS::RDS::DBInstance',
+                 Properties: props.merge(rds_props)
 
         output "RDS#{db_name}EndpointAddress",
-               :Description => "#{db_name} Endpoint Address",
-               :Value => get_att("RDS#{db_name}Instance", 'Endpoint.Address')
-
+               Description: "#{db_name} Endpoint Address",
+               Value: get_att("RDS#{db_name}Instance", 'Endpoint.Address')
       end
-
     end # RDS
   end # Plugins
 end # Enscalator

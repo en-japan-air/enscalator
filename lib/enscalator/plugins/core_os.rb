@@ -1,15 +1,11 @@
 module Enscalator
-
   module Plugins
-
     # CoreOS appliance
     module CoreOS
-
       class << self
-
         # CoreOS Release channels
         # @see https://coreos.com/releases
-        CHANNELS=[:alpha, :beta, :stable].freeze
+        CHANNELS = [:alpha, :beta, :stable].freeze
 
         # Get CoreOS mapping for specific version from specific channel (stable, beta or alpha)
         #
@@ -18,8 +14,8 @@ module Enscalator
         # @return [Hash] CoreOS mapping for specific version and channel
         #  (if version tag is not given, returns the most latest version number)
         def get_channel_version(channel: :stable, tag: nil)
-          raise ArgumentError, "channel can only be one of #{CHANNELS.to_s}" unless CHANNELS.include? channel
-          base_url = "http://#{channel.to_s}.release.core-os.net/amd64-usr"
+          fail ArgumentError, "channel can only be one of #{CHANNELS}" unless CHANNELS.include? channel
+          base_url = "http://#{channel}.release.core-os.net/amd64-usr"
           fetch_mapping(base_url, tag)
         end
 
@@ -45,15 +41,20 @@ module Enscalator
         # @param [String] tag specific version release tag
         # @return [Hash] CoreOS mapping
         def fetch_mapping(base_url, tag)
-          raise ArgumentError, 'url cannot be empty or nil' if base_url.blank?
+          fail ArgumentError, 'url cannot be empty or nil' if base_url.blank?
           versions = fetch_versions(base_url)
           version = if tag && !tag.empty?
-                      versions.select { |v| v == Semantic::Version.new(tag) }.first.to_s
+                      versions.find { |v| v == Semantic::Version.new(tag) }.to_s
                     else
                       versions.sort.last.to_s
                     end
 
-          images = open([base_url, version, 'coreos_production_ami_all.json'].join('/')) { |f| f.read } rescue nil
+          images = begin
+            open([base_url, version, 'coreos_production_ami_all.json'].join('/')) { |f| f.read }
+          rescue RuntimeError
+            nil
+          end
+
           json = JSON.parse(images) if images
           parse_raw_mapping(json)
         end
@@ -73,14 +74,12 @@ module Enscalator
         # @param [Array] coreos_mapping list of region to virtualization kind mappings
         # @return [Hash] mapping, that can be referred to with find_in_map
         def parse_raw_mapping(coreos_mapping)
-          if coreos_mapping
-            amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
-            Hash[
-              amis.map { |a| [a['name'], {:pv => a['pv'], :hvm => a['hvm']}] }
-            ].with_indifferent_access
-          end
+          return {} unless coreos_mapping
+          amis = coreos_mapping.empty? ? [] : coreos_mapping['amis']
+          Hash[
+            amis.map { |a| [a['name'], { pv: a['pv'], hvm: a['hvm'] }] }
+          ].with_indifferent_access
         end
-
       end # class << self
 
       # Initialize CoreOS related configurations
@@ -88,7 +87,6 @@ module Enscalator
       def core_os_init
         mapping 'AWSCoreOSAMI', CoreOS.get_channel_version(channel: :stable)
       end
-
     end # module CoreOS
   end # module Plugins
 end # module Enscalator

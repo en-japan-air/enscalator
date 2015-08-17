@@ -1,19 +1,16 @@
 module Enscalator
-
   module Plugins
-
     # Elasticsearch related configuration
     module Elasticsearch
       include Enscalator::Helpers
 
       # Retrieves mapping for Elasticsearch Bitnami stack
       class << self
-
         # Supported storage types in AWS
-        STORAGE=[:'ebs', :'instance-store']
+        STORAGE = [:ebs, :'instance-store']
 
         # Supported Elasticsearch image architectures
-        ARCH=[:amd64, :i386]
+        ARCH = [:amd64, :i386]
 
         # Get ami region/virtualization type mapping
         #
@@ -21,8 +18,8 @@ module Enscalator
         # @param [Symbol] arch image architecture type
         # @return [Hash] mapping
         def get_mapping(storage: :ebs, arch: :amd64)
-          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
-          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
+          fail ArgumentError, "storage can only be one of #{STORAGE}" unless STORAGE.include? storage
+          fail ArgumentError, "arch can only be one of #{ARCH}" unless ARCH.include? arch
           fetch_mapping(storage, arch)
         end
 
@@ -32,8 +29,8 @@ module Enscalator
         # @param [Symbol] arch image architecture type
         # @return [Hash] mapping
         def get_release_version(storage: :ebs, arch: :amd64)
-          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
-          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
+          fail ArgumentError, "storage can only be one of #{STORAGE}" unless STORAGE.include? storage
+          fail ArgumentError, "arch can only be one of #{ARCH}" unless ARCH.include? arch
           fetch_versions
             .select { |r| r.root_storage == storage && r.arch == arch }
             .map { |v| v.version.to_s }.uniq.first
@@ -54,8 +51,7 @@ module Enscalator
           versions = fetch_versions
           versions.select { |r| r.root_storage == storage && r.arch == arch }
             .group_by(&:region)
-            .map { |k, v| [k,
-                           v.map { |i| [i.virtualization, i.ami] }.to_h] }.to_h
+            .map { |k, v| [k, v.map { |i| [i.virtualization, i.ami] }.to_h] }.to_h
             .with_indifferent_access
         end
 
@@ -67,10 +63,12 @@ module Enscalator
           raw_entries = html.xpath('//td[@class="instance_id"]')
           entries = raw_entries.xpath('a')
           raw_entries.xpath('strong/a').each { |sa| entries << sa }
-          raw_versions = entries.map { |i| [
-            i.xpath('@href').first.value.split('/').last,
-            i.children.first.text
-          ] }.to_h
+          raw_versions = entries.map do |i|
+            [
+              i.xpath('@href').first.value.split('/').last,
+              i.children.first.text
+            ]
+          end.to_h
           parse_versions(raw_versions)
         end
 
@@ -84,9 +82,9 @@ module Enscalator
             version_str = fix_entry(str).split('-')
             name, version, baseos = version_str
             Struct::ElasticSearch.new(name,
-                                      Semantic::Version.new(version.gsub('=', '-')),
+                                      Semantic::Version.new(version.tr('=', '-')),
                                       baseos,
-                                      version_str.include?('ebs') ? :'ebs' : :'instance-store',
+                                      version_str.include?('ebs') ? :ebs : :'instance-store',
                                       version_str.include?('x64') ? :amd64 : :i386,
                                       region,
                                       ami,
@@ -100,10 +98,13 @@ module Enscalator
         # @return [String] reformatted version string
         def fix_entry(str)
           pattern = '[-](?:[\w\d]+){1,3}[-]ami'
-          token = Regexp.new(pattern.gsub('?:', '')).match(str)[1] rescue nil
+          token = begin
+            Regexp.new(pattern.gsub('?:', '')).match(str)[1]
+          rescue
+            nil
+          end
           str.gsub(Regexp.new(pattern), ['=', token, '-'].join)
         end
-
       end # class << self
 
       # Create new elasticsearch instance
@@ -155,14 +156,14 @@ module Enscalator
         plugin_tags = [version_tag, cluster_name_tag]
 
         # Set instance tags
-        if properties.has_key?(:Tags) && !properties[:Tags].empty?
+        if properties.key?(:Tags) && !properties[:Tags].empty?
           properties[:Tags].concat(plugin_tags)
         else
           properties[:Tags] = plugin_tags
         end
 
         # Configure instance using user-data
-        if !properties.has_key?(:UserData) || !properties[:UserData].empty?
+        if !properties.key?(:UserData) || !properties[:UserData].empty?
           properties[:UserData] = Base64.encode64(read_user_data('elasticsearch'))
         end
 

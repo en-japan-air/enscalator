@@ -171,7 +171,7 @@ module Enscalator
       security_group_vpc 'ResourceSecurityGroup',
                          'Enable internal access with ssh',
                          vpc.id,
-                         securityGroupIngress: [
+                         security_group_ingress: [
                            {
                              IpProtocol: 'tcp',
                              FromPort: '22',
@@ -193,7 +193,7 @@ module Enscalator
       security_group_vpc 'ApplicationSecurityGroup',
                          'Security group of the application servers',
                          vpc.id,
-                         securityGroupIngress: [
+                         security_group_ingress: [
                            {
                              IpProtocol: 'tcp',
                              FromPort: '0',

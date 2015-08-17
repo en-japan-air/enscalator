@@ -1,10 +1,7 @@
 module Enscalator
-
   module Plugins
-
     # Auto scaling group plugin
     module AutoScale
-
       # Create new auto scaling group
       #
       # @param [String] image_id image id that will be used to launch instance
@@ -24,10 +21,8 @@ module Enscalator
         @launch_config_resource_name = 'LaunchConfig'
         @auto_scale_resource_name = 'AutoScale'
         @auto_scale_name = "#{auto_scale_name || aws_stack_name}AutoScale"
+        @auto_scale_key_name = gen_ssh_key_name @auto_scale_name.underscore, region, stack_name
 
-        @auto_scale_key_name = gen_ssh_key_name @auto_scale_name.underscore,
-                                               region,
-                                               stack_name
         pre_run do
           create_ssh_key @auto_scale_key_name,
                          region,
@@ -65,7 +60,6 @@ module Enscalator
         # return resource name
         @auto_scale_resource_name
       end
-
     end # module AutoScale
   end # module Plugins
 end # module Enscalator

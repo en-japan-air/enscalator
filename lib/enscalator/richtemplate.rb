@@ -175,21 +175,21 @@ module Enscalator
     #
     # @param [String] name of the security group
     # @param [String] description of security group
-    # @param [Array] securityGroupEgress list of outbound rules
-    # @param [Array] securityGroupIngress list of inbound rules
-    # @param [Array] dependsOn list of resources this vpc needs
+    # @param [Array] security_group_egress list of outbound rules
+    # @param [Array] security_group_ingress list of inbound rules
+    # @param [Array] depends_on list of resources this vpc needs
     # @param [Hash] tags tags
     def security_group(name,
                        description,
-                       securityGroupEgress: [],
-                       securityGroupIngress: [],
-                       dependsOn: [],
+                       security_group_egress: [],
+                       security_group_ingress: [],
+                       depends_on: [],
                        tags: {})
       properties = {
         GroupDescription: description
       }
-      properties[:SecurityGroupIngress] = securityGroupIngress unless securityGroupIngress.empty?
-      properties[:SecurityGroupEgress] = securityGroupEgress unless securityGroupEgress.empty?
+      properties[:SecurityGroupEgress] = security_group_egress unless security_group_egress.empty?
+      properties[:SecurityGroupIngress] = security_group_ingress unless security_group_ingress.empty?
       unless tags.include?('Name')
         tags['Name'] = join('-', aws_stack_name, name)
       end
@@ -198,7 +198,7 @@ module Enscalator
         Type: 'AWS::EC2::SecurityGroup',
         Properties: properties
       }
-      options[:DependsOn] = dependsOn unless dependsOn.empty?
+      options[:DependsOn] = depends_on unless depends_on.empty?
       resource name, options
     end
 
@@ -206,23 +206,23 @@ module Enscalator
     #
     # @param [String] name of the security group
     # @param [String] description of security group
-    # @param [Array] securityGroupEgress list of outbound rules
-    # @param [Array] securityGroupIngress list of inbound rules
-    # @param [Array] dependsOn list of resources this vpc needs
+    # @param [Array] security_group_egress list of outbound rules
+    # @param [Array] security_group_ingress list of inbound rules
+    # @param [Array] depends_on list of resources this vpc needs
     # @param [Hash] tags tags
     def security_group_vpc(name,
                            description,
                            vpc,
-                           securityGroupEgress: [],
-                           securityGroupIngress: [],
-                           dependsOn: [],
+                           security_group_egress: [],
+                           security_group_ingress: [],
+                           depends_on: [],
                            tags: {})
       properties = {
         VpcId: vpc,
         GroupDescription: description
       }
-      properties[:SecurityGroupIngress] = securityGroupIngress unless securityGroupIngress.empty?
-      properties[:SecurityGroupEgress] = securityGroupEgress unless securityGroupEgress.empty?
+      properties[:SecurityGroupEgress] = security_group_egress unless security_group_egress.empty?
+      properties[:SecurityGroupIngress] = security_group_ingress unless security_group_ingress.empty?
       unless tags.include?('Name')
         tags['Name'] = join('-', aws_stack_name, name)
       end
@@ -231,7 +231,7 @@ module Enscalator
         Type: 'AWS::EC2::SecurityGroup',
         Properties: properties
       }
-      options[:DependsOn] = dependsOn unless dependsOn.empty?
+      options[:DependsOn] = depends_on unless depends_on.empty?
       resource name, options
     end
 
