@@ -15,9 +15,7 @@ require_relative 'plugins/rethinkdb'
 require_relative 'plugins/rds'
 
 module Enscalator
-
   # Namespace for enscalator plugins
   module Plugins
   end
-
 end
