@@ -1,0 +1,7 @@
+
+# Set line length to be the same as in Intellij IDEA
+Metrics/LineLength:
+  Max: 120
+
+Metrics/CyclomaticComplexity:
+  Max: 10

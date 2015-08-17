@@ -68,8 +68,6 @@ module Enscalator
 
         mapping 'AWSUbuntuAMI', Ubuntu.get_mapping(storage: storage, arch: arch)
 
-        parameter_key_name "Ubuntu#{instance_name}"
-
         parameter_allocated_storage "Ubuntu#{instance_name}",
                                     default: 5,
                                     min: 5,
