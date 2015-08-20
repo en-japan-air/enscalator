@@ -49,11 +49,7 @@ module Enscalator
                       versions.sort.last.to_s
                     end
 
-          images = begin
-            open([base_url, version, 'coreos_production_ami_all.json'].join('/')) { |f| f.read }
-          rescue RuntimeError
-            nil
-          end
+          images = open([base_url, version, 'coreos_production_ami_all.json'].join('/')) { |f| f.read }
 
           json = JSON.parse(images) if images
           parse_raw_mapping(json)
