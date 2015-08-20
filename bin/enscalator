@@ -7,33 +7,33 @@ argv = ARGV.dup
 p = Trollop::Parser.new do
   banner 'Usage: enscalator [arguments]'
 
-  opt :list_templates, %q{List all available templates}, default: false, short: 'l'
-  opt :template, %q{Template name}, type: String, short: 't'
-  opt :region, %q{AWS Region}, type: String, default: 'us-east-1', short: 'r'
-  opt :parameters, %q{Parameters 'Key1=Value1;Key2=Value2'}, type: String, short: 'p'
-  opt :stack_name, %q{Stack name}, type: String, short: 's'
-  opt :hosted_zone, %q{Hosted zone (e.x. 'enjapan.prod.')}, type: String, short: 'z'
-  opt :create_stack, %q{Create the stack}, default: false, short: 'c'
-  opt :update_stack, %q{Update already deployed stack}, default: false, short: 'u'
-  opt :pre_run, %q{Use pre-run hooks}, default: true, short: 'e'
-  opt :post_run, %q{Use post-run hooks}, default: true, short: 'o'
-  opt :expand, %q{Print generated JSON template}, default: false, short: 'x'
-  opt :capabilities, %q{AWS capabilities}, default: 'CAPABILITY_IAM', short: 'a'
-  opt :vpc_stack_name, %q{VPC stack name}, default: 'enjapan-vpc', short: 'n'
-  opt :availability_zone, %q{Deploy to specific availability zone}, default: 'all', short: 'd'
+  opt :list_templates, 'List all available templates', default: false, short: 'l'
+  opt :template, 'Template name', type: String, short: 't'
+  opt :region, 'AWS Region', type: String, default: 'us-east-1', short: 'r'
+  opt :parameters, "Parameters 'Key1=Value1;Key2=Value2'", type: String, short: 'p'
+  opt :stack_name, 'Stack name', type: String, short: 's'
+  opt :hosted_zone, "Hosted zone (e.x. 'enjapan.prod.')", type: String, short: 'z'
+  opt :create_stack, 'Create the stack', default: false, short: 'c'
+  opt :update_stack, 'Update already deployed stack', default: false, short: 'u'
+  opt :pre_run, 'Use pre-run hooks', default: true, short: 'e'
+  opt :post_run, 'Use post-run hooks', default: true, short: 'o'
+  opt :expand, 'Print generated JSON template', default: false, short: 'x'
+  opt :capabilities, 'AWS capabilities', default: 'CAPABILITY_IAM', short: 'a'
+  opt :vpc_stack_name, 'VPC stack name', default: 'enjapan-vpc', short: 'n'
+  opt :availability_zone, 'Deploy to specific availability zone', default: 'all', short: 'd'
 
   conflicts :list_templates, :create_stack, :update_stack, :expand
 end
 
-OPTS = Trollop::with_standard_exception_handling p do
-  raise Trollop::HelpNeeded if ARGV.empty?
+OPTS = Trollop.with_standard_exception_handling p do
+  fail Trollop::HelpNeeded if ARGV.empty?
   p.parse ARGV
 end
 
 if OPTS[:availability_zone_given]
   valid_values = ('a'..'e').to_a << 'all'
   unless valid_values.include? OPTS[:availability_zone]
-    STDERR.puts %Q{Availability zone can be only one off "#{valid_values.join(',')}"}
+    STDERR.puts %(Availability zone can be only one off "#{valid_values.join(',')}")
     exit
   end
 end
@@ -49,10 +49,9 @@ end
 if OPTS[:template] && templates.include?(OPTS[:template])
   # for stack_name use template name as a base and convert it from camelcase to underscore case
   OPTS[:stack_name] ||= OPTS[:template].underscore.gsub(/[_]/, '-')
-  Object.const_get("Enscalator::Templates::#{OPTS[:template]}").new(OPTS.merge({ARGV: argv})).exec!
+  Object.const_get("Enscalator::Templates::#{OPTS[:template]}").new(OPTS.merge(ARGV: argv)).exec!
 elsif OPTS[:template_given] && !OPTS[:template].empty?
-  STDERR.puts %Q{Template "#{OPTS[:template]}" doesn't exist}
+  STDERR.puts %(Template "#{OPTS[:template]}" doesn't exist)
 else
   STDERR.puts 'Template name cannot be an empty string'
 end
-
