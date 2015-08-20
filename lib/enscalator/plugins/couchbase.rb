@@ -11,7 +11,7 @@ module Enscalator
       def couchbase_init(db_name,
                          bucket: nil,
                          allocated_storage: 5,
-                         instance_type: 'm1.medium')
+                         instance_type: 't2.medium')
         @couchbase_mapping ||=
           mapping 'AWSCouchbaseAMI', couchbase_ami_mapping
 
@@ -40,18 +40,18 @@ module Enscalator
                      })
       end
 
-      # Couchbase ami mapping
+      # Couchbase ami mapping for x64 images
       # @return [Hash] aws mapping
       def couchbase_ami_mapping
         {
-          :'us-east-1' => { amd64: 'ami-403b4328' },
-          :'us-west-2' => { amd64: 'ami-c398c6f3' },
-          :'us-west-1' => { amd64: 'ami-1a554c5f' },
-          :'eu-west-1' => { amd64: 'ami-8129aaf6' },
-          :'ap-southeast-1' => { amd64: 'ami-88745fda' },
-          :'ap-northeast-1' => { amd64: 'ami-6a7b676b' },
-          :'sa-east-1' => { amd64: 'ami-59229f44' }
-        }
+          :'us-west-2' => { paravirtual: 'ami-c398c6f3' },
+          :'us-west-1' => { paravirtual: 'ami-1a554c5f' },
+          :'us-east-1' => { paravirtual: 'ami-403b4328' },
+          :'sa-east-1' => { paravirtual: 'ami-59229f44' },
+          :'eu-west-1' => { paravirtual: 'ami-8129aaf6' },
+          :'ap-southeast-1' => { paravirtual: 'ami-88745fda' },
+          :'ap-northeast-1' => { paravirtual: 'ami-6a7b676b' }
+        }.with_indifferent_access
       end
 
       # Couchbase user data
