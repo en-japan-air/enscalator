@@ -20,7 +20,7 @@ module Enscalator
 
         @launch_config_resource_name = 'LaunchConfig'
         @auto_scale_resource_name = 'AutoScale'
-        @auto_scale_name = "#{auto_scale_name || aws_stack_name}AutoScale" # TODO: fix this
+        @auto_scale_name = "#{auto_scale_name || app_template_name}AutoScale"
         @auto_scale_key_name = gen_ssh_key_name @auto_scale_name.underscore, region, stack_name
 
         pre_run do
@@ -63,7 +63,7 @@ module Enscalator
 
       # Callback to get name of class which included this module
       def self.included(klass)
-        @app_template_name = klass.name.demodulize.downcase
+        self.send(:define_method, :app_template_name) { "#{klass.name.demodulize.downcase}" }
       end
     end # module AutoScale
   end # module Plugins
