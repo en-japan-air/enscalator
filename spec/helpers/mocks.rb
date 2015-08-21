@@ -3,10 +3,13 @@ module Helpers
   module Mocks
 
     # richtemplate class generator
-    def gen_richtemplate(superclass = Enscalator::RichTemplateDSL,
+    def gen_richtemplate(name,
+                         superclass = Enscalator::RichTemplateDSL,
                          includes = [],
                          &block)
       Class.new(superclass) do
+        Object.send(:remove_const, name.to_sym) if Object.const_defined?(name.to_sym)
+        Object.const_set(name.to_sym, self)
         includes.each { |mod| include mod } unless includes.empty?
         define_method(:tpl, &block)
       end
