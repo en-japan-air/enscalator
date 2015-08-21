@@ -39,23 +39,32 @@ module Enscalator
                    SecurityGroups: [ref_private_security_group, ref_application_security_group]
                  }.merge(launch_config_props)
 
+        if auto_scale_props.key?(:Tags)
+          warn('Do not use auto_scale_props to set Tags, auto_scale_tags is available for that purpose')
+          auto_scale_props.delete_if { |k, _| k == :Tags }
+        end
+
+        auto_scale_current_tags = [
+          {
+            Key: 'Name',
+            Value: @auto_scale_name,
+            PropagateAtLaunch: true
+          }
+        ].concat(auto_scale_tags)
+
+        auto_scale_current_properties = {
+          AvailabilityZones: availability_zones.values,
+          VPCZoneIdentifier: ref_application_subnets,
+          LaunchConfigurationName: ref(@launch_config_resource_name),
+          MinSize: 0,
+          MaxSize: 1,
+          DesiredCapacity: 1,
+          Tags: auto_scale_current_tags
+        }.merge(auto_scale_props)
+
         resource @auto_scale_resource_name,
                  Type: 'AWS::AutoScaling::AutoScalingGroup',
-                 Properties: {
-                   AvailabilityZones: availability_zones.values,
-                   VPCZoneIdentifier: ref_application_subnets,
-                   LaunchConfigurationName: ref(@launch_config_resource_name),
-                   MinSize: 0,
-                   MaxSize: 1,
-                   DesiredCapacity: 1,
-                   Tags: [
-                     {
-                       Key: 'Name',
-                       Value: @auto_scale_name,
-                       PropagateAtLaunch: true
-                     }
-                   ].concat(auto_scale_tags)
-                 }.merge(auto_scale_props)
+                 Properties: auto_scale_current_properties
 
         # return resource name
         @auto_scale_resource_name
