@@ -70,9 +70,9 @@ module Enscalator
         @auto_scale_resource_name
       end
 
-      # Callback to get name of class which included this module
+      # Callback to get name of the class which included this module
       def self.included(klass)
-        self.send(:define_method, :app_template_name) { "#{klass.name.demodulize.downcase}" }
+        send(:define_method, :app_template_name) { "#{klass.name.demodulize.downcase}" }
       end
     end # module AutoScale
   end # module Plugins

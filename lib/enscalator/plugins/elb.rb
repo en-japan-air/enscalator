@@ -4,15 +4,11 @@ module Enscalator
     module Elb
       # Create new ELB instance
       #
-      # @param [String] stack_name must be stack name from @options[:stack_name]
-      # @param [String] region must be region from @options[:region]
       # @param [String, Hash] elb_name ELB instance name - can be either String or Fn::Join
       # @param [Integer] web_server_port application port to which ELB redirects traffic
       # @param [String] zone_name zone name attached to the vpc
       # @return [String] ELB resource name
-      def elb_init(stack_name,
-                   region,
-                   elb_name: join('-', aws_stack_name, 'elb'),
+      def elb_init(elb_name: join('-', aws_stack_name, 'elb'),
                    web_server_port: 9000,
                    health_check_path: '/',
                    zone_name: nil,
@@ -81,10 +77,12 @@ module Enscalator
                        InstancePort: ref('WebServerPort'),
                        Protocol: 'HTTP'
                      }
-                   ] + ([{ LoadBalancerPort: '443',
-                           InstancePort: ref('WebServerPort'),
-                           SSLCertificateId: ref('SSLCertificateId'),
-                           Protocol: 'HTTPS' }] if ssl),
+                   ] + (ssl == false ? [] : [
+                     { LoadBalancerPort: '443',
+                       InstancePort: ref('WebServerPort'),
+                       SSLCertificateId: ref('SSLCertificateId'),
+                       Protocol: 'HTTPS' }
+                   ]),
                    HealthCheck: {
                      Target: join('', 'HTTP:', ref_web_server_port, health_check_path),
                      HealthyThreshold: '3',
