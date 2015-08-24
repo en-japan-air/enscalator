@@ -64,7 +64,7 @@ describe 'Enscalator::Plugins::Elb.elb_init' do
             availability_zones.map { |suffix, _| subnets[suffix] }
           end
         end
-        elb_init(internal: false)
+        elb_init(internal: false, ssl: true)
       end
     end
 
@@ -94,6 +94,20 @@ describe 'Enscalator::Plugins::Elb.elb_init' do
                                      ToPort: '465',
                                      CidrIp: '0.0.0.0/0' }]
       expect(security_group_ingress).to include(*expected_security_ingress)
+      elb = resources['LoadBalancer']
+      listeners = elb[:Properties][:Listeners]
+      expected_listeners = [{
+                              LoadBalancerPort: '80',
+                              InstancePort: ref('WebServerPort'),
+                              Protocol: 'HTTP'
+                            },
+                            {
+                              LoadBalancerPort: '443',
+                              InstancePort: ref('WebServerPort'),
+                              SSLCertificateId: ref('SSLCertificateId'),
+                              Protocol: 'HTTPS'
+                            }]
+      expect(listeners).to include(*expected_listeners)
     end
   end
 end
