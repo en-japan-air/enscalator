@@ -1,8 +1,6 @@
 module Helpers
-
   module Mocks
-
-    # richtemplate class generator
+    # RichTemplateDSL class generator
     def gen_richtemplate(name,
                          superclass = Enscalator::RichTemplateDSL,
                          includes = [],
@@ -15,18 +13,8 @@ module Helpers
       end
     end
 
-    # TODO: remove in favor of gen_richtemplate method
-    class RichTemplateFixture < Enscalator::RichTemplateDSL
-      define_method :tpl do
-        @app_name = self.class.name.demodulize
-        value Description: 'test template'
-      end
-    end
-
-    # TODO: remove dependency on RichTemplateFixture
     # default testing command-line options
-    def default_cmd_opts(template = RichTemplateFixture.name.demodulize,
-                         stack_name = RichTemplateFixture.name.downcase.demodulize)
+    def default_cmd_opts(template, stack_name)
       {
         template: template,
         stack_name: stack_name,
@@ -57,7 +45,6 @@ module Helpers
           }
         end
       end
-    end
-
-  end # module CommandLine
+    end # def mock_availability_zones
+  end # module Mocks
 end # module Helpers
