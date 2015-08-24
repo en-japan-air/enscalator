@@ -1,27 +1,23 @@
 module Enscalator
-
   module Plugins
-
     # Ubuntu appliance
     module Ubuntu
-
       class << self
-
         # Supported storage types in AWS
-        STORAGE=[:'ebs', :'ebs-io1', :'ebs-ssd', :'instance-store']
+        STORAGE = [:ebs, :'ebs-io1', :'ebs-ssd', :'instance-store']
 
         # Supported Ubuntu image architectures
-        ARCH=[:amd64, :i386]
+        ARCH = [:amd64, :i386]
 
         # Supported Ubuntu releases
-        RELEASE={
-          :vivid => '15.04',
-          :utopic => '14.10',
-          :trusty => '14.04',
-          :saucy => '13.10',
-          :raring => '13.04',
-          :quantal => '12.10',
-          :precise => '12.04'
+        RELEASE = {
+          vivid: '15.04',
+          utopic: '14.10',
+          trusty: '14.04',
+          saucy: '13.10',
+          raring: '13.04',
+          quantal: '12.10',
+          precise: '12.04'
         }
 
         # Structure to hold parsed record
@@ -37,9 +33,9 @@ module Enscalator
         # @raise [ArgumentError] if arch is nil, empty or not one of supported values
         # @return [Hash] mapping for Ubuntu amis
         def get_mapping(release: :trusty, storage: :ebs, arch: :amd64)
-          raise ArgumentError, 'release can be either codename or version' unless RELEASE.to_a.flatten.include? release
-          raise ArgumentError, "storage can only be one of #{STORAGE.to_s}" unless STORAGE.include? storage
-          raise ArgumentError, "arch can only be one of #{ARCH.to_s}" unless ARCH.include? arch
+          fail ArgumentError, 'release can be either codename or version' unless RELEASE.to_a.flatten.include? release
+          fail ArgumentError, "storage can only be one of #{STORAGE}" unless STORAGE.include? storage
+          fail ArgumentError, "arch can only be one of #{ARCH}" unless ARCH.include? arch
           begin
             version = RELEASE.keys.include?(release) ? release : RELEASE.key(release)
             body = open("https://cloud-images.ubuntu.com/query/#{version}/server/released.current.txt") { |f| f.read }
@@ -52,7 +48,6 @@ module Enscalator
               .with_indifferent_access
           end
         end
-
       end # class << self
 
       # Create new Ubuntu instance
@@ -62,7 +57,7 @@ module Enscalator
       # @param [String] arch architecture (amd64 or i386)
       # @param [String] instance_type instance type
       def ubuntu_init(instance_name,
-                      storage: :'ebs',
+                      storage: :ebs,
                       arch: :amd64,
                       instance_type: 't2.medium')
 
@@ -85,7 +80,6 @@ module Enscalator
                        InstanceType: ref("Ubuntu#{instance_name}InstanceType")
                      }
       end
-
     end # Ubuntu
   end # Plugins
 end # Enscalator

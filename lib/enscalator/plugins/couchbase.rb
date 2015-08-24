@@ -1,10 +1,7 @@
 module Enscalator
-
   module Plugins
-
     # Plugin for Couchbase
     module Couchbase
-
       # Couchbase instance
       #
       # @param [String] db_name database name
@@ -14,20 +11,12 @@ module Enscalator
       def couchbase_init(db_name,
                          bucket: nil,
                          allocated_storage: 5,
-                         instance_type: 'm1.medium')
-
+                         instance_type: 't2.medium')
         @couchbase_mapping ||=
-          mapping 'AWSCouchbaseAMI', {
-                                     :'us-east-1' => {:amd64 => 'ami-403b4328'},
-                                     :'us-west-2' => {:amd64 => 'ami-c398c6f3'},
-                                     :'us-west-1' => {:amd64 => 'ami-1a554c5f'},
-                                     :'eu-west-1' => {:amd64 => 'ami-8129aaf6'},
-                                     :'ap-southeast-1' => {:amd64 => 'ami-88745fda'},
-                                     :'ap-northeast-1' => {:amd64 => 'ami-6a7b676b'},
-                                     :'sa-east-1' => {:amd64 => 'ami-59229f44'}
-                                   }
+          mapping 'AWSCouchbaseAMI', couchbase_ami_mapping
 
         fail 'You need to provide a bucket for couchbase' if bucket.nil?
+
         parameter_key_name "Couchbase#{db_name}"
 
         parameter_allocated_storage "Couchbase#{db_name}",
@@ -41,23 +30,38 @@ module Enscalator
                      find_in_map('AWSCouchbaseAMI', ref('AWS::Region'), 'amd64'),
                      ref_resource_subnets.first,
                      [ref_private_security_group, ref_resource_security_group],
-                     dependsOn: [], properties: {
-            :KeyName => ref("Couchbase#{db_name}KeyName"),
-            :InstanceType => ref("Couchbase#{db_name}InstanceType"),
-            :UserData => Base64.encode64(
-              set_couchbase_user_data(bucket, 'Administrator', '3fA76JWtzYbm')
-            )
-          })
+                     dependsOn: [],
+                     properties: {
+                       KeyName: ref("Couchbase#{db_name}KeyName"),
+                       InstanceType: ref("Couchbase#{db_name}InstanceType"),
+                       UserData: Base64.encode64(
+                         couchbase_user_data(bucket, 'Administrator', '3fA76JWtzYbm')
+                       )
+                     })
+      end
+
+      # Couchbase ami mapping for x64 images
+      # @return [Hash] aws mapping
+      def couchbase_ami_mapping
+        {
+          :'us-west-2' => { paravirtual: 'ami-c398c6f3' },
+          :'us-west-1' => { paravirtual: 'ami-1a554c5f' },
+          :'us-east-1' => { paravirtual: 'ami-403b4328' },
+          :'sa-east-1' => { paravirtual: 'ami-59229f44' },
+          :'eu-west-1' => { paravirtual: 'ami-8129aaf6' },
+          :'ap-southeast-1' => { paravirtual: 'ami-88745fda' },
+          :'ap-northeast-1' => { paravirtual: 'ami-6a7b676b' }
+        }.with_indifferent_access
       end
 
       # Couchbase user data
       #
       # @param [String] bucket couchbase bucket
       # @return [String] user data script
-      def set_couchbase_user_data(bucket, user, password)
-        data =<<-EOG
+      def couchbase_user_data(bucket, user, password)
+        data = <<-EOG
           #!/usr/bin/env bash
-          while [[ ! -e /opt/couchbase/var/lib/couchbase/couchbase-server.pid ]];do
+          while [[ ! -e /opt/couchbase/var/lib/couchbase/couchbase-server.pid ]]; do
             sleep 20
             echo "wait for couchbase" >> /tmp/userdatalog
             service couchbase-server status >> /tmp/userdatalog
@@ -89,7 +93,6 @@ module Enscalator
         EOG
         data
       end
-
     end # module Couchbase
   end # module Plugins
 end # module Enscalator

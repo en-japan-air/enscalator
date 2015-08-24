@@ -39,6 +39,16 @@ describe 'Enscalator::Helpers' do
     expect { test_fixture.ec2_client(nil) }.to raise_exception ArgumentError
   end
 
+  it 'should create valid client for route53' do
+    client = test_fixture.route53_client('us-east-1')
+    expect(client.class).to be Aws::Route53::Client
+  end
+
+  it 'should raise exception when region is not provided for route53 client' do
+    expect { test_fixture.route53_client('') }.to raise_exception ArgumentError
+    expect { test_fixture.route53_client(nil) }.to raise_exception ArgumentError
+  end
+
   it 'should find amis using ec2 client and default parameters' do
     VCR.use_cassette 'aws_sdk_ec2_client_find_ami', :tag => :aws_credentials do
       client = test_fixture.ec2_client('us-east-1')

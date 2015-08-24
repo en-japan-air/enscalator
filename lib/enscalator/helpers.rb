@@ -2,23 +2,20 @@ require 'open3'
 require 'ruby-progressbar'
 
 module Enscalator
-
   # Collection of helper classes and static methods
   module Helpers
-
     # Executed command as sub-processes with stdout and stderr streams
     #  taken from: https://nickcharlton.net/posts/ruby-subprocesses-with-stdout-stderr-streams.html
     class Subprocess
-
       # Create new subprocess and execute command there
       #
       # @param [String] cmd command to be executed
       def initialize(cmd)
         # standard input is not used
         Open3.popen3(cmd) do |_stdin, stdout, stderr, thread|
-          {:out => stdout, :err => stderr}.each do |key, stream|
+          { out: stdout, err: stderr }.each do |key, stream|
             Thread.new do
-              until (line = stream.gets).nil? do
+              until (line = stream.gets).nil?
                 # yield the block depending on the stream
                 if key == :out
                   yield line, nil, thread if block_given?
@@ -40,8 +37,8 @@ module Enscalator
     # @return [String] produced output from executed command
     def run_cmd(cmd)
       # use contracts to get rid of exceptions: https://github.com/egonSchiele/contracts.ruby
-      raise ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
-      raise ArgumentError, 'Argument cannot be empty' if cmd.empty?
+      fail ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
+      fail ArgumentError, 'Argument cannot be empty' if cmd.empty?
       command = cmd.join(' ')
       Subprocess.new command do |stdout, stderr, _thread|
         STDOUT.puts stdout if stdout
@@ -55,8 +52,8 @@ module Enscalator
     # @return [Aws::CloudFormation::Client]
     # @raise [ArgumentError] when region is not given
     def cfn_client(region)
-      raise ArgumentError,
-            'Unable to proceed without region' if region.blank?
+      fail ArgumentError,
+           'Unable to proceed without region' if region.blank?
       Aws::CloudFormation::Client.new(region: region)
     end
 
@@ -66,8 +63,8 @@ module Enscalator
     # @return [Aws::CloudFormation::Resource]
     # @raise [ArgumentError] when client is not provided or its not expected class type
     def cfn_resource(client)
-      raise ArgumentError,
-            'must be instance of Aws::CloudFormation::Client' unless client.instance_of?(Aws::CloudFormation::Client)
+      fail ArgumentError,
+           'must be instance of Aws::CloudFormation::Client' unless client.instance_of?(Aws::CloudFormation::Client)
       Aws::CloudFormation::Resource.new(client: client)
     end
 
@@ -77,8 +74,8 @@ module Enscalator
     # @return [Aws::EC2::Client]
     # @raise [ArgumentError] when region is not given
     def ec2_client(region)
-      raise ArgumentError,
-            'Unable to proceed without region' if region.blank?
+      fail ArgumentError,
+           'Unable to proceed without region' if region.blank?
       Aws::EC2::Client.new(region: region)
     end
 
@@ -88,8 +85,8 @@ module Enscalator
     # @return [Aws::Route53::Client]
     # @raise [ArgumentError] when region is not given
     def route53_client(region)
-      raise ArgumentError,
-            'Unable to proceed without region' if region.blank?
+      fail ArgumentError,
+           'Unable to proceed without region' if region.blank?
       Aws::Route53::Client.new(region: region)
     end
 
@@ -99,12 +96,12 @@ module Enscalator
     # @return [Hash] images satisfying query conditions
     # @raise [ArgumentError] when client is not provided or its not expected class type
     def find_ami(client, owners: ['self'], filters: nil)
-      raise ArgumentError,
-            'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
+      fail ArgumentError,
+           'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
       query = {}
       query[:dry_run] = false
-      query[:owners] = owners if owners.kind_of?(Array) && owners.any?
-      query[:filters] = filters if filters.kind_of?(Array) && filters.any?
+      query[:owners] = owners if owners.is_a?(Array) && owners.any?
+      query[:filters] = filters if filters.is_a?(Array) && filters.any?
       client.describe_images(query)
     end
 
@@ -114,13 +111,10 @@ module Enscalator
     # @param [String] stack_name name of the stack
     # @return [Aws::CloudFormation::Stack]
     def wait_stack(cfn, stack_name)
-
       stack = cfn.stack(stack_name)
 
       title = 'Waiting for stack to be created'
-      progress = ProgressBar.create :title => title,
-                                    :starting_at => 10,
-                                    :total => nil
+      progress = ProgressBar.create(title: title, starting_at: 10, total: nil)
 
       loop do
         break unless stack.stack_status =~ /(CREATE|UPDATE)_IN_PROGRESS$/
@@ -141,15 +135,24 @@ module Enscalator
     # @raise [ArgumentError] when stack is nil
     # @raise [ArgumentError] when key is nil or empty
     def get_resource(stack, key)
-      raise ArgumentError, 'stack must not be nil' if stack.nil?
-      raise ArgumentError, 'key must not be nil nor empty' if key.nil? || key.empty?
+      fail ArgumentError, 'stack must not be nil' if stack.nil?
+      fail ArgumentError, 'key must not be nil nor empty' if key.nil? || key.empty?
 
       # query with physical_resource_id
-      resource = stack.resource(key).physical_resource_id rescue nil
+      resource = begin
+        stack.resource(key).physical_resource_id
+      rescue RuntimeError
+        nil
+      end
+
       if resource.nil?
         # fallback to values from stack.outputs
         output = stack.outputs.select { |s| s.output_key == key }
-        resource = output.first.output_value rescue nil
+        resource = begin
+          output.first.output_value
+        rescue RuntimeError
+          nil
+        end
       end
       resource
     end
@@ -162,8 +165,8 @@ module Enscalator
     # @raise [ArgumentError] when stack is nil
     # @raise [ArgumentError] when keys are nil or empty list
     def get_resources(stack, keys)
-      raise ArgumentError, 'stack must not be nil' if stack.nil?
-      raise ArgumentError, 'key must not be nil nor empty' if keys.nil? || keys.empty?
+      fail ArgumentError, 'stack must not be nil' if stack.nil?
+      fail ArgumentError, 'key must not be nil nor empty' if keys.nil? || keys.empty?
 
       keys.map { |k| get_resource(stack, k) }.compact
     end
@@ -206,7 +209,7 @@ module Enscalator
       begin
         run_cmd(cmd)
       rescue Errno::ENOENT
-        puts $!.to_s
+        puts $ERROR_INFO.to_s
         STDERR.puts cmd
       end
     end
@@ -232,7 +235,7 @@ module Enscalator
       stack = wait_stack(cfn, dependent_stack_name)
 
       extra_parameters_cleaned = extra_parameters.map do |x|
-        if x.has_key? 'ParameterKey'
+        if x.key? 'ParameterKey'
           {
             parameter_key: x['ParameterKey'],
             parameter_value: x['ParameterValue']

@@ -6,17 +6,18 @@ require 'enscalator/version'
 Gem::Specification.new do |spec|
   spec.name          = 'enscalator'
   spec.version       = Enscalator::VERSION
-  spec.authors       = ["Ugo Bataillard"]
-  spec.email         = ["ugo.bataillard@en-japan.io"]
+  spec.authors       = ['Ugo Bataillard']
+  spec.email         = ['ugo.bataillard@en-japan.io']
 
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org, or delete to allow pushes to any server."
+    spec.metadata['allowed_push_host'] =
+      "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org (delete to allow pushes to any server.)"
   end
 
   spec.required_ruby_version = '~> 2.0'
 
-  spec.summary       = %q{Make enjapan apps webscale}
-  spec.description   = %q{Make them really webscale}
+  spec.summary       = 'Make enjapan apps webscale'
+  spec.description   = 'Make them really webscale'
   spec.homepage      = 'https://www.github.com/en-japan/enscalator'
   spec.license       = 'None'
 
@@ -47,5 +48,4 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'ruby-progressbar', '~> 1.7.5'
   spec.add_runtime_dependency 'nokogiri', '~> 1.6.6.2'
   spec.add_runtime_dependency 'semantic', '~> 1.4.0'
-
 end

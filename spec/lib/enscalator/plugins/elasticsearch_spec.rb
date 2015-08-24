@@ -11,7 +11,9 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
     let(:template_fixture) {
       es_test_app_name = app_name
       es_test_description = description
-      gen_richtemplate(Enscalator::EnAppTemplateDSL,
+      es_test_template_name = app_name.humanize.delete(' ')
+      gen_richtemplate(es_test_template_name,
+                       Enscalator::EnAppTemplateDSL,
                        [Enscalator::Plugins::Elasticsearch]) do
         @app_name = es_test_app_name
         value(Description: es_test_description)
@@ -22,9 +24,8 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
 
     it 'should create mapping template for Elasticsearch' do
       VCR.use_cassette 'elasticsearch_init_mapping_in_template', allow_playback_repeats: true do
-        ESTestDefault = template_fixture
-        cmd_opts = default_cmd_opts(ESTestDefault.name, ESTestDefault.name.underscore)
-        elasticsearch_template = ESTestDefault.new(cmd_opts)
+        cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
+        elasticsearch_template = template_fixture.new(cmd_opts)
         dict = elasticsearch_template.instance_variable_get(:@dict)
 
         mapping_under_test = dict[:Mappings]['AWSElasticsearchAMI']
@@ -51,8 +52,10 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
     let(:template_fixture_with_props) {
       es_test_app_name = app_name
       es_test_description = description
+      es_test_template_name = app_name.humanize.delete(' ')
       es_test_properties = template_properties
-      gen_richtemplate(Enscalator::EnAppTemplateDSL,
+      gen_richtemplate(es_test_template_name,
+                       Enscalator::EnAppTemplateDSL,
                        [Enscalator::Plugins::Elasticsearch]) do
         @app_name = es_test_app_name
         value(Description: es_test_description)
@@ -64,11 +67,10 @@ describe 'Enscalator::Plugins::Elasticsearch.elasticsearch_init' do
 
     it 'should properly combine tags from both plugin and template' do
       VCR.use_cassette 'elasticsearch_template_and_plugin_with_tags' do
-        ESTestWithParams = template_fixture_with_props
-        cmd_opts = default_cmd_opts(ESTestWithParams.name, ESTestWithParams.name.underscore)
-        elasticsearch_tags_template = ESTestWithParams.new(cmd_opts)
+        cmd_opts = default_cmd_opts(template_fixture_with_props.name,
+                                    template_fixture_with_props.name.underscore)
+        elasticsearch_tags_template = template_fixture_with_props.new(cmd_opts)
         dict = elasticsearch_tags_template.instance_variable_get(:@dict)
-
         tags = dict[:Resources]["Elasticsearch#{app_name}"][:Properties][:Tags]
         keys = tags.map { |t| t[:Key] }
         expect(keys).to include(*%w{TestKey Version ClusterName Name})

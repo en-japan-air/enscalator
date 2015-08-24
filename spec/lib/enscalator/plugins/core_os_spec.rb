@@ -126,6 +126,13 @@ describe 'Enscalator::Plugins::CoreOS.private_methods' do
     end
   end
 
+  it 'should raise exception when base_url could be accessed, but required data is not found there' do
+    VCR.use_cassette 'coreos_mapping_wrong_url' do
+      testUrl = 'http://stable.release.core-os.net/sparc-usr'
+      expect { Enscalator::Plugins::CoreOS.send(:fetch_mapping, testUrl, nil) }.to raise_exception OpenURI::HTTPError
+    end
+  end
+
   it 'should raise exception when base_url parameter is not valid' do
     expect { Enscalator::Plugins::CoreOS.send(:fetch_mapping, '', nil) }.to raise_exception ArgumentError
     expect { Enscalator::Plugins::CoreOS.send(:fetch_mapping, nil, nil) }.to raise_exception ArgumentError

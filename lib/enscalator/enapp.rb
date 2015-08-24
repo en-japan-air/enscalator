@@ -2,10 +2,8 @@ require 'cloudformation-ruby-dsl/cfntemplate'
 require_relative 'richtemplate'
 
 module Enscalator
-
   # Template DSL for common enJapan application stack
   class EnAppTemplateDSL < RichTemplateDSL
-
     include Enscalator::Helpers
 
     attr_reader :app_name
@@ -15,7 +13,7 @@ module Enscalator
     # Create new EnAppTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
-    def initialize(options={})
+    def initialize(options = {})
       # application name taken from template name by default
       @app_name = self.class.name.demodulize
 
@@ -130,7 +128,8 @@ module Enscalator
                 ConstraintDescription: 'must begin with sg- followed by numbers and alphanumeric characters.'
 
       # allocate application/resource cidr blocks dynamically for all availability zones
-      availability_zones.zip(get_application_cidr_blocks, get_resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
+      availability_zones.zip(get_application_cidr_blocks,
+                             get_resource_cidr_blocks).each do |pair, application_cidr_block, resource_cidr_block|
         suffix, availability_zone = pair
 
         private_route_table_name = "PrivateRouteTable#{suffix.upcase}"
@@ -172,7 +171,7 @@ module Enscalator
       security_group_vpc 'ResourceSecurityGroup',
                          'Enable internal access with ssh',
                          vpc.id,
-                         securityGroupIngress: [
+                         security_group_ingress: [
                            {
                              IpProtocol: 'tcp',
                              FromPort: '22',
@@ -194,7 +193,7 @@ module Enscalator
       security_group_vpc 'ApplicationSecurityGroup',
                          'Security group of the application servers',
                          vpc.id,
-                         securityGroupIngress: [
+                         security_group_ingress: [
                            {
                              IpProtocol: 'tcp',
                              FromPort: '0',
@@ -206,7 +205,6 @@ module Enscalator
                            Name: join('-', aws_stack_name, 'app', 'sg'),
                            Application: aws_stack_name
                          }
-
     end
   end # class EnAppTemplateDSL
 end # module Enscalator
