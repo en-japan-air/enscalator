@@ -1,10 +1,5 @@
 require 'cloudformation-ruby-dsl/cfntemplate'
 
-# Create new rich template
-def rich_template(&block)
-  Enscalator::RichTemplateDSL.new(&block)
-end
-
 module Enscalator
   # DSL specific for enscalator
   class RichTemplateDSL < TemplateDSL
