@@ -9,6 +9,7 @@ SimpleCov.start do
 end
 Coveralls.wear!
 
+$LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'enscalator'
 
 # Debugging (use binding.pry to directly inspect in given scope)

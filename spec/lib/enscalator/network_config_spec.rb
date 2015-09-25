@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::NetworkConfig' do
+describe Enscalator::NetworkConfig do
 
   it 'should return valid vpc networking configuration' do
     network_conf = Enscalator::NetworkConfig.mapping_vpc_net

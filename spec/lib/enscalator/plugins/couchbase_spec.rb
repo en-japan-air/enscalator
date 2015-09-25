@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::Plugins::Couchbase.couchbase_init' do
+describe Enscalator::Plugins::Couchbase, '#couchbase_init' do
 
   let(:app_name) { 'couchbase_test' }
   let(:description) { 'This is test template for couchbase' }

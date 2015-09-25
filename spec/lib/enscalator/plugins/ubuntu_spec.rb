@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::Plugins::Ubuntu' do
+describe Enscalator::Plugins::Ubuntu, '#ubuntu_init' do
 
   it 'should create mapping template for Ubuntu using default parameters' do
     VCR.use_cassette 'ubuntu_mapping_default_options' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::Plugins::Elb.elb_init' do
+describe Enscalator::Plugins::Elb, '#elb_init' do
   let(:app_name) { 'elb_test' }
   let(:description) { 'This is test template for elastic load balancer' }
 

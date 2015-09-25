@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::InstanceType' do
+describe Enscalator::InstanceType do
 
   it 'should provide EC2 instance type' do
     ec2_instance_type = Enscalator::InstanceType.ec2_instance_type
@@ -18,11 +18,11 @@ describe 'Enscalator::InstanceType' do
 
 end
 
-describe 'Enscalator::InstanceType::AwsInstance' do
+describe Enscalator::InstanceType::AwsInstance do
 
   it 'should create instance using constructor with provided values' do
-    test_current_gen = {general: %w{ gen1.small gen2.big }}
-    test_previous_gen = {micro: %w{ micro1.small micro2.supersmall }}
+    test_current_gen = { general: %w{ gen1.small gen2.big } }
+    test_previous_gen = { micro: %w{ micro1.small micro2.supersmall } }
     instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
     expect(instance.current_generation).to be(test_current_gen)
     expect(instance.previous_generation).to be(test_previous_gen)
@@ -35,15 +35,15 @@ describe 'Enscalator::InstanceType::AwsInstance' do
   end
 
   it 'should verify if given instance type is within given range' do
-    test_current_gen = {general: %w{ gen1.small gen2.big }}
+    test_current_gen = { general: %w{ gen1.small gen2.big } }
     instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen)
     expect(instance.supported?(test_current_gen.values.flatten.first)).to be(true)
     expect(instance.supported?('false_type')).to be(false)
   end
 
   it 'should check if given instance type is obsolete (previous generation)' do
-    test_current_gen = {general: %w{ gen1.fast gen2.big }}
-    test_previous_gen = {micro: %w{ micro1.slow }}
+    test_current_gen = { general: %w{ gen1.fast gen2.big } }
+    test_previous_gen = { micro: %w{ micro1.slow } }
     instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
     expect(instance.obsolete?('micro1.slow')).to be(true)
     expect(instance.obsolete?('gen1.fast')).to be(false)
@@ -51,31 +51,31 @@ describe 'Enscalator::InstanceType::AwsInstance' do
   end
 
   it 'should return allowed values for current generation instance types' do
-    test_current_gen = {general: %w{ gen1.fast gen2.big }}
-    test_previous_gen = {micro: %w{ micro1.slow }}
+    test_current_gen = { general: %w{ gen1.fast gen2.big } }
+    test_previous_gen = { micro: %w{ micro1.slow } }
     instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
     expect(instance.allowed_values('gen1.fast')).to include(*test_current_gen.values.flatten)
     expect(instance.allowed_values('gen1.fast')).not_to include(*test_previous_gen.values.flatten)
   end
 
   it 'should return allowed values for previous generation instance types' do
-    test_current_gen = {general: %w{ gen1.fast gen2.big }}
-    test_previous_gen = {micro: %w{ micro1.slow }}
+    test_current_gen = { general: %w{ gen1.fast gen2.big } }
+    test_previous_gen = { micro: %w{ micro1.slow } }
     instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
     expect(instance.allowed_values('micro1.slow')).to include(*test_previous_gen.values.flatten)
     expect(instance.allowed_values('micro1.slow')).not_to include(*test_current_gen.values.flatten)
   end
 
   it 'should return empty array for allowed values if instance type is not supported' do
-    test_current_gen = {general: %w{ gen1.fast gen2.big }}
-    test_previous_gen = {micro: %w{ micro1.slow }}
+    test_current_gen = { general: %w{ gen1.fast gen2.big } }
+    test_previous_gen = { micro: %w{ micro1.slow } }
     instance = Enscalator::InstanceType::AwsInstance.new(test_current_gen, test_previous_gen)
     expect(instance.allowed_values('superbig10.superfast')).to eq([])
     expect(instance.allowed_values('micro1.slow')).not_to eq([])
   end
 end
 
-describe 'Enscalator::InstanceType::EC2' do
+describe Enscalator::InstanceType::EC2 do
 
   it 'should create EC2 instance type' do
     ec2 = Enscalator::InstanceType::EC2.new
@@ -88,7 +88,7 @@ describe 'Enscalator::InstanceType::EC2' do
 
 end
 
-describe 'Enscalator::InstanceType::RDS' do
+describe Enscalator::InstanceType::RDS do
 
   it 'should create RDS instance type' do
     rds = Enscalator::InstanceType::RDS.new
