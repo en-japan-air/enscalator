@@ -1,13 +1,20 @@
 # Coveralls
 require 'simplecov'
 require 'coveralls'
-SimpleCov.formatter = Coveralls::SimpleCov::Formatter
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
+  Coveralls::SimpleCov::Formatter,
+  SimpleCov::Formatter::HTMLFormatter
+]
 SimpleCov.start do
   add_filter 'lib/enscalator/templates' # don't track coverage for templates
   add_filter 'spec/lib'
   add_filter 'spec/helpers'
 end
-Coveralls.wear!
+
+# Use Coveralls formatter only in CI environment
+if ENV['CI'].eql?('true') || ENV['TRAVIS'].eql?('true') || ENV['COVERALLS_REPO_TOKEN']
+  Coveralls.wear!
+end
 
 $LOAD_PATH.unshift File.expand_path('../lib', __FILE__)
 require 'enscalator'
