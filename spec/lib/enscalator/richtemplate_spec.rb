@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::RichTemplateDSL' do
+describe Enscalator::RichTemplateDSL do
   let(:app_name) { 'richtemplate_test' }
   let(:description) { 'This is a template for richtemplate itself' }
   let(:richtemplate) do

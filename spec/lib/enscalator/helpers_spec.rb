@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::Helpers' do
+describe Enscalator::Helpers do
 
   class TestFixture
     include Enscalator::Helpers

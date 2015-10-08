@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::Plugins::Debian' do
+describe Enscalator::Plugins::Debian, '#debian_init' do
 
   it 'should create mapping template for Debian using default parameter' do
     VCR.use_cassette 'debian_mapping_default_options' do
