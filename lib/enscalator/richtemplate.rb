@@ -335,7 +335,7 @@ module Enscalator
                 ConstraintDescription: "must be between #{min} and #{max}Gb."
     end
 
-    # iam instance profile with full access policies to passed services
+    # IAM instance profile with full access policies to passed services
     #
     # @param [String] role_name iam role name
     # @param [Array<String>] services a list of aws service name
