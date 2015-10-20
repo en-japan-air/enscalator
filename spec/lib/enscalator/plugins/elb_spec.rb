@@ -44,10 +44,12 @@ describe Enscalator::Plugins::Elb, '#elb_init' do
 
   context 'when invoked with parameters' do
     let(:template_name) { app_name.humanize.delete(' ') }
+    let(:template_instances) { [ref('TestInstance1'), ref('TestInstance2')] }
     let(:template_fixture) do
       elb_test_app_name = app_name
       elb_test_description = description
       elb_test_template_name = template_name
+      elb_test_template_instances = template_instances
       gen_richtemplate(elb_test_template_name,
                        Enscalator::EnAppTemplateDSL,
                        [Enscalator::Plugins::Elb]) do
@@ -64,7 +66,7 @@ describe Enscalator::Plugins::Elb, '#elb_init' do
             availability_zones.map { |suffix, _| subnets[suffix] }
           end
         end
-        elb_init(internal: false, ssl: true)
+        elb_init(instances: elb_test_template_instances, ssl: true, internal: false)
       end
     end
 
@@ -76,8 +78,7 @@ describe Enscalator::Plugins::Elb, '#elb_init' do
       expect(resources['ELBSecurityGroup']).to_not be_nil
       security_group = resources['ELBSecurityGroup']
       security_group_ingress = security_group[:Properties][:SecurityGroupIngress]
-      expected_security_ingress = [{
-                                     IpProtocol: 'tcp',
+      expected_security_ingress = [{ IpProtocol: 'tcp',
                                      FromPort: '0',
                                      ToPort: '65535',
                                      CidrIp: '10.0.0.0/8' },
@@ -108,6 +109,8 @@ describe Enscalator::Plugins::Elb, '#elb_init' do
                               Protocol: 'HTTPS'
                             }]
       expect(listeners).to include(*expected_listeners)
+      instances = elb[:Properties][:Instances]
+      expect(instances).to eq(template_instances)
     end
   end
 end
