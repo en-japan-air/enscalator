@@ -104,7 +104,7 @@ module Enscalator
                      },
                      {
                        Key: 'Network',
-                       Value: 'Private'
+                       Value: (internal ? 'Private' : 'Public')
                      }
                    ]
                  }.merge(internal ? { Scheme: 'internal' } : {})
