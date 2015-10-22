@@ -90,26 +90,39 @@ module Enscalator
                                  ttl: 300,
                                  type: 'A',
                                  healthcheck: nil,
+                                 alias_target: {},
                                  resource_records: [])
       if type && !RECORD_TYPE.include?(type)
         fail("Route53 record type can only be one of the following: #{RECORD_TYPE.join(',')}")
       end
       if healthcheck && (!healthcheck.is_a?(Hash) || !healthcheck.include?(:Ref))
-        fail('healthcheck must be a valid cloud formation ref function')
+        fail('healthcheck must be a valid cloudformation Ref function')
+      end
+      if alias_target && (!alias_target.is_a?(Hash))
+        fail('AliasTarget must be a Hash')
       end
 
+      name = app_name ? app_name : stack_name.titleize.remove(/\s/)
       properties = {
         Name: record_name,
+        Comment: "#{type} record for #{[app_name, 'in '].join(' ') if app_name}#{stack_name} stack",
         HostedZoneName: zone_name,
-        TTL: ttl,
-        Type: type,
-        Comment: "#{type} record for #{app_name} in #{stack_name} stack"
+        Type: type
       }
 
-      properties[:HealthCheckId] = healthcheck if healthcheck
-      properties[:ResourceRecords] = resource_records.empty? ? ref("#{app_name}PublicIpAddress") : resource_records
+      if alias_target && (alias_target.is_a?(Hash) && !alias_target.empty?)
+        fail('AliasTarget can be created only for A or AAAA type records') unless %w(A AAAA).include?(type)
+        unless alias_target.key?(:HostedZoneId) && alias_target.key?(:DNSName)
+          fail('AliasTarget must have HostedZoneId and DNSName properties')
+        end
+        properties[:AliasTarget] = alias_target
+      else
+        properties[:TTL] = ttl
+        properties[:HealthCheckId] = healthcheck if healthcheck
+        properties[:ResourceRecords] = resource_records.empty? ? ref("#{app_name}PublicIpAddress") : resource_records
+      end
 
-      resource "#{app_name}Hostname",
+      resource "#{name}Hostname",
                Type: 'AWS::Route53::RecordSet',
                Properties: properties
     end

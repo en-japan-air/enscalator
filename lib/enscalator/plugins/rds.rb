@@ -17,6 +17,8 @@ module Enscalator
                    allocated_storage: 5,
                    storage_type: 'gp2',
                    multizone: 'false',
+                   engine: 'MySQL',
+                   engine_version: '5.6',
                    parameter_group: '***REMOVED***',
                    instance_type: 'db.t2.small',
                    properties: {})
@@ -29,6 +31,16 @@ module Enscalator
                                     default: allocated_storage,
                                     min: 5,
                                     max: 1024
+
+        parameter "RDS#{db_name}Engine",
+                  Default: engine,
+                  Description: 'DB engine type of the DB instance',
+                  Type: 'String'
+
+        parameter "RDS#{db_name}EngineVersion",
+                  Default: engine_version,
+                  Description: 'DB engine version of the DB instance',
+                  Type: 'String'
 
         parameter "RDS#{db_name}StorageType",
                   Default: storage_type,
@@ -92,9 +104,10 @@ module Enscalator
         end
 
         rds_props = {
-          Engine: 'MySQL',
           PubliclyAccessible: 'false',
           MultiAZ: ref("RDS#{db_name}Multizone"),
+          Engine: ref("RDS#{db_name}Engine"),
+          EngineVersion: ref("RDS#{db_name}EngineVersion"),
           MasterUsername: ref("RDS#{db_name}Username"),
           MasterUserPassword: ref("RDS#{db_name}Password"),
           DBInstanceClass: ref("RDS#{db_name}InstanceType"),
@@ -105,13 +118,16 @@ module Enscalator
           StorageType: ref("RDS#{db_name}StorageType")
         }
 
-        resource "RDS#{db_name}Instance",
+        rds_instance_resource_name = "RDS#{db_name}Instance"
+        resource rds_instance_resource_name,
                  Type: 'AWS::RDS::DBInstance',
                  Properties: props.merge(rds_props)
 
         output "RDS#{db_name}EndpointAddress",
                Description: "#{db_name} Endpoint Address",
                Value: get_att("RDS#{db_name}Instance", 'Endpoint.Address')
+
+        rds_instance_resource_name
       end
     end # RDS
   end # Plugins
