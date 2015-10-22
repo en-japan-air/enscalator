@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Enscalator::Route53' do
+describe Enscalator::Route53 do
 
   describe '#create_healthcheck' do
     let(:app_name) { 'route53_healthcheck_test' }
@@ -146,6 +146,25 @@ describe 'Enscalator::Route53' do
       end
     end
 
+    context 'when invoked with default parameters without app_name' do
+      it 'should use stack_name to generate application like name' do
+        cmd_opts = default_cmd_opts(dns_record_template_fixture_default.name,
+                                    dns_record_template_fixture_default.name.underscore)
+                     .merge({ hosted_zone: 'private.enjapan.test' })
+        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+
+        test_record_name = 'test-entry-default'
+        route53_template.create_single_dns_record(nil,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name)
+        dict = route53_template.instance_variable_get(:@dict)
+        expect(dict[:Description]).to eq(description)
+        expected_name = cmd_opts[:stack_name].titleize.delete(' ')
+        expect(dict[:Resources]["#{expected_name}Hostname"].empty?).to be_falsey
+      end
+    end
+
     context 'when invoked with type parameter set to non-default value' do
       it 'should include valid dns record type in generated template' do
         cmd_opts =
@@ -227,6 +246,60 @@ describe 'Enscalator::Route53' do
                                                     cmd_opts[:hosted_zone],
                                                     test_record_name,
                                                     healthcheck: []) }.to raise_exception(RuntimeError)
+      end
+    end
+    context 'when invoked with alias_target parameter with non-default value' do
+      it 'should include valid alias_target reference in generated template' do
+        cmd_opts =
+          default_cmd_opts(dns_record_template_fixture_default.name,
+                           dns_record_template_fixture_default.name.underscore)
+            .merge({ hosted_zone: 'private.enjapan.test' })
+        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        test_record_name = 'test-entry-aliastarget'
+        test_aliastarget = {
+          HostedZoneId: get_att('TestResource', 'CanonicalHostedZoneNameID'),
+          DNSName: get_att('TestResource', 'CanonicalHostedZoneName')
+        }
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  alias_target: test_aliastarget)
+        dict = route53_template.instance_variable_get(:@dict)
+        test_resources = dict[:Resources]["#{app_name}Hostname"]
+        expect(test_resources[:Properties][:AliasTarget]).to eq(test_aliastarget)
+      end
+
+      it 'should raise Runtime exception if its not valid' do
+        cmd_opts =
+          default_cmd_opts(dns_record_template_fixture_default.name,
+                           dns_record_template_fixture_default.name.underscore)
+            .merge({ hosted_zone: 'private.enjapan.test' })
+        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        test_record_name = 'test-entry-aliastarget'
+        expect {
+          route53_template.create_single_dns_record(app_name,
+                                                    cmd_opts[:stack_name],
+                                                    cmd_opts[:hosted_zone],
+                                                    test_record_name,
+                                                    alias_target: []) }.to raise_exception(RuntimeError)
+        expect {
+          route53_template.create_single_dns_record(app_name,
+                                                    cmd_opts[:stack_name],
+                                                    cmd_opts[:hosted_zone],
+                                                    test_record_name,
+                                                    type: 'CNAME',
+                                                    alias_target: {
+                                                      HostedZoneId: 'test_zone_id'
+                                                    }) }.to raise_exception(RuntimeError)
+        expect {
+          route53_template.create_single_dns_record(app_name,
+                                                    cmd_opts[:stack_name],
+                                                    cmd_opts[:hosted_zone],
+                                                    test_record_name,
+                                                    alias_target: {
+                                                      DNSName: 'test_zone_dns'
+                                                    }) }.to raise_exception(RuntimeError)
       end
     end
 

@@ -12,6 +12,7 @@ module Enscalator
                    web_server_port: 9000,
                    health_check_path: '/',
                    zone_name: nil,
+                   dns_record_name: "elb.#{stack_name.dasherize}.#{zone_name}",
                    ssl: false,
                    internal: true)
 
@@ -108,22 +109,21 @@ module Enscalator
                    ]
                  }.merge(internal ? { Scheme: 'internal' } : {})
 
-        output 'LoadBalancerDnsName',
-               Description: 'LoadBalancer DNS Name',
-               Value: get_att('LoadBalancer', 'DNSName')
+        # use alias target to create proper cloudformation template for Route53 side of elb configuration
+        alias_target = {
+          HostedZoneId: get_att(@elb_resource_name, 'CanonicalHostedZoneNameID'),
+          DNSName: get_att(@elb_resource_name, 'CanonicalHostedZoneName')
+        }
 
-        post_run do
-          cfn = cfn_resource(cfn_client(region))
-          stack = wait_stack(cfn, stack_name)
-          elb_name = get_resource(stack, 'LoadBalancerDnsName')
-          upsert_dns_record(
-            zone_name: zone_name,
-            record_name: "elb.#{stack_name}.#{zone_name}",
-            type: 'CNAME',
-            values: [elb_name],
-            region: region
-          )
-        end
+        create_single_dns_record(nil,
+                                 stack_name,
+                                 zone_name,
+                                 dns_record_name,
+                                 alias_target: alias_target)
+
+        output "#{@elb_resource_name}DNSName",
+               Description: 'LoadBalancer DNS Name',
+               Value: get_att(@elb_resource_name, 'DNSName')
 
         # return resource name
         @elb_resource_name
