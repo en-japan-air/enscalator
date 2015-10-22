@@ -27,6 +27,10 @@ module Enscalator
       @vpc_stack ||= cfn_resource(cfn_client(region)).stack(vpc_stack_name)
     end
 
+    def current_stack
+      @current_stack ||= (cfn_resource(cfn_client(region)).stack(stack_name) rescue nil) unless creating?
+    end
+
     # Get vpc
     #
     # @return [Aws::EC2::Vpc] vpc instance
@@ -89,7 +93,14 @@ module Enscalator
     # @return [Hash]
     def get_application_to_az_mapping
       cidr_blocks = get_available_cidr_blocks.dup
-      availability_zones.map { |suffix, az| Struct::Subnet.new(az, suffix, cidr_blocks.shift) }
+      availability_zones.map do |suffix, az| 
+        cidr_block = (begin 
+          subnet_id = get_resource(current_stack, "ApplicationSubnet#{suffix.upcase}") 
+          Aws::EC2::Subnet.new(id: subnet_id, region: region).cidr_block
+        end rescue nil) if current_stack 
+        
+        Struct::Subnet.new(az, suffix, cidr_block || cidr_blocks.shift) 
+      end
     end
 
     # CIDR blocks allocated for application subnets
@@ -102,7 +113,14 @@ module Enscalator
     # @return [Array]
     def get_resource_to_az_mapping
       cidr_blocks = (get_available_cidr_blocks - get_application_cidr_blocks).dup
-      availability_zones.map { |suffix, az| Struct::Subnet.new(az, suffix, cidr_blocks.shift) }
+      availability_zones.map do |suffix, az| 
+        cidr_block = (begin 
+          subnet_id = get_resource(current_stack, "ResourceSubnet#{suffix.upcase}") 
+          Aws::EC2::Subnet.new(id: subnet_id, region: region).cidr_block
+        end rescue nil) if current_stack 
+
+        Struct::Subnet.new(az, suffix, cidr_block || cidr_blocks.shift) 
+      end
     end
 
     # CIDR blocks allocated for resource subnets
