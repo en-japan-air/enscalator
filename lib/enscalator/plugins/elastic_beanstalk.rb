@@ -56,10 +56,13 @@ module Enscalator
           }]
         }
 
+        elastic_beanstalk_resource_name = "#{app_name}BeanstalkApp"
 
-        resource "#{app_name}BeanstalkApp",
+        resource elastic_beanstalk_resource_name,
           Type: 'AWS::ElasticBeanstalk::Application',
           Properties: properties
+
+        elastic_beanstalk_resource_name
       end
 
     end # module ElasticBeanstalk

@@ -118,13 +118,16 @@ module Enscalator
           StorageType: ref("RDS#{db_name}StorageType")
         }
 
-        resource "RDS#{db_name}Instance",
+        rds_instance_resource_name = "RDS#{db_name}Instance"
+        resource rds_instance_resource_name,
                  Type: 'AWS::RDS::DBInstance',
                  Properties: props.merge(rds_props)
 
         output "RDS#{db_name}EndpointAddress",
                Description: "#{db_name} Endpoint Address",
                Value: get_att("RDS#{db_name}Instance", 'Endpoint.Address')
+
+        rds_instance_resource_name
       end
     end # RDS
   end # Plugins
