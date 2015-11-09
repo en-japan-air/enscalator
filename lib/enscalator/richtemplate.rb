@@ -19,6 +19,13 @@ module Enscalator
       super(&block)
     end
 
+    # Helper method to check if the current command is to create the stack
+    # 
+    # @return [Truthy] truthful if currently creating a stack
+    def creating?
+       @options[:create_stack]
+    end
+
     # Helper method to provide accessor for `region`
     #
     # @return [String] region
