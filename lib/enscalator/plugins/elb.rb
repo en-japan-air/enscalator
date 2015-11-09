@@ -109,10 +109,7 @@ module Enscalator
         }
 
         properties[:Scheme] = 'internal' if internal
-
-        if instances && !instances.empty?
-          properties[:Instances] = instances
-        end
+        properties[:Instances] = instances if instances && !instances.empty?
 
         resource @elb_resource_name,
                  Type: 'AWS::ElasticLoadBalancing::LoadBalancer',

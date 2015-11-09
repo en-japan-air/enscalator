@@ -93,13 +93,13 @@ module Enscalator
     # @return [Hash]
     def get_application_to_az_mapping
       cidr_blocks = get_available_cidr_blocks.dup
-      availability_zones.map do |suffix, az| 
-        cidr_block = (begin 
-          subnet_id = get_resource(current_stack, "ApplicationSubnet#{suffix.upcase}") 
+      availability_zones.map do |suffix, az|
+        cidr_block = (begin
+          subnet_id = get_resource(current_stack, "ApplicationSubnet#{suffix.upcase}")
           Aws::EC2::Subnet.new(id: subnet_id, region: region).cidr_block
-        end rescue nil) if current_stack 
-        
-        Struct::Subnet.new(az, suffix, cidr_block || cidr_blocks.shift) 
+        end rescue nil) if current_stack
+
+        Struct::Subnet.new(az, suffix, cidr_block || cidr_blocks.shift)
       end
     end
 
@@ -113,13 +113,13 @@ module Enscalator
     # @return [Array]
     def get_resource_to_az_mapping
       cidr_blocks = (get_available_cidr_blocks - get_application_cidr_blocks).dup
-      availability_zones.map do |suffix, az| 
-        cidr_block = (begin 
-          subnet_id = get_resource(current_stack, "ResourceSubnet#{suffix.upcase}") 
+      availability_zones.map do |suffix, az|
+        cidr_block = (begin
+          subnet_id = get_resource(current_stack, "ResourceSubnet#{suffix.upcase}")
           Aws::EC2::Subnet.new(id: subnet_id, region: region).cidr_block
-        end rescue nil) if current_stack 
+        end rescue nil) if current_stack
 
-        Struct::Subnet.new(az, suffix, cidr_block || cidr_blocks.shift) 
+        Struct::Subnet.new(az, suffix, cidr_block || cidr_blocks.shift)
       end
     end
 
