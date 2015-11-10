@@ -14,6 +14,7 @@ require_relative 'plugins/debian'
 require_relative 'plugins/rethinkdb'
 require_relative 'plugins/rds'
 require_relative 'plugins/elastic_beanstalk'
+require_relative 'plugins/elastic_cache'
 
 module Enscalator
   # Namespace for enscalator plugins

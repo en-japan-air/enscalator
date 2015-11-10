@@ -7,8 +7,10 @@ module Enscalator
       def elastic_beanstalk_app(app_name,
                                 stack_name,
                                 ssh_key: app_name,
-                                solution_stack_name: '64bit Amazon Linux 2015.03 v2.0.1 running Ruby 2.2 (Passenger Standalone)',
-                                instance_type: 't2.small')
+                                solution_stack_name: '64bit Amazon Linux 2015.09 v2.0.4 running Ruby 2.2 (Passenger Standalone)',
+                                instance_type: 't2.small'
+                               )
+
         properties = {
           ApplicationName: app_name,
           Description: "#{app_name} in #{stack_name} stack",
