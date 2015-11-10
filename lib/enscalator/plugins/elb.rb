@@ -13,6 +13,7 @@ module Enscalator
                    health_check_path: '/',
                    zone_name: nil,
                    dns_record_name: "elb.#{stack_name.dasherize}.#{zone_name}",
+                   instances: [],
                    ssl: false,
                    internal: true)
 
@@ -68,46 +69,51 @@ module Enscalator
                     ConstraintDescription: 'must be a string'
         end
 
+        properties = {
+          LoadBalancerName: elb_name,
+          Listeners: [
+            {
+              LoadBalancerPort: '80',
+              InstancePort: ref('WebServerPort'),
+              Protocol: 'HTTP'
+            }
+          ] + (ssl == false ? [] : [
+            { LoadBalancerPort: '443',
+              InstancePort: ref('WebServerPort'),
+              SSLCertificateId: ref('SSLCertificateId'),
+              Protocol: 'HTTPS' }
+          ]),
+          HealthCheck: {
+            Target: join('', 'HTTP:', ref_web_server_port, health_check_path),
+            HealthyThreshold: '3',
+            UnhealthyThreshold: '5',
+            Interval: '30',
+            Timeout: '5'
+          },
+          SecurityGroups: [ref('ELBSecurityGroup')],
+          Subnets: internal ? ref_application_subnets : public_subnets,
+          Tags: [
+            {
+              Key: 'Name',
+              Value: elb_name
+            },
+            {
+              Key: 'Application',
+              Value: aws_stack_name
+            },
+            {
+              Key: 'Network',
+              Value: (internal ? 'Private' : 'Public')
+            }
+          ]
+        }
+
+        properties[:Scheme] = 'internal' if internal
+        properties[:Instances] = instances if instances && !instances.empty?
+
         resource @elb_resource_name,
                  Type: 'AWS::ElasticLoadBalancing::LoadBalancer',
-                 Properties: {
-                   LoadBalancerName: elb_name,
-                   Listeners: [
-                     {
-                       LoadBalancerPort: '80',
-                       InstancePort: ref('WebServerPort'),
-                       Protocol: 'HTTP'
-                     }
-                   ] + (ssl == false ? [] : [
-                     { LoadBalancerPort: '443',
-                       InstancePort: ref('WebServerPort'),
-                       SSLCertificateId: ref('SSLCertificateId'),
-                       Protocol: 'HTTPS' }
-                   ]),
-                   HealthCheck: {
-                     Target: join('', 'HTTP:', ref_web_server_port, health_check_path),
-                     HealthyThreshold: '3',
-                     UnhealthyThreshold: '5',
-                     Interval: '30',
-                     Timeout: '5'
-                   },
-                   SecurityGroups: [ref('ELBSecurityGroup')],
-                   Subnets: internal ? ref_application_subnets : public_subnets,
-                   Tags: [
-                     {
-                       Key: 'Name',
-                       Value: elb_name
-                     },
-                     {
-                       Key: 'Application',
-                       Value: aws_stack_name
-                     },
-                     {
-                       Key: 'Network',
-                       Value: 'Private'
-                     }
-                   ]
-                 }.merge(internal ? { Scheme: 'internal' } : {})
+                 Properties: properties
 
         # use alias target to create proper cloudformation template for Route53 side of elb configuration
         alias_target = {
