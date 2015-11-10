@@ -84,6 +84,50 @@ module Enscalator
       end
     end # class EC2
 
+    class ElasticCache < AwsInstance
+      def initialize
+        super(current_generation, previous_generation)
+      end
+
+      def max_memory(type)
+        {"cache.t1.micro" => 142606336,
+          "cache.t2.micro" => 581959680,
+          "cache.t2.small" => 1665138688,
+          "cache.t2.medium" => 3461349376,
+          "cache.m1.small" => 943718400,
+          "cache.m1.medium" => 3093299200,
+          "cache.m1.large" => 7025459200,
+          "cache.m1.xlarge" => 14889779200,
+          "cache.m2.xlarge" => 17091788800,
+          "cache.m2.2xlarge" => 35022438400,
+          "cache.m2.4xlarge" => 70883737600,
+          "cache.m3.medium" => 2988441600,
+          "cache.m3.large" => 6501171200,
+          "cache.m3.xlarge" => 14260633600,
+          "cache.m3.2xlarge" => 29989273600,
+          "cache.c1.xlarge" => 6501171200,
+          "cache.r3.large" => 14470348800,
+          "cache.r3.xlarge" => 30513561600,
+          "cache.r3.2xlarge" => 62495129600,
+          "cache.r3.4xlarge" => 126458265600,
+          "cache.r3.8xlarge" => 254384537600
+        }[type]
+      end
+
+      def current_generation
+        {cache: %w(cache.m3.medium cache.m3.large cache.m3.xlarge cache.m3.2xlarge
+          cache.r3.large cache.r3.xlarge cache.r3.2xlarge
+          cache.r3.4xlarge cache.r3.8xlarge cache.t2.micro
+          cache.t2.small cache.t2.medium)}
+      end
+
+      def previous_generation
+        {cache: %w(cache.m1.small cache.m1.medium cache.m1.large cache.m1.xlarge
+        cache.m2.xlarge cache.m2.2xlarge cache.m2.4xlarge cache.t1.micro
+        cache.c1.xlarge)}
+      end
+    end
+
     # RDS instance
     class RDS < AwsInstance
       def initialize
@@ -128,6 +172,13 @@ module Enscalator
       # @return [Enscalator::InstanceType::RDS]
       def rds_instance_type
         RDS.new
+      end
+
+      # Creates ElasticCache instance type with corresponding values set
+      #
+      # @return [Enscalator::InstanceType::ElasticCache]
+      def elastic_cache_instance_type
+        ElasticCache.new
       end
     end # class << self
   end # module InstanceType
