@@ -1,5 +1,6 @@
 /.DS_S*
 /.bundle/
+/vendor/bundle
 /.yardoc
 /Gemfile.lock
 /_yardoc/
