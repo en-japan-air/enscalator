@@ -1,4 +1,5 @@
 module Helpers
+  # Mocks common for all tests
   module Mocks
     # RichTemplateDSL class generator
     def gen_richtemplate(name,
@@ -35,7 +36,7 @@ module Helpers
 
     # should be called from within template mock
     def mock_availability_zones
-      self.class_eval do
+      class_eval do
         define_method('availability_zones') do
           {
             a: 'us-east-1a',

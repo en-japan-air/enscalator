@@ -1,6 +1,9 @@
-AllCops:
-  Exclude:
-    - lib/enscalator/templates/**/*
-    - spec/**/*
+require: rubocop-rspec
 
 inherit_from: .rubocop_todo.yml
+
+AllCops:
+  Exclude:
+    - vendor/**/*
+    - lib/enscalator/templates/**/*
+

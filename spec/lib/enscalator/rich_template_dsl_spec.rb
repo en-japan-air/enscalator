@@ -16,7 +16,7 @@ describe Enscalator::RichTemplateDSL do
   end
 
   context 'with default template parameters' do
-    it 'should return valid values for region, stack and vpc name using provided accessors' do
+    it 'returns valid values for region, stack and vpc name using provided accessors' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       expect(test_fixture.region).to eq(opts[:region])
@@ -24,44 +24,42 @@ describe Enscalator::RichTemplateDSL do
       expect(test_fixture.vpc_stack_name).to eq(opts[:vpc_stack_name])
     end
 
-    it 'should parse parameters option into valid Hash format' do
+    it 'parses parameters option into valid Hash format' do
       test_params = {
         :SomeKey1 => 'SomeValue1',
         :SomeKey2 => 'SomeValue2'
       }.with_indifferent_access
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
-               .merge({ parameters: test_params.map { |k, v| "#{k.to_s}=#{v}" }.join(';') })
+      opts = default_cmd_opts(
+        richtemplate.name,
+        richtemplate.name.underscore).merge(parameters: test_params.map { |k, v| "#{k}=#{v}" }.join(';'))
       test_fixture = richtemplate.new(opts)
       expect(test_fixture.parameters).to eq(test_params)
     end
 
-    it 'should properly handle provided hosted zone option' do
+    it 'properly handles provided hosted zone option' do
       test_zone = 'somezone'
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
-               .merge({ hosted_zone: test_zone })
+      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(hosted_zone: test_zone)
       test_fixture = richtemplate.new(opts)
       expect(test_fixture.hosted_zone).to eq(test_zone << '.')
     end
 
-    it 'should properly handle provided hosted zone option with trailing dot' do
+    it 'properly handles provided hosted zone option with trailing dot' do
       test_zone = 'somezone' << '.'
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
-               .merge({ hosted_zone: test_zone })
+      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(hosted_zone: test_zone)
       test_fixture = richtemplate.new(opts)
       expect(test_fixture.hosted_zone).to eq(test_zone)
     end
 
-    it 'should fail if hosted zone is not given, but its accessor was called' do
+    it 'fails if hosted zone is not given, but its accessor was called' do
       test_zone = nil
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
-               .merge({ hosted_zone: test_zone })
+      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(hosted_zone: test_zone)
       test_fixture = richtemplate.new(opts)
-      expect {
+      expect do
         test_fixture.hosted_zone
-      }.to raise_exception RuntimeError
+      end.to raise_exception RuntimeError
     end
 
-    it 'should return all availability zones by default' do
+    it 'return all availability zones by default' do
       VCR.use_cassette 'richtemplate_all_availability_zones' do
         opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
         test_fixture = richtemplate.new(opts)
@@ -71,7 +69,7 @@ describe Enscalator::RichTemplateDSL do
       end
     end
 
-    it 'should return availability zones using provided accessor method' do
+    it 'returns availability zones using provided accessor method' do
       VCR.use_cassette 'richtemplate_all_availability_zones', allow_playback_repeats: true do
         opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
         test_fixture = richtemplate.new(opts)
@@ -80,10 +78,9 @@ describe Enscalator::RichTemplateDSL do
       end
     end
 
-    it 'should return availability zones specified in command-line options' do
+    it 'returns availability zones specified in command-line options' do
       VCR.use_cassette 'richtemplate_specific_availability_zone' do
-        opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
-                 .merge({ availability_zone: 'a' })
+        opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(availability_zone: 'a')
         test_fixture = richtemplate.new(opts)
         az_list = test_fixture.get_availability_zones
         expect(az_list).not_to be_nil
@@ -92,18 +89,17 @@ describe Enscalator::RichTemplateDSL do
       end
     end
 
-    it 'should fail if specified availability zones is valid, but not supported in given region' do
+    it 'fails if specified availability zones are valid, but not supported in given region' do
       VCR.use_cassette 'richtemplate_specific_availability_zone', allow_playback_repeats: true do
-        opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
-                 .merge({ availability_zone: 'd' })
+        opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(availability_zone: 'd')
         test_fixture = richtemplate.new(opts)
-        expect {
+        expect do
           test_fixture.get_availability_zones
-        }.to raise_exception RuntimeError
+        end.to raise_exception RuntimeError
       end
     end
 
-    it 'should convert Hash to cloudformation template tags format' do
+    it 'converts Hash to cloudformation template tags format' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_tags = {
@@ -112,19 +108,19 @@ describe Enscalator::RichTemplateDSL do
       }
       properties = test_fixture.tags_to_properties(test_tags)
       test_tags.each do |k, v|
-        expect(properties.select { |p| p[:Key] == k }.first[:Key]).to eq(k)
-        expect(properties.select { |p| p[:Value] == v }.first[:Value]).to eq(v)
+        expect(properties.find { |p| p[:Key] == k }[:Key]).to eq(k)
+        expect(properties.find { |p| p[:Value] == v }[:Value]).to eq(v)
       end
     end
 
-    it 'should add description to template dict' do
+    it 'add sdescription to template dict' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       expect(test_fixture.description(description)[:Description]).to eq(description)
       expect(test_fixture.instance_variable_get(:@dict)[:Description]).to eq(description)
     end
 
-    it 'should use current generation ec2 instance type' do
+    it 'uses current generation ec2 instance type' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_ec2'
@@ -136,7 +132,7 @@ describe Enscalator::RichTemplateDSL do
       expect(ec2_instance_type[:Default]).to be(test_instance_type)
     end
 
-    it 'should use previous generation (obsolete) ec2 instance type' do
+    it 'uses previous generation (obsolete) ec2 instance type' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_ec2_obsolete'
@@ -148,17 +144,17 @@ describe Enscalator::RichTemplateDSL do
       expect(ec2_instance_type[:Default]).to be(test_instance_type)
     end
 
-    it 'should fail if ec2 instance type is not within range of supported types' do
+    it 'fails if ec2 instance type is not within range of supported types' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_ec2_failing'
       test_instance_type = 'z5.superbig'
-      expect {
+      expect do
         test_fixture.parameter_ec2_instance_type(test_instance_name, type: test_instance_type)
-      }.to raise_exception RuntimeError
+      end.to raise_exception RuntimeError
     end
 
-    it 'should use current generation rds instance type' do
+    it 'uses current generation rds instance type' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_rds'
@@ -170,7 +166,7 @@ describe Enscalator::RichTemplateDSL do
       expect(rds_instance_type[:Default]).to be(test_instance_type)
     end
 
-    it 'should use previous generation (obsolete) rds instance type' do
+    it 'uses previous generation (obsolete) rds instance type' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_rds_obsolete'
@@ -182,17 +178,17 @@ describe Enscalator::RichTemplateDSL do
       expect(rds_instance_type[:Default]).to be(test_instance_type)
     end
 
-    it 'should fail if rds instance type is not within range of supported types' do
+    it 'fails if rds instance type is not within range of supported types' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_rds_failing'
       test_instance_type = 'db.z5.supersmall'
-      expect {
+      expect do
         test_fixture.parameter_rds_instance_type(test_instance_name, type: test_instance_type)
-      }.to raise_exception RuntimeError
+      end.to raise_exception RuntimeError
     end
 
-    it 'should use allowed values when given instance type is also present there' do
+    it 'uses allowed values when given instance type is also present there' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_allowed'
@@ -208,20 +204,20 @@ describe Enscalator::RichTemplateDSL do
       expect(instance_type[:AllowedValues]).to be(test_allowed_values)
     end
 
-    it 'should fail if instance type is not within range of allowed values' do
+    it 'fails if instance type is not within range of allowed values' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_failing_allowed_values'
       test_instance_type = 'z5.superbig'
       test_allowed_values = %w(z5.extrasmall z5.supersmall z4.extrahard)
-      expect {
+      expect do
         test_fixture.parameter_instance_type(test_instance_name,
                                              test_instance_type,
                                              allowed_values: test_allowed_values)
-      }.to raise_exception RuntimeError
+      end.to raise_exception RuntimeError
     end
 
-    it 'should dynamically create parameter accessor' do
+    it 'dynamically create parameter accessor' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_method_name, test_params = {
@@ -238,15 +234,15 @@ describe Enscalator::RichTemplateDSL do
 
       # method should be defined
       expect { test_fixture.send("ref_#{test_method_name}".to_sym) }.not_to raise_exception
-      expect(test_fixture.send("ref_#{test_method_name}".to_sym)).to eq({ Ref: test_method_name })
-      expect(test_fixture.instance_variable_get(:@dict)[:Parameters]).to eq({ "#{test_method_name}" => test_params })
+      expect(test_fixture.send("ref_#{test_method_name}".to_sym)).to eq(Ref: test_method_name)
+      expect(test_fixture.instance_variable_get(:@dict)[:Parameters]).to eq("#{test_method_name}" => test_params)
     end
 
-    it 'should add given list of blocks to the run_queue' do
+    it 'adds given list of blocks to the run_queue' do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_str = 'this is test'
-      test_items = [] << Proc.new { test_str.dup }
+      test_items = [] << proc { test_str.dup }
       expect(test_fixture.instance_variable_get(:@run_queue)).to be_nil
       test_fixture.enqueue(test_items)
       expect(test_fixture.instance_variable_get(:@run_queue)).to eq(test_items)

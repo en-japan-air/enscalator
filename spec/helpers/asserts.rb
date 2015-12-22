@@ -1,9 +1,12 @@
 module Helpers
+  # Common asserts
   module Asserts
+    # Regions supported by Amazon AWS
+    AWS_REGIONS = %w(
+      eu-central-1 ap-northeast-1 sa-east-1 ap-southeast-2 ap-southeast-1 us-east-1 us-west-2 us-west-1 eu-west-1
+    )
 
-    AWS_REGIONS = %w{eu-central-1 ap-northeast-1 sa-east-1 ap-southeast-2
-                  ap-southeast-1 us-east-1 us-west-2 us-west-1 eu-west-1}
-
+    # Virtualization support by Amazon AWS
     AWS_VIRTUALIZATION = {
       :hvm => 'hvm',
       :pv => 'paravirtual'
@@ -32,16 +35,19 @@ module Helpers
     end
 
     def assert_ami(str)
-      expect(str).to match /ami[-][a-z0-9]{8}/
+      expect(str).to match Regexp.new(/ami[-][a-z0-9]{8}/)
     end
 
     def assert_ec2_instance_type(type)
-      expect(type).to match /^[\w\d]{1,3}[.][\w]*$/
+      expect(type).to match Regexp.new(/^[\w\d]{1,3}[.][\w]*$/)
     end
 
     def assert_rds_instance_type(type)
-      expect(type).to match /^db[.][\w\d]{1,3}[.][\w]*$/
+      expect(type).to match Regexp.new(/^db[.][\w\d]{1,3}[.][\w]*$/)
     end
 
+    def assert_el_cache_instance_type(type)
+      expect(type).to match Regexp.new(/^cache[.][\w\d]{1,3}[.][\w]*$/)
+    end
   end # Asserts
 end # Helpers

@@ -11,7 +11,7 @@ describe Enscalator::Plugins::RDS do
       rds_test_template_name = db_name.humanize.delete(' ')
       gen_richtemplate(rds_test_template_name,
                        Enscalator::EnAppTemplateDSL,
-                       [Enscalator::Plugins::RDS]) do
+                       [described_class]) do
         @db_name = rds_test_db_name
         value(Description: rds_test_description)
         mock_availability_zones
@@ -19,16 +19,16 @@ describe Enscalator::Plugins::RDS do
       end
     end
 
-    it 'should create valid template' do
+    it 'generates valid template' do
       cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
       rds_template = template_fixture.new(cmd_opts)
       dict = rds_template.instance_variable_get(:@dict)
       params_under_test = dict[:Parameters]
       resources_under_test = dict[:Resources]
 
-      expected_parameters = %w{Name AllocatedStorage
-                          StorageType Multizone ParameterGroup
-                          InstanceType Username Password}.map { |p| "RDS#{db_name}#{p}" }
+      expected_parameters = %w(
+        Name AllocatedStorage StorageType Multizone
+        ParameterGroup InstanceType Username Password).map { |p| "RDS#{db_name}#{p}" }
       expect(params_under_test.keys).to include(*expected_parameters)
 
       subnet_res = "RDS#{db_name}SubnetGroup"
@@ -40,14 +40,14 @@ describe Enscalator::Plugins::RDS do
   end
 
   context 'when properties with custom tags where passed' do
-    let(:tags) {
+    let(:tags) do
       {
         Tags: [
           Key: 'TestTagKey',
           Value: 'TestTagValue'
         ]
       }
-    }
+    end
 
     let(:template_fixture_with_tags) do
       rds_test_db_name = db_name
@@ -56,7 +56,7 @@ describe Enscalator::Plugins::RDS do
       rds_test_template_name = db_name.humanize.delete(' ')
       gen_richtemplate(rds_test_template_name,
                        Enscalator::EnAppTemplateDSL,
-                       [Enscalator::Plugins::RDS]) do
+                       [described_class]) do
         @db_name = rds_test_db_name
         value(Description: rds_test_description)
         mock_availability_zones
@@ -65,7 +65,7 @@ describe Enscalator::Plugins::RDS do
       end
     end
 
-    it 'should create valid template with custom tags' do
+    it 'generates valid template with custom tags' do
       cmd_opts = default_cmd_opts(template_fixture_with_tags.name,
                                   template_fixture_with_tags.name.underscore)
       rds_template = template_fixture_with_tags.new(cmd_opts)
@@ -82,7 +82,7 @@ describe Enscalator::Plugins::RDS do
       rds_test_template_name = db_name.humanize.delete(' ')
       gen_richtemplate(rds_test_template_name,
                        Enscalator::EnAppTemplateDSL,
-                       [Enscalator::Plugins::RDS]) do
+                       [described_class]) do
         @db_name = rds_test_db_name
         value(Description: rds_test_description)
         mock_availability_zones
@@ -91,7 +91,7 @@ describe Enscalator::Plugins::RDS do
       end
     end
 
-    it 'should create template with DBSnapshotIdentifier instead of DBName' do
+    it 'generates template with DBSnapshotIdentifier instead of DBName' do
       cmd_opts = default_cmd_opts(template_fixture_with_snapshot.name,
                                   template_fixture_with_snapshot.name.underscore)
       rds_template = template_fixture_with_snapshot.new(cmd_opts)
@@ -102,5 +102,4 @@ describe Enscalator::Plugins::RDS do
       expect(rds_resource_props).not_to include(:DBName)
     end
   end
-
 end

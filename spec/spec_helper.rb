@@ -33,14 +33,14 @@ aws_credentials =
     creds = Aws::Credentials.new(profile[:aws_access_key_id],
                                  profile[:aws_secret_access_key],
                                  profile[:session_token])
-    stub = Class.new {
+    stub = Class.new do
       define_method :initialize do |config|
         instance_variable_set('@config', config)
       end
       define_method :resolve do
         creds
       end
-    }
+    end
     Aws.send(:remove_const, :CredentialProviderChain.to_s) if Aws.const_defined? :CredentialProviderChain
     Aws.const_set(:CredentialProviderChain, stub)
     creds

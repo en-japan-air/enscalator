@@ -1,13 +1,11 @@
 require 'spec_helper'
 
 describe Enscalator::Plugins::AutoScale do
-
   let(:app_name) { 'auto_scale_test' }
   let(:description) { 'This is test template for auto scale group' }
   let(:image_id) { 'ami-0123456a' }
 
   describe '#auto_scale_init' do
-
     context 'when invoked with default parameters' do
       let(:template_name) { app_name.humanize.delete(' ') }
       let(:template_fixture) do
@@ -17,7 +15,7 @@ describe Enscalator::Plugins::AutoScale do
         as_test_template_name = template_name
         gen_richtemplate(as_test_template_name,
                          Enscalator::EnAppTemplateDSL,
-                         [Enscalator::Plugins::AutoScale]) do
+                         [described_class]) do
           @app_name = as_test_app_name
           value(Description: as_test_description)
           mock_availability_zones
@@ -25,14 +23,14 @@ describe Enscalator::Plugins::AutoScale do
         end
       end
 
-      it 'should generate valid template with default values' do
+      it 'generates valid template with default values' do
         cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
         as_template = template_fixture.new(cmd_opts)
         dict = as_template.instance_variable_get(:@dict)
         expect(dict[:Resources].keys).to include(*%w(LaunchConfig AutoScale))
         test_autoscale = dict[:Resources]['AutoScale']
         expect(test_autoscale[:Type]).to eq('AWS::AutoScaling::AutoScalingGroup')
-        expect(test_autoscale[:Properties][:LaunchConfigurationName]).to eq({ Ref: 'LaunchConfig' })
+        expect(test_autoscale[:Properties][:LaunchConfigurationName]).to eq(Ref: 'LaunchConfig')
         default_tag = { Key: 'Name', Value: "#{template_name.downcase}AutoScale", PropagateAtLaunch: true }
         expect(test_autoscale[:Properties][:Tags]).to include(default_tag)
         test_launchconfig = dict[:Resources]['LaunchConfig']
@@ -56,7 +54,7 @@ describe Enscalator::Plugins::AutoScale do
         as_test_auto_scale_tags = auto_scale_tags
         gen_richtemplate(as_test_template_name,
                          Enscalator::EnAppTemplateDSL,
-                         [Enscalator::Plugins::AutoScale]) do
+                         [described_class]) do
           @app_name = as_test_app_name
           value(Description: as_test_description)
           mock_availability_zones
@@ -67,7 +65,7 @@ describe Enscalator::Plugins::AutoScale do
         end
       end
 
-      it 'should generate valid template using provided values' do
+      it 'generates valid template using provided values' do
         cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
         as_template = template_fixture.new(cmd_opts)
         dict = as_template.instance_variable_get(:@dict)
@@ -79,7 +77,5 @@ describe Enscalator::Plugins::AutoScale do
         expect(test_launchconfig[:Properties][:InstanceType]).to eq(launch_config_props[:InstanceType])
       end
     end
-
   end
-
 end
