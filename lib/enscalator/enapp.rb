@@ -27,6 +27,9 @@ module Enscalator
       @vpc_stack ||= cfn_resource(cfn_client(region)).stack(vpc_stack_name)
     end
 
+    # Get current stack
+    #
+    # @return [Aws::CloudFormation::Stack] current stack
     def current_stack
       @current_stack ||= (cfn_resource(cfn_client(region)).stack(stack_name) rescue nil) unless creating?
     end

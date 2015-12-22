@@ -84,47 +84,64 @@ module Enscalator
       end
     end # class EC2
 
+    # ElasticCache instance
     class ElasticCache < AwsInstance
       def initialize
         super(current_generation, previous_generation)
       end
 
+      # Determine maximum available memory for given instance type
+      #
+      # @return [Hash] instance max memory
       def max_memory(type)
-        {"cache.t1.micro" => 142606336,
-          "cache.t2.micro" => 581959680,
-          "cache.t2.small" => 1665138688,
-          "cache.t2.medium" => 3461349376,
-          "cache.m1.small" => 943718400,
-          "cache.m1.medium" => 3093299200,
-          "cache.m1.large" => 7025459200,
-          "cache.m1.xlarge" => 14889779200,
-          "cache.m2.xlarge" => 17091788800,
-          "cache.m2.2xlarge" => 35022438400,
-          "cache.m2.4xlarge" => 70883737600,
-          "cache.m3.medium" => 2988441600,
-          "cache.m3.large" => 6501171200,
-          "cache.m3.xlarge" => 14260633600,
-          "cache.m3.2xlarge" => 29989273600,
-          "cache.c1.xlarge" => 6501171200,
-          "cache.r3.large" => 14470348800,
-          "cache.r3.xlarge" => 30513561600,
-          "cache.r3.2xlarge" => 62495129600,
-          "cache.r3.4xlarge" => 126458265600,
-          "cache.r3.8xlarge" => 254384537600
-        }[type]
+        {
+          'cache.t1.micro': 142_606_336,
+          'cache.t2.micro': 581_959_680,
+          'cache.t2.small': 1_665_138_688,
+          'cache.t2.medium': 3_461_349_376,
+          'cache.m1.small': 943_718_400,
+          'cache.m1.medium': 3_093_299_200,
+          'cache.m1.large': 7_025_459_200,
+          'cache.m1.xlarge': 14_889_779_200,
+          'cache.m2.xlarge': 17_091_788_800,
+          'cache.m2.2xlarge': 35_022_438_400,
+          'cache.m2.4xlarge': 70_883_737_600,
+          'cache.m3.medium': 2_988_441_600,
+          'cache.m3.large': 6_501_171_200,
+          'cache.m3.xlarge': 14_260_633_600,
+          'cache.m3.2xlarge': 29_989_273_600,
+          'cache.c1.xlarge': 6_501_171_200,
+          'cache.r3.large': 14_470_348_800,
+          'cache.r3.xlarge': 30_513_561_600,
+          'cache.r3.2xlarge': 62_495_129_600,
+          'cache.r3.4xlarge': 126_458_265_600,
+          'cache.r3.8xlarge': 254_384_537_600
+        }.with_indifferent_access.fetch(type)
       end
 
+      # Current generation instance types
+      #
+      # @return [Hash] instance family and type
       def current_generation
-        {cache: %w(cache.m3.medium cache.m3.large cache.m3.xlarge cache.m3.2xlarge
-          cache.r3.large cache.r3.xlarge cache.r3.2xlarge
-          cache.r3.4xlarge cache.r3.8xlarge cache.t2.micro
-          cache.t2.small cache.t2.medium)}
+        {
+          standard: %w(
+            cache.t2.micro cache.t2.small cache.t2.medium
+            cache.m3.medium cache.m3.large cache.m3.xlarge cache.m3.2xlarge),
+          memory_optimized: %w(cache.r3.large cache.r3.xlarge cache.r3.2xlarge cache.r3.4xlarge cache.r3.8xlarge)
+        }
       end
 
+      # @deprecated Will be removed once Amazon fully stops supporting these instances
+      # Previous generation instance types
+      #
+      # @return [Hash] instance family and type
       def previous_generation
-        {cache: %w(cache.m1.small cache.m1.medium cache.m1.large cache.m1.xlarge
-        cache.m2.xlarge cache.m2.2xlarge cache.m2.4xlarge cache.t1.micro
-        cache.c1.xlarge)}
+        {
+          standard: %w(cache.m1.small cache.m1.medium cache.m1.large cache.m1.xlarge),
+          memory_optimized: %w(cache.m2.xlarge cache.m2.2xlarge cache.m2.4xlarge),
+          compute_optimized: %w(cache.c1.xlarge),
+          micro: %w(cache.t1.micro)
+        }
       end
     end
 
