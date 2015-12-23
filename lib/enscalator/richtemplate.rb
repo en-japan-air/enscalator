@@ -508,6 +508,12 @@ module Enscalator
 
     # Determine content of run queue and execute each block in queue in sequence
     def exec!
+      # TODO: remove after fixed this workaround to pass profile value to helpers
+      if @options[:profile]
+        Enscalator.send(:remove_const, :AwsProfile.to_s) if Enscalator.const_defined? :AwsProfile
+        Enscalator.const_set(:AwsProfile, @options[:profile])
+      end
+
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
       enqueue([@options[:expand] ? proc { puts JSON.pretty_generate(self) } : proc { cfn_cmd(self) }])
@@ -521,9 +527,16 @@ module Enscalator
     #
     # @param [RichTemplateDSL] template cloudformation template
     def cfn_cmd(template)
-      command = %w(aws cloudformation)
+      command = %w(aws)
 
-      command << (@options[:create_stack] ? ' create-stack' : ' update-stack')
+      if @options[:profile]
+        aws_credentials_profile = @options[:profile]
+        command.concat(%W(--profile #{aws_credentials_profile}))
+      end
+
+      command << 'cloudformation'
+
+      command << (@options[:create_stack] ? 'create-stack' : ' pdate-stack')
 
       command.concat(%W(--stack-name '#{stack_name}')) if stack_name
       command.concat(%W(--region '#{region}')) if region

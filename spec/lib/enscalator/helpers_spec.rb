@@ -6,7 +6,43 @@ describe Enscalator::Helpers do
     include Enscalator::Helpers
   end
 
-  test_fixture = TestFixture.new
+  let(:test_fixture) { TestFixture.new }
+
+  describe '#credentials_profile' do
+    let(:aws_test_profile) { 'some_profile' }
+    let(:credentials_test_path) { 'spec/assets/aws/credentials' }
+    before do |example|
+      if example.metadata[:aws_shared_credentials]
+        allow_any_instance_of(Aws::SharedCredentials)
+          .to receive(:default_path).and_return(credentials_test_path)
+        Enscalator.send(:remove_const, :AwsProfile.to_s) if Enscalator.const_defined? :AwsProfile
+        Enscalator.const_set(:AwsProfile, aws_test_profile)
+      end
+    end
+
+    after do |example|
+      if example.metadata[:aws_shared_credentials]
+        allow_any_instance_of(Aws::SharedCredentials).to receive(:default_path).and_call_original
+        Enscalator.send(:remove_const, :AwsProfile.to_s) if Enscalator.const_defined? :AwsProfile
+      end
+    end
+
+    context 'when default profile for aws credentials' do
+      it 'returns nothing' do
+        expect(test_fixture.credentials_profile).to be_nil
+      end
+    end
+
+    context 'when profile option was passed', :aws_shared_credentials do
+      it 'creates shared credentials interface with configured profile' do
+        expect { test_fixture.credentials_profile }.not_to raise_exception
+        test_credentials = test_fixture.credentials_profile
+        expect(test_credentials.class).to be(Aws::SharedCredentials)
+        expect(test_credentials.profile_name).to eq(aws_test_profile)
+        expect(test_credentials.path).to eq(credentials_test_path)
+      end
+    end
+  end
 
   it 'creates valid cloudformation client' do
     client = test_fixture.cfn_client('us-east-1')

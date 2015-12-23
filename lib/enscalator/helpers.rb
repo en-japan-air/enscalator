@@ -25,10 +25,19 @@ module Enscalator
               end
             end
           end
-
           thread.join # wait for external process to finish
         end
       end
+    end
+
+    # @deprecated Remove after template command execution gets fixed
+    # Workaround method to check if AWS credential profile was passed
+    #
+    # @return [Aws::SharedCredentials]
+    def credentials_profile
+      @credentials_profile ||= Aws::SharedCredentials.new(profile_name: Enscalator.const_get(:AwsProfile))
+    rescue NameError
+      nil
     end
 
     # Run command and print captured output to corresponding standard streams
@@ -39,8 +48,7 @@ module Enscalator
       # use contracts to get rid of exceptions: https://github.com/egonSchiele/contracts.ruby
       fail ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
       fail ArgumentError, 'Argument cannot be empty' if cmd.empty?
-      command = cmd.join(' ')
-      Subprocess.new command do |stdout, stderr, _thread|
+      Subprocess.new(cmd.join(' ')) do |stdout, stderr, _thread|
         STDOUT.puts stdout if stdout
         STDERR.puts stderr if stderr
       end
@@ -54,7 +62,10 @@ module Enscalator
     def cfn_client(region)
       fail ArgumentError,
            'Unable to proceed without region' if region.blank?
-      Aws::CloudFormation::Client.new(region: region)
+      opts = {}
+      opts[:region] = region
+      opts[:credentials] = credentials_profile if credentials_profile
+      Aws::CloudFormation::Client.new(opts)
     end
 
     # Cloudformation resource
@@ -76,7 +87,10 @@ module Enscalator
     def ec2_client(region)
       fail ArgumentError,
            'Unable to proceed without region' if region.blank?
-      Aws::EC2::Client.new(region: region)
+      opts = {}
+      opts[:region] = region
+      opts[:credentials] = credentials_profile if credentials_profile
+      Aws::EC2::Client.new(opts)
     end
 
     # Route 53 client
@@ -87,7 +101,10 @@ module Enscalator
     def route53_client(region)
       fail ArgumentError,
            'Unable to proceed without region' if region.blank?
-      Aws::Route53::Client.new(region: region)
+      opts = {}
+      opts[:region] = region
+      opts[:credentials] = credentials_profile if credentials_profile
+      Aws::Route53::Client.new(opts)
     end
 
     # Find ami images registered
@@ -112,10 +129,8 @@ module Enscalator
     # @return [Aws::CloudFormation::Stack]
     def wait_stack(cfn, stack_name)
       stack = cfn.stack(stack_name)
-
       title = 'Waiting for stack to be created'
       progress = ProgressBar.create(title: title, starting_at: 10, total: nil)
-
       loop do
         break unless stack.stack_status =~ /(CREATE|UPDATE)_IN_PROGRESS$/
         progress.title = title + " [#{stack.stack_status}]"
@@ -123,7 +138,6 @@ module Enscalator
         sleep 5
         stack = cfn.stack(stack_name)
       end
-
       stack
     end
 
@@ -137,14 +151,12 @@ module Enscalator
     def get_resource(stack, key)
       fail ArgumentError, 'stack must not be nil' if stack.nil?
       fail ArgumentError, 'key must not be nil nor empty' if key.nil? || key.empty?
-
       # query with physical_resource_id
       resource = begin
         stack.resource(key).physical_resource_id
       rescue RuntimeError
         nil
       end
-
       if resource.nil?
         # fallback to values from stack.outputs
         output = stack.outputs.select { |s| s.output_key == key }
@@ -167,7 +179,6 @@ module Enscalator
     def get_resources(stack, keys)
       fail ArgumentError, 'stack must not be nil' if stack.nil?
       fail ArgumentError, 'key must not be nil nor empty' if keys.nil? || keys.empty?
-
       keys.map { |k| get_resource(stack, k) }.compact
     end
 
@@ -178,10 +189,7 @@ module Enscalator
     def generate_parameters(stack, keys)
       keys.map do |k|
         v = get_resource(stack, k)
-        {
-          parameter_key: k,
-          parameter_value: v
-        }
+        { parameter_key: k, parameter_value: v }
       end
     end
 
@@ -200,12 +208,10 @@ module Enscalator
                         keys,
                         prepend_args: '',
                         append_args: '')
-
       cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
       args = get_resources(stack, keys).join(' ')
       cmd = [script_path, prepend_args, args, append_args]
-
       begin
         run_cmd(cmd)
       rescue Errno::ENOENT
@@ -230,10 +236,8 @@ module Enscalator
                          stack_name,
                          keys: [],
                          extra_parameters: [])
-
       cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
-
       extra_parameters_cleaned = extra_parameters.map do |x|
         if x.key? 'ParameterKey'
           {
@@ -244,13 +248,11 @@ module Enscalator
           x
         end
       end
-
       options = {
         stack_name: stack_name,
         template_body: template,
         parameters: generate_parameters(stack, keys) + extra_parameters_cleaned
       }
-
       cfn.create_stack(options)
     end
 

@@ -41,6 +41,7 @@ module Enscalator
       opt :capabilities, 'AWS capabilities', default: 'CAPABILITY_IAM', short: 'a'
       opt :vpc_stack_name, 'VPC stack name', default: 'enjapan-vpc', short: 'n'
       opt :availability_zone, 'Deploy to specific availability zone', default: 'all', short: 'd'
+      opt :profile, 'Use a specific profile from your credential file', type: String, default: nil
 
       conflicts :list_templates, :create_stack, :update_stack, :expand
     end
