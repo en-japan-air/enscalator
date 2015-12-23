@@ -9,6 +9,7 @@ module Enscalator
     # Cloudformation limit when sending template body directly
     TEMPLATE_BODY_LIMIT = 51_200
 
+    # TODO: pass additional params to TemplateDSL: https://github.com/bazaarvoice/cloudformation-ruby-dsl/issues/57
     # Create new RichTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
@@ -252,12 +253,10 @@ module Enscalator
     # @param [Hash] options options
     def resource(name, options)
       super
-
-      if options[:Type] && %w(AWS::EC2::Instance).include?(options[:Type])
-        output "#{name}PrivateIpAddress",
-               Description: "#{name} Private IP Address",
-               Value: get_att(name, 'PrivateIp')
-      end
+      return nil unless options[:Type] && %w(AWS::EC2::Instance).include?(options[:Type])
+      output "#{name}PrivateIpAddress",
+             Description: "#{name} Private IP Address",
+             Value: get_att(name, 'PrivateIp')
     end
 
     # Key name parameter
@@ -508,11 +507,13 @@ module Enscalator
 
     # Determine content of run queue and execute each block in queue in sequence
     def exec!
-      # TODO: remove after fixed this workaround to pass profile value to helpers
+      # TODO: remove this workaround to pass profile value to helpers together with cfn_cmd method
       if @options[:profile]
         Enscalator.send(:remove_const, :AwsProfile.to_s) if Enscalator.const_defined? :AwsProfile
         Enscalator.const_set(:AwsProfile, @options[:profile])
       end
+
+      init_assets_dir
 
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
@@ -535,8 +536,7 @@ module Enscalator
       end
 
       command << 'cloudformation'
-
-      command << (@options[:create_stack] ? 'create-stack' : ' pdate-stack')
+      command << (@options[:create_stack] ? 'create-stack' : 'update-stack')
 
       command.concat(%W(--stack-name '#{stack_name}')) if stack_name
       command.concat(%W(--region '#{region}')) if region

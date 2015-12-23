@@ -1,7 +1,11 @@
 require 'open3'
 require 'ruby-progressbar'
 
+# Enscalator
 module Enscalator
+  # Default directory to save generated assets like ssh keys, configs and etc.
+  DEFAULT_ASSETS_DIR = '.' << name.downcase
+
   # Collection of helper classes and static methods
   module Helpers
     # Executed command as sub-processes with stdout and stderr streams
@@ -33,11 +37,27 @@ module Enscalator
     # @deprecated Remove after template command execution gets fixed
     # Workaround method to check if AWS credential profile was passed
     #
-    # @return [Aws::SharedCredentials]
-    def credentials_profile
-      @credentials_profile ||= Aws::SharedCredentials.new(profile_name: Enscalator.const_get(:AwsProfile))
+    # @return [String]
+    def aws_profile
+      Enscalator.const_get(:AwsProfile)
     rescue NameError
       nil
+    end
+
+    # Create new instance Aws::SharedCredentials for non-default profile
+    #
+    # @return [Aws::SharedCredentials]
+    def credentials_profile
+      return nil unless aws_profile
+      @credentials_profile ||= Aws::SharedCredentials.new(profile_name: aws_profile)
+    end
+
+    # Initialize enscalator directory
+    # @return [String]
+    def init_assets_dir
+      @assets_dir ||= File.join(ENV['HOME'], Enscalator::DEFAULT_ASSETS_DIR)
+      FileUtils.mkdir_p(@assets_dir) unless Dir.exist?(@assets_dir)
+      @assets_dir
     end
 
     # Run command and print captured output to corresponding standard streams
@@ -272,7 +292,8 @@ module Enscalator
     # @param [Boolean] force_create force to create a new ssh key
     def create_ssh_key(key_name, region, force_create: false)
       client = ec2_client(region)
-
+      target_dir = File.join(@assets_dir, aws_profile ? aws_profile : 'default')
+      FileUtils.mkdir_p(target_dir) unless Dir.exist? target_dir
       if !client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
         # delete existed ssh key
         client.delete_key_pair(key_name: key_name)
@@ -282,7 +303,7 @@ module Enscalator
         STDERR.puts "Created new ssh key with fingerprint: #{key_pair.key_fingerprint}"
 
         # save private key for current user
-        private_key = File.join(ENV['HOME'], '.ssh', key_name)
+        private_key = File.join(target_dir, key_name)
         File.open(private_key, 'w') do |wfile|
           wfile.write(key_pair.key_material)
         end
@@ -302,5 +323,5 @@ module Enscalator
       fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
       File.read(user_data_path)
     end
-  end # module Asserts
+  end # module Helpers
 end # module Enscalator
