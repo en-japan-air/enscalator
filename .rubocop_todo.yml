@@ -47,13 +47,6 @@ Metrics/PerceivedComplexity:
 Style/AccessorMethodName:
   Exclude:
     - 'lib/enscalator/enapp.rb'
-    - 'lib/enscalator/richtemplate.rb'
-
-# Offense count: 73
-# Cop supports --auto-correct.
-# Configuration parameters: EnforcedStyle, SupportedStyles, UseHashRocketsWithSymbolValues.
-Style/HashSyntax:
-  Enabled: false
 
 # Offense count: 3
 Style/RescueModifier:

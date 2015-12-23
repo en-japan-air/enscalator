@@ -44,13 +44,13 @@ module Enscalator
       # @return [Hash] aws mapping
       def couchbase_ami_mapping
         {
-          :'us-west-2' => { paravirtual: 'ami-c398c6f3' },
-          :'us-west-1' => { paravirtual: 'ami-1a554c5f' },
-          :'us-east-1' => { paravirtual: 'ami-403b4328' },
-          :'sa-east-1' => { paravirtual: 'ami-59229f44' },
-          :'eu-west-1' => { paravirtual: 'ami-8129aaf6' },
-          :'ap-southeast-1' => { paravirtual: 'ami-88745fda' },
-          :'ap-northeast-1' => { paravirtual: 'ami-6a7b676b' }
+          'us-west-2': { paravirtual: 'ami-c398c6f3' },
+          'us-west-1': { paravirtual: 'ami-1a554c5f' },
+          'us-east-1': { paravirtual: 'ami-403b4328' },
+          'sa-east-1': { paravirtual: 'ami-59229f44' },
+          'eu-west-1': { paravirtual: 'ami-8129aaf6' },
+          'ap-southeast-1': { paravirtual: 'ami-88745fda' },
+          'ap-northeast-1': { paravirtual: 'ami-6a7b676b' }
         }.with_indifferent_access
       end
 

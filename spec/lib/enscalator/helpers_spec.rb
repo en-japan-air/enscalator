@@ -86,7 +86,7 @@ describe Enscalator::Helpers do
   end
 
   it 'finds amis using ec2 client and default parameters' do
-    VCR.use_cassette 'aws_sdk_ec2_client_find_ami', :tag => :aws_credentials do
+    VCR.use_cassette 'aws_sdk_ec2_client_find_ami', tag: :aws_credentials do
       client = test_fixture.ec2_client('us-east-1')
       images = test_fixture.find_ami(client).images
       assert_ami(images.sample.image_id)

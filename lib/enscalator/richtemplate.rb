@@ -72,7 +72,7 @@ module Enscalator
     end
 
     # Get a list of availability zones for the given region
-    def get_availability_zones
+    def read_availability_zones
       az = @options[:availability_zone].to_sym
       supported_az = ec2_client(region).describe_availability_zones.availability_zones
       alive_az = supported_az.select { |zone| zone.state == 'available' }
@@ -90,7 +90,7 @@ module Enscalator
 
     # Availability zones accessor
     def availability_zones
-      @availability_zones ||= get_availability_zones
+      @availability_zones ||= read_availability_zones
     end
 
     # Pre-run hook
