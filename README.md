@@ -55,6 +55,8 @@ $> enscalator -c -t Interaction \
 -p 'CouchbaseInteractionKeyName=test;WebServerPort=9000'
 ```
 
+> Note: if you'd like to run enscalator without installing it as gem, use `./exe/enscalator` script.
+
 ### How to write a template
 Templates are stored in `lib/enscalator/templates/`.  
 When your template is done you need to `require_relative` it in `lib/enscalator.rb/templates.rb`.
