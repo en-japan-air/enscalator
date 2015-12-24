@@ -23,18 +23,18 @@ module Enscalator
 
         value Description: description
 
-        parameter_ec2_instance_type 'NAT', type: 't2.small'
+        parameter_ec2_instance_type 'NAT', type: 'c4.large'
 
         mapping 'AWSNATAMI',
-                'us-east-1': { AMI: 'ami-303b1458' },
-                'us-west-1': { AMI: 'ami-7da94839' },
-                'us-west-2': { AMI: 'ami-69ae8259' },
-                'eu-west-1': { AMI: 'ami-6975eb1e' },
-                'eu-central-1': { AMI: 'ami-46073a5b' },
-                'ap-northeast-1': { AMI: 'ami-03cf3903' },
-                'ap-southeast-1': { AMI: 'ami-b49dace6' },
-                'ap-southeast-2': { AMI: 'ami-e7ee9edd' },
-                'sa-east-1': { AMI: 'ami-fbfa41e6' }
+                'us-east-1': { AMI: 'ami-68115b02' },
+                'us-west-1': { AMI: 'ami-ef1a718f' },
+                'us-west-2': { AMI: 'ami-77a4b816' },
+                'eu-west-1': { AMI: 'ami-c0993ab3' },
+                'eu-central-1': { AMI: 'ami-0b322e67' },
+                'ap-northeast-1': { AMI: 'ami-f885ae96' },
+                'ap-southeast-1': { AMI: 'ami-e2fc3f81' },
+                'ap-southeast-2': { AMI: 'ami-e3217a80' },
+                'sa-east-1': { AMI: 'ami-8631b5ea' }
 
         mapping 'AWSRegionNetConfig', NetworkConfig.mapping_vpc_net
 
