@@ -172,7 +172,8 @@ module Enscalator
                  immutable_metadata: join('', '{ "purpose": "', aws_stack_name, '-app" }')
                }
 
-        subnet "ResourceSubnet#{suffix.upcase}",
+        resource_subnet_name = "ResourceSubnet#{suffix.upcase}"
+        subnet resource_subnet_name,
                vpc.id,
                resource_cidr_block,
                availabilityZone: availability_zone,
@@ -181,11 +182,18 @@ module Enscalator
                  Application: aws_stack_name
                }
 
-        resource "RouteTableAssociation#{suffix.upcase}",
+        resource "ApplicationRouteTableAssociation#{suffix.upcase}",
                  Type: 'AWS::EC2::SubnetRouteTableAssociation',
                  Properties: {
                    RouteTableId: ref(private_route_table_name),
                    SubnetId: ref(application_subnet_name)
+                 }
+
+        resource "ResourceRouteTableAssociation#{suffix.upcase}",
+                 Type: 'AWS::EC2::SubnetRouteTableAssociation',
+                 Properties: {
+                   RouteTableId: ref(private_route_table_name),
+                   SubnetId: ref(resource_subnet_name)
                  }
       end
 
