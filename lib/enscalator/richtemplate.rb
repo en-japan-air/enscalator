@@ -507,13 +507,9 @@ module Enscalator
 
     # Determine content of run queue and execute each block in queue in sequence
     def exec!
-      # TODO: remove this workaround to pass profile value to helpers together with cfn_cmd method
-      if @options[:profile]
-        Enscalator.send(:remove_const, :AwsProfile.to_s) if Enscalator.const_defined? :AwsProfile
-        Enscalator.const_set(:AwsProfile, @options[:profile])
-      end
-
       init_assets_dir
+
+      init_aws_config(@options[:region], profile_name: @options[:profile])
 
       enqueue(@pre_run_blocks) if @options[:pre_run]
 

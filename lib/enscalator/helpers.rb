@@ -34,30 +34,26 @@ module Enscalator
       end
     end
 
-    # @deprecated Remove after template command execution gets fixed
-    # Workaround method to check if AWS credential profile was passed
-    #
-    # @return [String]
-    def aws_profile
-      Enscalator.const_get(:AwsProfile)
-    rescue NameError
-      nil
-    end
-
-    # Create new instance Aws::SharedCredentials for non-default profile
-    #
-    # @return [Aws::SharedCredentials]
-    def credentials_profile
-      return nil unless aws_profile
-      @credentials_profile ||= Aws::SharedCredentials.new(profile_name: aws_profile)
-    end
-
     # Initialize enscalator directory
     # @return [String]
     def init_assets_dir
       @assets_dir ||= File.join(ENV['HOME'], Enscalator::DEFAULT_ASSETS_DIR)
       FileUtils.mkdir_p(@assets_dir) unless Dir.exist?(@assets_dir)
       @assets_dir
+    end
+
+    # Provision Aws.config with custom settings
+    # @param [String] region valid aws region
+    # @param [String] profile_name aws credentials profile name
+    def init_aws_config(region, profile_name: nil)
+      fail ArgumentError,
+           'Unable to proceed without region' if region.blank?
+      opts = {}
+      opts[:region] = region
+      unless profile_name.blank?
+        opts[:credentials] = Aws::SharedCredentials.new(profile_name: profile_name)
+      end
+      Aws.config.update(opts)
     end
 
     # Run command and print captured output to corresponding standard streams
@@ -81,10 +77,9 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     def cfn_client(region)
       fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
+           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
       opts = {}
-      opts[:region] = region
-      opts[:credentials] = credentials_profile if credentials_profile
+      opts[:region] = region unless Aws.config.key?(:region)
       Aws::CloudFormation::Client.new(opts)
     end
 
@@ -106,10 +101,9 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     def ec2_client(region)
       fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
+           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
       opts = {}
-      opts[:region] = region
-      opts[:credentials] = credentials_profile if credentials_profile
+      opts[:region] = region unless Aws.config.key?(:region)
       Aws::EC2::Client.new(opts)
     end
 
@@ -120,10 +114,9 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     def route53_client(region)
       fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
+           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
       opts = {}
-      opts[:region] = region
-      opts[:credentials] = credentials_profile if credentials_profile
+      opts[:region] = region unless Aws.config.key?(:region)
       Aws::Route53::Client.new(opts)
     end
 
