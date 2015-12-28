@@ -214,9 +214,8 @@ module Enscalator
               "Setup": [
                 "apt",
                 "ark",
-                "elasticsearch",
                 "java",
-                "layer-custom::esplugins"
+                "layer-custom::es-opsworks"
               ]
             },
             "EnableAutoHealing": "true",
