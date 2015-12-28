@@ -4,7 +4,7 @@ require 'ruby-progressbar'
 # Enscalator
 module Enscalator
   # Default directory to save generated assets like ssh keys, configs and etc.
-  DEFAULT_ASSETS_DIR = '.' << name.downcase
+  ASSETS_DIR = File.join(ENV['HOME'], ".#{name.split('::').first.downcase}")
 
   # Collection of helper classes and static methods
   module Helpers
@@ -37,9 +37,7 @@ module Enscalator
     # Initialize enscalator directory
     # @return [String]
     def init_assets_dir
-      @assets_dir ||= File.join(ENV['HOME'], Enscalator::DEFAULT_ASSETS_DIR)
-      FileUtils.mkdir_p(@assets_dir) unless Dir.exist?(@assets_dir)
-      @assets_dir
+      FileUtils.mkdir_p(Enscalator::ASSETS_DIR) unless Dir.exist?(Enscalator::ASSETS_DIR)
     end
 
     # Provision Aws.config with custom settings
@@ -285,7 +283,11 @@ module Enscalator
     # @param [Boolean] force_create force to create a new ssh key
     def create_ssh_key(key_name, region, force_create: false)
       client = ec2_client(region)
-      target_dir = File.join(@assets_dir, aws_profile ? aws_profile : 'default')
+      aws_profile = if Aws.config.key?(:credentials)
+                      creds = Aws.config[:credentials]
+                      creds.profile_name if creds.respond_to?(:profile_name)
+                    end
+      target_dir = File.join(Enscalator::ASSETS_DIR, aws_profile ? aws_profile : 'default')
       FileUtils.mkdir_p(target_dir) unless Dir.exist? target_dir
       if !client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
         # delete existed ssh key
