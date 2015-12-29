@@ -9,6 +9,7 @@ module Enscalator
     # Cloudformation limit when sending template body directly
     TEMPLATE_BODY_LIMIT = 51_200
 
+    # TODO: pass additional params to TemplateDSL: https://github.com/bazaarvoice/cloudformation-ruby-dsl/issues/57
     # Create new RichTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
@@ -71,7 +72,7 @@ module Enscalator
     end
 
     # Get a list of availability zones for the given region
-    def get_availability_zones
+    def read_availability_zones
       az = @options[:availability_zone].to_sym
       supported_az = ec2_client(region).describe_availability_zones.availability_zones
       alive_az = supported_az.select { |zone| zone.state == 'available' }
@@ -89,7 +90,7 @@ module Enscalator
 
     # Availability zones accessor
     def availability_zones
-      @availability_zones ||= get_availability_zones
+      @availability_zones ||= read_availability_zones
     end
 
     # Pre-run hook
@@ -252,12 +253,10 @@ module Enscalator
     # @param [Hash] options options
     def resource(name, options)
       super
-
-      if options[:Type] && %w(AWS::EC2::Instance).include?(options[:Type])
-        output "#{name}PrivateIpAddress",
-               Description: "#{name} Private IP Address",
-               Value: get_att(name, 'PrivateIp')
-      end
+      return nil unless options[:Type] && %w(AWS::EC2::Instance).include?(options[:Type])
+      output "#{name}PrivateIpAddress",
+             Description: "#{name} Private IP Address",
+             Value: get_att(name, 'PrivateIp')
     end
 
     # Key name parameter
@@ -508,6 +507,10 @@ module Enscalator
 
     # Determine content of run queue and execute each block in queue in sequence
     def exec!
+      init_assets_dir
+
+      init_aws_config(@options[:region], profile_name: @options[:profile])
+
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
       enqueue([@options[:expand] ? proc { puts JSON.pretty_generate(self) } : proc { cfn_cmd(self) }])
@@ -521,9 +524,15 @@ module Enscalator
     #
     # @param [RichTemplateDSL] template cloudformation template
     def cfn_cmd(template)
-      command = %w(aws cloudformation)
+      command = %w(aws)
 
-      command << (@options[:create_stack] ? ' create-stack' : ' update-stack')
+      if @options[:profile]
+        aws_credentials_profile = @options[:profile]
+        command.concat(%W(--profile #{aws_credentials_profile}))
+      end
+
+      command << 'cloudformation'
+      command << (@options[:create_stack] ? 'create-stack' : 'update-stack')
 
       command.concat(%W(--stack-name '#{stack_name}')) if stack_name
       command.concat(%W(--region '#{region}')) if region

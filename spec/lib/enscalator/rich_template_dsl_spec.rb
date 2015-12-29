@@ -26,8 +26,8 @@ describe Enscalator::RichTemplateDSL do
 
     it 'parses parameters option into valid Hash format' do
       test_params = {
-        :SomeKey1 => 'SomeValue1',
-        :SomeKey2 => 'SomeValue2'
+        SomeKey1: 'SomeValue1',
+        SomeKey2: 'SomeValue2'
       }.with_indifferent_access
       opts = default_cmd_opts(
         richtemplate.name,
@@ -63,7 +63,7 @@ describe Enscalator::RichTemplateDSL do
       VCR.use_cassette 'richtemplate_all_availability_zones' do
         opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
         test_fixture = richtemplate.new(opts)
-        az_list = test_fixture.get_availability_zones
+        az_list = test_fixture.read_availability_zones
         expect(az_list).not_to be_nil
         expect(az_list.size > 1).to be(true)
       end
@@ -73,7 +73,7 @@ describe Enscalator::RichTemplateDSL do
       VCR.use_cassette 'richtemplate_all_availability_zones', allow_playback_repeats: true do
         opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
         test_fixture = richtemplate.new(opts)
-        az = test_fixture.send(:availability_zones) # should call `get_availability_zones` method internally
+        az = test_fixture.send(:availability_zones) # should call `read_availability_zones` method internally
         expect(test_fixture.availability_zones).to eq(az)
       end
     end
@@ -82,7 +82,7 @@ describe Enscalator::RichTemplateDSL do
       VCR.use_cassette 'richtemplate_specific_availability_zone' do
         opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(availability_zone: 'a')
         test_fixture = richtemplate.new(opts)
-        az_list = test_fixture.get_availability_zones
+        az_list = test_fixture.read_availability_zones
         expect(az_list).not_to be_nil
         expect(az_list.size).to eq(1)
         expect(az_list.keys.first).to eq(opts[:availability_zone].to_sym)
@@ -94,7 +94,7 @@ describe Enscalator::RichTemplateDSL do
         opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(availability_zone: 'd')
         test_fixture = richtemplate.new(opts)
         expect do
-          test_fixture.get_availability_zones
+          test_fixture.read_availability_zones
         end.to raise_exception RuntimeError
       end
     end

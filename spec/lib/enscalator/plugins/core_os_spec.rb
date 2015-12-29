@@ -172,16 +172,16 @@ describe Enscalator::Plugins::CoreOS do
 
     it 'parses CoreOS ami mapping and returns it in valid format' do
       test_mapping = {
-        :amis => [
+        amis: [
           {
-            :name => 'aws-region-1',
-            :pv => 'ami-pv123abc',
-            :hvm => 'ami-hvm123ab'
+            name: 'aws-region-1',
+            pv: 'ami-pv123abc',
+            hvm: 'ami-hvm123ab'
           },
           {
-            :name => 'aws-region-2',
-            :pv => 'ami-pv333abc',
-            :hvm => 'ami-hvm222ab'
+            name: 'aws-region-2',
+            pv: 'ami-pv333abc',
+            hvm: 'ami-hvm222ab'
           }
         ]
       }.with_indifferent_access
