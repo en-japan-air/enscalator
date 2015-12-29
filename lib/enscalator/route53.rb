@@ -82,6 +82,7 @@ module Enscalator
     # @param [Integer] ttl time to live
     # @param [String] type dns record type
     # @param [Hash] healthcheck reference to the healthcheck resource
+    # @param [Hash] alias_target alias target
     # @param [Array] resource_records resources associated with record_name
     def create_single_dns_record(app_name,
                                  stack_name,

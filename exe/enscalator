@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+
+# TODO: remove once enscalator can be used as standalone gem
+# Workaround to keep this script working, i.e. when it
+# executed directly from codebase like './exe/enscalator'
+begin
+  Object.const_get('Enscalator')
+rescue NameError
+  require 'bundler/setup'
+end
+require 'enscalator'
+
+Enscalator.run!(ARGV)
