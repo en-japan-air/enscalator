@@ -388,6 +388,17 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
+    def parameter_ami(name, ami_id)
+      parameter_name = "#{name}AMIId"
+      parameter parameter_name,
+                Default: ami_id,
+                Description: "The #{name} AMI id",
+                Type: 'String',
+                AllowedPattern: 'ami-[a-zA-Z0-9]*',
+                ConstraintDescription: 'must be valid AMI id (ami-*).'
+      parameter_name
+    end
+
     # Instance type parameter
     #
     # @param [String] instance_name instance name
@@ -400,13 +411,14 @@ module Enscalator
                 else
                   fail("Instance type \"#{type}\" is not in allowed values: #{allowed_values.join(' ')}")
                 end
-
-      parameter "#{instance_name}InstanceType",
+      name = "#{instance_name}InstanceType"
+      parameter name,
                 Default: type,
                 Description: "The #{instance_name} instance type",
                 Type: 'String',
                 AllowedValues: allowed,
                 ConstraintDescription: 'must be valid EC2 instance type.'
+      name 
     end
 
     # EC2 Instance type parameter

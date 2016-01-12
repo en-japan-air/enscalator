@@ -15,6 +15,7 @@ require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
+require_relative '***REMOVED***'
 
 module Enscalator
   # Namespace for template collection

@@ -16,6 +16,7 @@ require_relative 'plugins/rds'
 require_relative 'plugins/elastic_beanstalk'
 require_relative 'plugins/elastic_cache'
 require_relative 'plugins/elasticsearch_opsworks'
+require_relative 'plugins/amazon_linux'
 
 module Enscalator
   # Namespace for enscalator plugins
