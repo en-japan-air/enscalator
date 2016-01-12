@@ -15,6 +15,7 @@ require_relative 'plugins/rethinkdb'
 require_relative 'plugins/rds'
 require_relative 'plugins/elastic_beanstalk'
 require_relative 'plugins/elastic_cache'
+require_relative 'plugins/elasticsearch_opsworks'
 
 module Enscalator
   # Namespace for enscalator plugins
