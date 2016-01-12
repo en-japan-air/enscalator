@@ -1,7 +1,11 @@
 require 'open3'
 require 'ruby-progressbar'
 
+# Enscalator
 module Enscalator
+  # Default directory to save generated assets like ssh keys, configs and etc.
+  ASSETS_DIR = File.join(ENV['HOME'], ".#{name.split('::').first.downcase}")
+
   # Collection of helper classes and static methods
   module Helpers
     # Executed command as sub-processes with stdout and stderr streams
@@ -25,10 +29,29 @@ module Enscalator
               end
             end
           end
-
           thread.join # wait for external process to finish
         end
       end
+    end
+
+    # Initialize enscalator directory
+    # @return [String]
+    def init_assets_dir
+      FileUtils.mkdir_p(Enscalator::ASSETS_DIR) unless Dir.exist?(Enscalator::ASSETS_DIR)
+    end
+
+    # Provision Aws.config with custom settings
+    # @param [String] region valid aws region
+    # @param [String] profile_name aws credentials profile name
+    def init_aws_config(region, profile_name: nil)
+      fail ArgumentError,
+           'Unable to proceed without region' if region.blank?
+      opts = {}
+      opts[:region] = region
+      unless profile_name.blank?
+        opts[:credentials] = Aws::SharedCredentials.new(profile_name: profile_name)
+      end
+      Aws.config.update(opts)
     end
 
     # Run command and print captured output to corresponding standard streams
@@ -39,8 +62,7 @@ module Enscalator
       # use contracts to get rid of exceptions: https://github.com/egonSchiele/contracts.ruby
       fail ArgumentError, "Expected Array, but actually was given #{cmd.class}" unless cmd.is_a?(Array)
       fail ArgumentError, 'Argument cannot be empty' if cmd.empty?
-      command = cmd.join(' ')
-      Subprocess.new command do |stdout, stderr, _thread|
+      Subprocess.new(cmd.join(' ')) do |stdout, stderr, _thread|
         STDOUT.puts stdout if stdout
         STDERR.puts stderr if stderr
       end
@@ -53,8 +75,10 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     def cfn_client(region)
       fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
-      Aws::CloudFormation::Client.new(region: region)
+           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
+      opts = {}
+      opts[:region] = region unless Aws.config.key?(:region)
+      Aws::CloudFormation::Client.new(opts)
     end
 
     # Cloudformation resource
@@ -75,8 +99,10 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     def ec2_client(region)
       fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
-      Aws::EC2::Client.new(region: region)
+           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
+      opts = {}
+      opts[:region] = region unless Aws.config.key?(:region)
+      Aws::EC2::Client.new(opts)
     end
 
     # Route 53 client
@@ -86,8 +112,10 @@ module Enscalator
     # @raise [ArgumentError] when region is not given
     def route53_client(region)
       fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
-      Aws::Route53::Client.new(region: region)
+           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
+      opts = {}
+      opts[:region] = region unless Aws.config.key?(:region)
+      Aws::Route53::Client.new(opts)
     end
 
     # Find ami images registered
@@ -112,10 +140,8 @@ module Enscalator
     # @return [Aws::CloudFormation::Stack]
     def wait_stack(cfn, stack_name)
       stack = cfn.stack(stack_name)
-
       title = 'Waiting for stack to be created'
       progress = ProgressBar.create(title: title, starting_at: 10, total: nil)
-
       loop do
         break unless stack.stack_status =~ /(CREATE|UPDATE)_IN_PROGRESS$/
         progress.title = title + " [#{stack.stack_status}]"
@@ -123,7 +149,6 @@ module Enscalator
         sleep 5
         stack = cfn.stack(stack_name)
       end
-
       stack
     end
 
@@ -137,14 +162,12 @@ module Enscalator
     def get_resource(stack, key)
       fail ArgumentError, 'stack must not be nil' if stack.nil?
       fail ArgumentError, 'key must not be nil nor empty' if key.nil? || key.empty?
-
       # query with physical_resource_id
       resource = begin
         stack.resource(key).physical_resource_id
       rescue RuntimeError
         nil
       end
-
       if resource.nil?
         # fallback to values from stack.outputs
         output = stack.outputs.select { |s| s.output_key == key }
@@ -167,7 +190,6 @@ module Enscalator
     def get_resources(stack, keys)
       fail ArgumentError, 'stack must not be nil' if stack.nil?
       fail ArgumentError, 'key must not be nil nor empty' if keys.nil? || keys.empty?
-
       keys.map { |k| get_resource(stack, k) }.compact
     end
 
@@ -178,10 +200,7 @@ module Enscalator
     def generate_parameters(stack, keys)
       keys.map do |k|
         v = get_resource(stack, k)
-        {
-          parameter_key: k,
-          parameter_value: v
-        }
+        { parameter_key: k, parameter_value: v }
       end
     end
 
@@ -200,12 +219,10 @@ module Enscalator
                         keys,
                         prepend_args: '',
                         append_args: '')
-
       cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
       args = get_resources(stack, keys).join(' ')
       cmd = [script_path, prepend_args, args, append_args]
-
       begin
         run_cmd(cmd)
       rescue Errno::ENOENT
@@ -230,10 +247,8 @@ module Enscalator
                          stack_name,
                          keys: [],
                          extra_parameters: [])
-
       cfn = cfn_resource(cfn_client(region))
       stack = wait_stack(cfn, dependent_stack_name)
-
       extra_parameters_cleaned = extra_parameters.map do |x|
         if x.key? 'ParameterKey'
           {
@@ -244,13 +259,11 @@ module Enscalator
           x
         end
       end
-
       options = {
         stack_name: stack_name,
         template_body: template,
         parameters: generate_parameters(stack, keys) + extra_parameters_cleaned
       }
-
       cfn.create_stack(options)
     end
 
@@ -270,7 +283,12 @@ module Enscalator
     # @param [Boolean] force_create force to create a new ssh key
     def create_ssh_key(key_name, region, force_create: false)
       client = ec2_client(region)
-
+      aws_profile = if Aws.config.key?(:credentials)
+                      creds = Aws.config[:credentials]
+                      creds.profile_name if creds.respond_to?(:profile_name)
+                    end
+      target_dir = File.join(Enscalator::ASSETS_DIR, aws_profile ? aws_profile : 'default')
+      FileUtils.mkdir_p(target_dir) unless Dir.exist? target_dir
       if !client.describe_key_pairs.key_pairs.collect(&:key_name).include?(key_name) || force_create
         # delete existed ssh key
         client.delete_key_pair(key_name: key_name)
@@ -280,7 +298,7 @@ module Enscalator
         STDERR.puts "Created new ssh key with fingerprint: #{key_pair.key_fingerprint}"
 
         # save private key for current user
-        private_key = File.join(ENV['HOME'], '.ssh', key_name)
+        private_key = File.join(target_dir, key_name)
         File.open(private_key, 'w') do |wfile|
           wfile.write(key_pair.key_material)
         end
@@ -300,5 +318,5 @@ module Enscalator
       fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
       File.read(user_data_path)
     end
-  end # module Asserts
+  end # module Helpers
 end # module Enscalator

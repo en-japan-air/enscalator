@@ -8,9 +8,9 @@ module Helpers
 
     # Virtualization support by Amazon AWS
     AWS_VIRTUALIZATION = {
-      :hvm => 'hvm',
-      :pv => 'paravirtual'
-    }
+      hvm: 'hvm',
+      pv: 'paravirtual'
+    }.with_indifferent_access
 
     def assert_mapping(mapping, fields: [])
       if mapping.keys.map(&:class).uniq.shift == Symbol

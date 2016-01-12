@@ -38,7 +38,7 @@ module Enscalator
     #
     # @return [Aws::EC2::Vpc] vpc instance
     def vpc
-      @vpc ||= Aws::EC2::Vpc.new(id: get_resource(vpc_stack, 'VpcId'), region: region)
+      @vpc ||= Aws::EC2::Vpc.new(id: get_resource(vpc_stack, 'VPC'))
     end
 
     # References to application subnets in all availability zones
