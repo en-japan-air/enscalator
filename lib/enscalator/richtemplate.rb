@@ -549,8 +549,15 @@ module Enscalator
 
       template_body = template.to_json
       if template_body.bytesize < TEMPLATE_BODY_LIMIT
-        command.concat(%W(--template-body '#{template_body}'))
-        run_cmd(command)
+        template_file = Tempfile.new('enscalator-template.json')
+        begin
+          template_file.write(template_body)
+          command.concat(%W(--template-body 'file://#{template_file.path}'))
+          run_cmd(command)
+        ensure
+          template_file.close
+          template_file.unlink
+        end
       else
         fail("Unable to deploy template exceeding #{TEMPLATE_BODY_LIMIT} limit: #{template_body.bytesize}")
       end
