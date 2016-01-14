@@ -86,6 +86,8 @@ module Enscalator
     # @return [String] private hosted zone
     # @raise [RuntimeError] if private hosted zone was accessed before it was configured
     def private_hosted_zone
+      # TODO: adjust other templates/plugins to use private_hosted_zone
+      # TODO: adjust command-line parser to pass private_hosted_zone in options
       @options[:hosted_zone] || fail('Private hosted zone has to be configured')
       handle_trailing_dot(@options[:hosted_zone])
     end
