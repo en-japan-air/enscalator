@@ -41,14 +41,14 @@ describe Enscalator::RichTemplateDSL do
       context 'when valid non-empty string' do
         it 'returns hosted zone in fqdn format' do
           test_private_zone_fqdn = 'somezone.'
-          opts = cmd_opts.merge(hosted_zone: test_private_zone_fqdn)
+          opts = cmd_opts.merge(private_hosted_zone: test_private_zone_fqdn)
           test_fixture = richtemplate.new(opts)
           expect(test_fixture.private_hosted_zone).to eq(test_private_zone_fqdn)
         end
       end
       context 'when nil' do
         it 'fails if its accessor was called' do
-          opts = cmd_opts.merge(hosted_zone: nil)
+          opts = cmd_opts.merge(private_hosted_zone: nil)
           test_fixture = richtemplate.new(opts)
           expect do
             test_fixture.private_hosted_zone

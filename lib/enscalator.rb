@@ -32,7 +32,7 @@ module Enscalator
       opt :region, 'AWS Region', type: String, default: 'us-east-1', short: 'r'
       opt :parameters, "Parameters 'Key1=Value1;Key2=Value2'", type: String, short: 'p'
       opt :stack_name, 'Stack name', type: String, short: 's'
-      opt :hosted_zone, "Hosted zone (e.x. 'enjapan.prod.')", type: String, short: 'z'
+      opt :private_hosted_zone, "Private hosted zone (e.x. 'enjapan.prod.')", type: String, short: 'z'
       opt :public_hosted_zone, 'Public hosted zone', type: String, short: 'g'
       opt :create_stack, 'Create the stack', default: false, short: 'c'
       opt :update_stack, 'Update already deployed stack', default: false, short: 'u'

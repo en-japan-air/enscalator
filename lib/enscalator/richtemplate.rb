@@ -77,7 +77,6 @@ module Enscalator
     # @raise [RuntimeError] if hosted zone is accessed but it's not configured
     def hosted_zone
       ActiveSupport::Deprecation.warn('hosted_zone is deprecated (use private_hosted_zone instead)')
-      @options[:hosted_zone] || fail('Hosted zone has to be configured')
       private_hosted_zone
     end
 
@@ -87,9 +86,8 @@ module Enscalator
     # @raise [RuntimeError] if private hosted zone was accessed before it was configured
     def private_hosted_zone
       # TODO: adjust other templates/plugins to use private_hosted_zone
-      # TODO: adjust command-line parser to pass private_hosted_zone in options
-      @options[:hosted_zone] || fail('Private hosted zone has to be configured')
-      handle_trailing_dot(@options[:hosted_zone])
+      @options[:private_hosted_zone] || fail('Private hosted zone has to be configured')
+      handle_trailing_dot(@options[:private_hosted_zone])
     end
 
     # Public hosted zone accessor
