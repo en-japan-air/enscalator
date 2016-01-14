@@ -67,7 +67,7 @@ module Enscalator
     # @param [String] str fqdn string
     # @return [String] fqdn with trailing dot
     def handle_trailing_dot(str)
-      str.end_with?('.') ? str : (str << '.')
+      str.end_with?('.') ? str : str + '.'
     end
 
     # @deprecated

@@ -35,6 +35,7 @@ Usage: enscalator [arguments]
   -p, --parameters=<s>             Parameters 'Key1=Value1;Key2=Value2'
   -s, --stack-name=<s>             Stack name
   -z, --hosted-zone=<s>            Hosted zone (e.x. 'enjapan.prod.')
+  -g, --public-hosted-zone=<s>     Public hosted zone
   -c, --create-stack               Create the stack
   -u, --update-stack               Update already deployed stack
   -e, --pre-run, --no-pre-run      Use pre-run hooks (default: true)
