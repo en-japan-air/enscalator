@@ -36,27 +36,64 @@ describe Enscalator::RichTemplateDSL do
       expect(test_fixture.parameters).to eq(test_params)
     end
 
-    it 'properly handles provided hosted zone option' do
-      test_zone = 'somezone'
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(hosted_zone: test_zone)
-      test_fixture = richtemplate.new(opts)
-      expect(test_fixture.hosted_zone).to eq(test_zone << '.')
+    describe '#private_hosted_zone' do
+      let(:cmd_opts) { default_cmd_opts(richtemplate.name, richtemplate.name.underscore) }
+      context 'when valid non-empty string' do
+        it 'returns hosted zone in fqdn format' do
+          test_private_zone = 'somezone'
+          opts = cmd_opts.merge(hosted_zone: test_private_zone)
+          test_fixture = richtemplate.new(opts)
+          expect(test_fixture.private_hosted_zone).to eq(test_private_zone)
+        end
+      end
+      context 'when nil' do
+        it 'fails if its accessor was called' do
+          opts = cmd_opts.merge(hosted_zone: nil)
+          test_fixture = richtemplate.new(opts)
+          expect do
+            test_fixture.private_hosted_zone
+          end.to raise_exception RuntimeError
+        end
+      end
     end
 
-    it 'properly handles provided hosted zone option with trailing dot' do
-      test_zone = 'somezone' << '.'
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(hosted_zone: test_zone)
-      test_fixture = richtemplate.new(opts)
-      expect(test_fixture.hosted_zone).to eq(test_zone)
+    describe '#public_hosted_zone' do
+      let(:cmd_opts) { default_cmd_opts(richtemplate.name, richtemplate.name.underscore) }
+      context 'when valid non-empty string' do
+        it 'returns public hosted zone in fqdn format' do
+          test_public_zone = 'somezone.public'
+          opts = cmd_opts.merge(public_hosted_zone: test_public_zone)
+          test_fixture = richtemplate.new(opts)
+          expect(test_fixture.public_hosted_zone).to eq(test_public_zone)
+        end
+      end
+      context 'when nil' do
+        it 'fails if its accessor was called' do
+          opts = cmd_opts.merge(public_hosted_zone: nil)
+          test_fixture = richtemplate.new(opts)
+          expect do
+            test_fixture.public_hosted_zone
+          end.to raise_exception RuntimeError
+        end
+      end
     end
 
-    it 'fails if hosted zone is not given, but its accessor was called' do
-      test_zone = nil
-      opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore).merge(hosted_zone: test_zone)
-      test_fixture = richtemplate.new(opts)
-      expect do
-        test_fixture.hosted_zone
-      end.to raise_exception RuntimeError
+    describe '#handle_trailing_dot' do
+      let(:test_fixture) do
+        richtemplate.new(default_cmd_opts(richtemplate.name, richtemplate.name.underscore))
+      end
+      context 'when string without trailing dot' do
+        it 'appends trailing dot' do
+          test_zone = 'somezone'
+          expect(test_fixture.handle_trailing_dot(test_zone)).to eq(test_zone << '.')
+        end
+        context 'when string with trailing dot' do
+          it 'uses provided string as is' do
+            test_zone = 'somezone' << '.'
+            expect(test_fixture.handle_trailing_dot(test_zone)).to eq(test_zone)
+          end
+        end
+      end
     end
 
     it 'return all availability zones by default' do

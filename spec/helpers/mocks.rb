@@ -22,6 +22,7 @@ module Helpers
         vpc_stack_name: 'enjapan-vpc',
         region: 'us-east-1',
         hosted_zone: 'test',
+        public_hosted_zone: 'public.test',
         parameters: nil,
         list_templates: false,
         expand: true,
