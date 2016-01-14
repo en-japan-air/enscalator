@@ -40,10 +40,10 @@ describe Enscalator::RichTemplateDSL do
       let(:cmd_opts) { default_cmd_opts(richtemplate.name, richtemplate.name.underscore) }
       context 'when valid non-empty string' do
         it 'returns hosted zone in fqdn format' do
-          test_private_zone = 'somezone'
-          opts = cmd_opts.merge(hosted_zone: test_private_zone)
+          test_private_zone_fqdn = 'somezone.'
+          opts = cmd_opts.merge(hosted_zone: test_private_zone_fqdn)
           test_fixture = richtemplate.new(opts)
-          expect(test_fixture.private_hosted_zone).to eq(test_private_zone)
+          expect(test_fixture.private_hosted_zone).to eq(test_private_zone_fqdn)
         end
       end
       context 'when nil' do
@@ -61,10 +61,10 @@ describe Enscalator::RichTemplateDSL do
       let(:cmd_opts) { default_cmd_opts(richtemplate.name, richtemplate.name.underscore) }
       context 'when valid non-empty string' do
         it 'returns public hosted zone in fqdn format' do
-          test_public_zone = 'somezone.public'
-          opts = cmd_opts.merge(public_hosted_zone: test_public_zone)
+          test_public_zone_fqdn = 'somezone.public.'
+          opts = cmd_opts.merge(public_hosted_zone: test_public_zone_fqdn)
           test_fixture = richtemplate.new(opts)
-          expect(test_fixture.public_hosted_zone).to eq(test_public_zone)
+          expect(test_fixture.public_hosted_zone).to eq(test_public_zone_fqdn)
         end
       end
       context 'when nil' do
