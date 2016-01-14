@@ -62,13 +62,41 @@ module Enscalator
       (@options[:parameters] || '').split(';').map { |s| s.split '=' }.to_h
     end
 
+    # Adds trailing dot to make it proper FQDN
+    #
+    # @param [String] str fqdn string
+    # @return [String] fqdn with trailing dot
+    def handle_trailing_dot(str)
+      str.end_with?('.') ? str : str + '.'
+    end
+
+    # @deprecated
     # Hosted zone accessor
     #
     # @return [String] hosted zone, and ensure ending with a '.'
     # @raise [RuntimeError] if hosted zone is accessed but it's not configured
     def hosted_zone
-      @options[:hosted_zone] || fail('Hosted zone has to be configured')
-      @options[:hosted_zone].ends_with?('.') ? @options[:hosted_zone] : @options[:hosted_zone] + '.'
+      ActiveSupport::Deprecation.warn('hosted_zone is deprecated (use private_hosted_zone instead)')
+      private_hosted_zone
+    end
+
+    # Private hosted zone accessor
+    #
+    # @return [String] private hosted zone
+    # @raise [RuntimeError] if private hosted zone was accessed before it was configured
+    def private_hosted_zone
+      # TODO: adjust other templates/plugins to use private_hosted_zone
+      @options[:private_hosted_zone] || fail('Private hosted zone has to be configured')
+      handle_trailing_dot(@options[:private_hosted_zone])
+    end
+
+    # Public hosted zone accessor
+    #
+    # @return [String] public hosted zone
+    # @raise [RuntimeError] if hosted zone was accessed before it was configured
+    def public_hosted_zone
+      @options[:public_hosted_zone] || fail('Public hosted zone has to be configured')
+      handle_trailing_dot(@options[:public_hosted_zone])
     end
 
     # Get a list of availability zones for the given region
