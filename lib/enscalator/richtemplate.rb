@@ -446,7 +446,7 @@ module Enscalator
                 Type: 'String',
                 AllowedValues: allowed,
                 ConstraintDescription: 'must be valid EC2 instance type.'
-      name 
+      name
     end
 
     # EC2 Instance type parameter
