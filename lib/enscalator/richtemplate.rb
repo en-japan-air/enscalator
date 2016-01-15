@@ -15,7 +15,7 @@ module Enscalator
     # @param [Hash] options command-line arguments
     def initialize(options = {})
       @options = options
-
+      init_aws_config(@options[:region], profile_name: @options[:profile])
       block = proc { tpl }
       super(&block)
     end
@@ -548,8 +548,6 @@ module Enscalator
     # Determine content of run queue and execute each block in queue in sequence
     def exec!
       init_assets_dir
-
-      init_aws_config(@options[:region], profile_name: @options[:profile])
 
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
