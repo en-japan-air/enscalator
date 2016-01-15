@@ -17,6 +17,7 @@ require_relative 'plugins/elastic_beanstalk'
 require_relative 'plugins/elastic_cache'
 require_relative 'plugins/elasticsearch_opsworks'
 require_relative 'plugins/amazon_linux'
+require_relative 'plugins/vpc_peering_connection'
 
 module Enscalator
   # Namespace for enscalator plugins
