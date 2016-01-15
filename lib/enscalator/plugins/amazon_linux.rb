@@ -44,7 +44,7 @@ module Enscalator
           )
 
           err_msg = format('Could not find any Linux Amazon Ami that fits the criteria: %s, %s, %s, %s, %s, %s',
-                           *[region, release, storage, arch, ebs_type, filters])
+                           region, release, storage, arch, ebs_type, filters)
           fail StandardError, err_msg unless resp.images
 
           images = resp.images.sort_by(&:creation_date).reverse
