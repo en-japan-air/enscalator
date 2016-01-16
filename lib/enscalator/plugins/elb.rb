@@ -17,7 +17,7 @@ module Enscalator
                    ssl: false,
                    internal: true)
 
-        @elb_resource_name = 'LoadBalancer'
+        elb_resource_name = 'LoadBalancer'
 
         parameter 'WebServerPort',
                   Description: 'TCP/IP Port for the web service',
@@ -111,14 +111,14 @@ module Enscalator
         properties[:Scheme] = 'internal' if internal
         properties[:Instances] = instances if instances && !instances.empty?
 
-        resource @elb_resource_name,
+        resource elb_resource_name,
                  Type: 'AWS::ElasticLoadBalancing::LoadBalancer',
                  Properties: properties
 
         # use alias target to create proper cloudformation template for Route53 side of elb configuration
         alias_target = {
-          HostedZoneId: get_att(@elb_resource_name, 'CanonicalHostedZoneNameID'),
-          DNSName: get_att(@elb_resource_name, 'CanonicalHostedZoneName')
+          HostedZoneId: get_att(elb_resource_name, 'CanonicalHostedZoneNameID'),
+          DNSName: get_att(elb_resource_name, 'CanonicalHostedZoneName')
         }
 
         create_single_dns_record(nil,
@@ -127,12 +127,12 @@ module Enscalator
                                  dns_record_name,
                                  alias_target: alias_target)
 
-        output "#{@elb_resource_name}DNSName",
+        output "#{elb_resource_name}DNSName",
                Description: 'LoadBalancer DNS Name',
-               Value: get_att(@elb_resource_name, 'DNSName')
+               Value: get_att(elb_resource_name, 'DNSName')
 
         # return resource name
-        @elb_resource_name
+        elb_resource_name
       end
     end # module Elb
   end # module Plugins
