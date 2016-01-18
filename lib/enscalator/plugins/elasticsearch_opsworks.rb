@@ -4,6 +4,12 @@ module Enscalator
     module ElasticsearchOpsworks
       include Enscalator::Helpers
 
+      # Create Elasticsearch cluster using Opsworks
+      #
+      # @param [String] app_name application name
+      # @param [String] ssh_key name of the ssh key
+      # @param [String] os base operating system
+      # @param [String] cookbook chef cookbook
       def elasticsearch_init(app_name,
                              ssh_key,
                              os: 'Amazon Linux 2015.09',

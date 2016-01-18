@@ -406,6 +406,11 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
+    # Ami image parameter
+    #
+    # @param [String] name ami of the ami
+    # @param [String] ami_id id of the ami
+    # @return [String] parameter name
     def parameter_ami(name, ami_id)
       parameter_name = "#{name}AMIId"
       parameter parameter_name,

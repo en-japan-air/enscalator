@@ -113,7 +113,7 @@ describe Enscalator::Plugins::CoreOS do
     end
   end
 
-# Tests for private methods in CoreOS meta class
+  # Tests for private methods in CoreOS meta class
   describe 'class << self' do
     it 'fetches mapping for specific version tag' do
       VCR.use_cassette 'coreos_522.5.0_from_stable_release_channel' do
