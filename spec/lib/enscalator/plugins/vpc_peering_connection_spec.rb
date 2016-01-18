@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Enscalator::Plugins::VPCPeeringConnection do
-
   describe '#parameter_vpc_id' do
     let(:test_param_name) { 'somename' }
     let(:test_param_description) { 'this is somename parameter' }
@@ -36,7 +35,6 @@ describe Enscalator::Plugins::VPCPeeringConnection do
         expect(dict[:Parameters][test_param_name]).not_to include(:Default)
       end
     end
-
   end
 
   describe '#vpc_peering_init' do
@@ -62,7 +60,6 @@ describe Enscalator::Plugins::VPCPeeringConnection do
         resource_under_test = dict[:Resources]
         expect(resource_under_test).to include(conn_name)
         expect(resource_under_test[conn_name][:Type]).to eq('AWS::EC2::VPCPeeringConnection')
-        puts 'VPC Peering template resource without tags => ', resource_under_test
         expect { resource_under_test[conn_name].fetch(:Tags) }.to raise_error(KeyError)
         resource_props = resource_under_test[conn_name][:Properties]
         expected_props = {
@@ -99,7 +96,6 @@ describe Enscalator::Plugins::VPCPeeringConnection do
         vpc_peering_template = template_fixture.new(cmd_opts)
         dict = vpc_peering_template.instance_variable_get(:@dict)
         resource_under_test = dict[:Resources]
-        puts 'VPC Peering template resource with tags => ', resource_under_test
         expect(resource_under_test[conn_name][:Tags]).to include(*tags)
       end
     end
