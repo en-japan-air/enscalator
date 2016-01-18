@@ -585,6 +585,7 @@ module Enscalator
         template_file = Tempfile.new('enscalator-template.json')
         begin
           template_file.write(template_body)
+          template_file.flush
           command.concat(%W(--template-body 'file://#{template_file.path}'))
           run_cmd(command)
         ensure

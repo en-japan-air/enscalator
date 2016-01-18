@@ -60,12 +60,12 @@ describe Enscalator::Plugins::VPCPeeringConnection do
         resource_under_test = dict[:Resources]
         expect(resource_under_test).to include(conn_name)
         expect(resource_under_test[conn_name][:Type]).to eq('AWS::EC2::VPCPeeringConnection')
-        expect { resource_under_test[conn_name].fetch(:Tags) }.to raise_error(KeyError)
         resource_props = resource_under_test[conn_name][:Properties]
         expected_props = {
           VpcId: ref("#{conn_name}VpcId"),
           PeerVpcId: ref("#{conn_name}PeerVpcId")
         }
+        expect { expected_props.fetch(:Tags) }.to raise_error(KeyError)
         expect(resource_props).to include(expected_props)
       end
     end
@@ -96,7 +96,7 @@ describe Enscalator::Plugins::VPCPeeringConnection do
         vpc_peering_template = template_fixture.new(cmd_opts)
         dict = vpc_peering_template.instance_variable_get(:@dict)
         resource_under_test = dict[:Resources]
-        expect(resource_under_test[conn_name][:Tags]).to include(*tags)
+        expect(resource_under_test[conn_name][:Properties][:Tags]).to include(*tags)
       end
     end
   end

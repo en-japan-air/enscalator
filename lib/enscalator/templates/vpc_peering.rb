@@ -58,6 +58,14 @@ module Enscalator
                          'VpcId where peering connection should go',
                          remote_vpc.id)
 
+        parameter remote_route_table_id_ref, {
+          Description: 'Route table for remote VPC',
+          Default: remote_route_table_id,
+          Type: 'String',
+          AllowedPattern: 'rtb-[a-zA-Z0-9]*',
+          ConstraintDescription: 'must be valid Route Table Id (rtb-*).'
+        }
+
         # Initialize Peering connection
         vpc_peering_init(connection_name,
                          tags: [

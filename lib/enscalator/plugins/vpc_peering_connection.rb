@@ -22,18 +22,19 @@ module Enscalator
       # @param [String] conn_name connection name
       # @param [Array<String>] tags list of tags
       def vpc_peering_init(conn_name, tags: [])
-        properties = {
-          Type: 'AWS::EC2::VPCPeeringConnection',
-          Properties: {
-            VpcId: ref("#{conn_name}VpcId"),
-            PeerVpcId: ref("#{conn_name}PeerVpcId")
-          }
+        options = {}
+        options[:Properties] = {
+          VpcId: ref("#{conn_name}VpcId"),
+          PeerVpcId: ref("#{conn_name}PeerVpcId")
         }
 
         # Set plugin tags
-        properties[:Tags] = tags if tags && !tags.empty?
+        options[:Properties][:Tags] = tags if tags && !tags.empty?
 
-        resource conn_name, properties
+        resource conn_name,
+                 {
+                   Type: 'AWS::EC2::VPCPeeringConnection'
+                 }.merge(options)
       end
     end # module VPCPeeringConnection
   end # module Plugins
