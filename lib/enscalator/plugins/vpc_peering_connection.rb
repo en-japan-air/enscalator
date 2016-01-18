@@ -2,9 +2,13 @@ module Enscalator
   module Plugins
     # VPC Peering Connection Plugin
     module VPCPeeringConnection
-      def self.parameter_vpc_id(name, description, id)
+
+      # Template parameter for VPC ID
+      #
+      # @param [String] name parameter name
+      # @param [String] description parameter description
+      def parameter_vpc_id(name, description)
         parameter name,
-                  Default: id,
                   Description: description,
                   Type: 'String',
                   AllowedPattern: 'vpc-[a-zA-Z0-9]*',
@@ -14,12 +18,10 @@ module Enscalator
       # Create new vpc peering connection
       #
       # @param [String] conn_name connection name
-      # @param [String] vpc_id id of the vpc instance
       # @param [Array<String>] tags list of tags
-      def vpc_peering_init(conn_name, vpc_id, peer_vpc_id, tags: [])
-
-        parameter_vpc_id("#{conn_name}VpcId", 'VpcId from where connection gets created', vpc_id)
-        parameter_vpc_id("#{conn_name}PeerVpcId", 'VpcId where peering connection should go', peer_vpc_id)
+      def vpc_peering_init(conn_name, tags: [])
+        parameter_vpc_id("#{conn_name}VpcId", 'VpcId from where connection gets created')
+        parameter_vpc_id("#{conn_name}PeerVpcId", 'VpcId where peering connection should go')
 
         properties = {
           Type: 'AWS::EC2::VPCPeeringConnection',
