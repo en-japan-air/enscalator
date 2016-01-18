@@ -41,7 +41,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop'
   spec.add_development_dependency 'rubocop-rspec'
 
-  spec.add_runtime_dependency 'cloudformation-ruby-dsl', '~> 0.4'
+  spec.add_runtime_dependency 'cloudformation-ruby-dsl', '~> 1.0'
   spec.add_runtime_dependency 'trollop', '~> 2.1'
   spec.add_runtime_dependency 'aws-sdk', '~> 2.1'
   spec.add_runtime_dependency 'ipaddress', '~> 0.8'

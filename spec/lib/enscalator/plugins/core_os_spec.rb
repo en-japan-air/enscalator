@@ -1,92 +1,119 @@
 require 'spec_helper'
 
 describe Enscalator::Plugins::CoreOS do
-  # Tests for public interfaces
   describe '#core_os_init' do
-    it 'generates mapping template for CoreOS' do
-      VCR.use_cassette 'coreos_init_mapping_in_template' do
-        # Test fixture for CoreOS template
-        class CoreOSTestTemplate < Enscalator::EnAppTemplateDSL
-          include Enscalator::Plugins::CoreOS
-          define_method :tpl do
-            core_os_init
-          end
+    let(:app_name) { 'test_server' }
+    let(:description) { 'This is a test template for CoreOS' }
+
+    context 'when invoked with default parameters' do
+      let(:template_fixture) do
+        coreos_test_app_name = app_name
+        coreos_test_description = description
+        coreos_test_template_name = app_name.humanize.delete(' ')
+        gen_richtemplate(coreos_test_template_name,
+                         Enscalator::EnAppTemplateDSL,
+                         [described_class]) do
+          @app_name = coreos_test_app_name
+          value(Description: coreos_test_description)
+          mock_availability_zones
+          core_os_init
         end
-        coreos_template = CoreOSTestTemplate.new
-        mapping_under_test = coreos_template.instance_variable_get(:@dict)[:Mappings]['AWSCoreOSAMI']
-        assert_mapping mapping_under_test
+      end
+
+      it 'generates mapping template for CoreOS' do
+        VCR.use_cassette 'coreos_init_mapping_in_template' do
+          cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
+          coreos_template = template_fixture.new(cmd_opts)
+          mapping_under_test = coreos_template.instance_variable_get(:@dict)[:Mappings]['AWSCoreOSAMI']
+          assert_mapping mapping_under_test
+        end
+      end
+    end
+  end
+
+  describe '#get_channel_version' do
+    context 'when alpha channel' do
+      let(:channel) { :alpha }
+      it 'return ami mapping for CoreOS latest version' do
+        VCR.use_cassette 'coreos_latest_from_alpha_channel' do
+          mapping = described_class.get_channel_version(channel: channel)
+          assert_mapping mapping
+        end
+      end
+
+      it 'return ami mapping for CoreOS 333.0.0 version' do
+        VCR.use_cassette 'coreos_333_0_0_from_alpha_channel' do
+          mapping = described_class.get_channel_version(channel: channel)
+          assert_mapping mapping
+        end
       end
     end
 
-    it 'returns ami mapping for CoreOS latest version in alpha channel' do
-      VCR.use_cassette 'coreos_latest_from_alpha_channel' do
-        mapping = described_class.get_channel_version(channel: :alpha)
-        assert_mapping mapping
+    context 'when beta channel' do
+      let(:channel) { :beta }
+      it 'return ami mapping for CoreOS latest version in beta channel' do
+        VCR.use_cassette 'coreos_latest_from_beta_channel' do
+          mapping = described_class.get_channel_version(channel: channel)
+          assert_mapping mapping
+        end
+      end
+
+      it 'return ami mapping for CoreOS 444.4.0 version in beta channel' do
+        VCR.use_cassette 'coreos_444_4_0_from_beta_channel' do
+          mapping = described_class.get_channel_version(channel: channel)
+          assert_mapping mapping
+        end
       end
     end
 
-    it 'returns ami mapping for CoreOS 333.0.0 version in alpha channel' do
-      VCR.use_cassette 'coreos_333_0_0_from_alpha_channel' do
-        mapping = described_class.get_channel_version(channel: :alpha)
-        assert_mapping mapping
+    context 'when stable channel' do
+      let(:channel) { :stable }
+      it 'return ami mapping for CoreOS latest version in stable channel' do
+        VCR.use_cassette 'coreos_latest_from_stable_channel' do
+          mapping = described_class.get_channel_version(channel: channel)
+          assert_mapping mapping
+        end
+      end
+
+      it 'return ami mapping for CoreOS 522.4.0 version in stable channel' do
+        VCR.use_cassette 'coreos_522_4_0_from_stable_channel' do
+          mapping = described_class.get_channel_version(channel: channel)
+          assert_mapping mapping
+        end
       end
     end
 
-    it 'returns ami mapping for CoreOS latest version in beta channel' do
-      VCR.use_cassette 'coreos_latest_from_beta_channel' do
-        mapping = described_class.get_channel_version(channel: :beta)
-        assert_mapping mapping
+    context 'when channel parameter is not valid' do
+      it 'raises ArgumentError exception' do
+        expect { described_class.get_channel_version(channel: :unstable) }.to raise_exception ArgumentError
       end
     end
+  end
 
-    it 'returns ami mapping for CoreOS 444.4.0 version in beta channel' do
-      VCR.use_cassette 'coreos_444_4_0_from_beta_channel' do
-        mapping = described_class.get_channel_version(channel: :beta)
-        assert_mapping mapping
-      end
-    end
-
-    it 'returns ami mapping for CoreOS latest version in stable channel' do
-      VCR.use_cassette 'coreos_latest_from_stable_channel' do
-        mapping = described_class.get_channel_version(channel: :beta)
-        assert_mapping mapping
-      end
-    end
-
-    it 'returns ami mapping for CoreOS 522.4.0 version in stable channel' do
-      VCR.use_cassette 'coreos_522_4_0_from_stable_channel' do
-        mapping = described_class.get_channel_version(channel: :beta)
-        assert_mapping mapping
-      end
-    end
-
-    it 'returns ami mapping for CoreOS specific version (626.0.0) regardless of channel' do
+  describe '#get_specific_version' do
+    it 'return ami mapping for CoreOS specific version (626.0.0) regardless of channel' do
       VCR.use_cassette 'coreos_specific_version_626_0_0' do
         mapping = described_class.get_specific_version(tag: '626.0.0')
         assert_mapping mapping # specific version only available in alpha channel
       end
     end
 
-    it 'returns ami mapping for CoreOS specific version (612.1.0) regardless of channel' do
+    it 'return ami mapping for CoreOS specific version (612.1.0) regardless of channel' do
       VCR.use_cassette 'coreos_specific_version_612_1_0' do
         mapping = described_class.get_specific_version(tag: '612.1.0')
         assert_mapping mapping # specific version only available in beta channel
       end
     end
 
-    it 'returns ami mapping for CoreOS specific version (607.0.0) regardless of channel' do
+    it 'return ami mapping for CoreOS specific version (607.0.0) regardless of channel' do
       VCR.use_cassette 'coreos_specific_version_607_0_0' do
         mapping = described_class.get_specific_version(tag: '607.0.0')
         assert_mapping mapping # specific version only available in stable channel
       end
     end
-
-    it 'raises ArgumentError exception when channel parameter is not valid' do
-      expect { described_class.get_channel_version(channel: :unstable) }.to raise_exception ArgumentError
-    end
   end
 
-  # Tests for private methods in CoreOS eigenclass
+# Tests for private methods in CoreOS meta class
   describe 'class << self' do
     it 'fetches mapping for specific version tag' do
       VCR.use_cassette 'coreos_522.5.0_from_stable_release_channel' do

@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-# Testing public interfaces
 describe Enscalator::Plugins::Elasticsearch do
   describe '#elasticsearch_init' do
     let(:app_name) { 'es_test' }

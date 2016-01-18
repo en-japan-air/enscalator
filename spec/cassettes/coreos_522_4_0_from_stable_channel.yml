@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://beta.release.core-os.net/amd64-usr
+    uri: http://stable.release.core-os.net/amd64-usr
     body:
       encoding: US-ASCII
       string: ''
@@ -18,30 +18,30 @@ http_interactions:
       code: 301
       message: Moved Permanently
     headers:
+      X-Guploader-Uploadid:
+      - ***REMOVED***-057Zw
       Location:
-      - http://beta.release.core-os.net/amd64-usr/index.html
+      - http://stable.release.core-os.net/amd64-usr/index.html
       Date:
-      - Sat, 11 Apr 2015 14:30:26 GMT
+      - Mon, 18 Jan 2016 05:11:35 GMT
       Expires:
-      - Sat, 11 Apr 2015 14:30:26 GMT
+      - Mon, 18 Jan 2016 05:11:35 GMT
       Cache-Control:
       - private, max-age=0
       Content-Length:
       - '0'
       Server:
-      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      - UploadServer
       Content-Type:
       - text/html; charset=UTF-8
-      Alternate-Protocol:
-      - 80:quic,p=0.5
     body:
       encoding: UTF-8
       string: ''
     http_version: 
-  recorded_at: Sat, 11 Apr 2015 14:30:10 GMT
+  recorded_at: Mon, 18 Jan 2016 05:11:35 GMT
 - request:
     method: get
-    uri: http://beta.release.core-os.net/amd64-usr/index.html
+    uri: http://stable.release.core-os.net/amd64-usr/index.html
     body:
       encoding: US-ASCII
       string: ''
@@ -57,70 +57,71 @@ http_interactions:
       code: 200
       message: OK
     headers:
-      Expires:
-      - Sat, 11 Apr 2015 15:23:16 GMT
+      X-Guploader-Uploadid:
+      - ***REMOVED***-UEWYEzFUlF-***REMOVED***_5yavf-hnQMlLU3kg7ljg
       Date:
-      - Sat, 11 Apr 2015 14:23:16 GMT
+      - Mon, 18 Jan 2016 05:11:34 GMT
+      Expires:
+      - Mon, 18 Jan 2016 05:12:34 GMT
       Last-Modified:
-      - Wed, 18 Mar 2015 17:05:41 GMT
+      - Tue, 08 Dec 2015 16:39:07 GMT
       Etag:
       - '"***REMOVED***"'
       X-Goog-Generation:
-      - '1426698341975000'
+      - '1449592747332000'
       X-Goog-Metageneration:
       - '1'
       X-Goog-Stored-Content-Encoding:
       - identity
       X-Goog-Stored-Content-Length:
-      - '1479'
+      - '1704'
       Content-Type:
       - text/html; charset=utf-8
       X-Goog-Hash:
-      - crc32c=i0kkew==
-      - md5=stQ33iGZZcIUH+cfcvYjKg==
+      - crc32c=DBFOZQ==
+      - md5=0SaWKqFx8ITy+U+6dgvnjQ==
       X-Goog-Storage-Class:
       - STANDARD
       Accept-Ranges:
       - bytes
-      Vary:
-      - Accept-Encoding
       Content-Length:
-      - '1479'
+      - '1704'
       Server:
-      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      - UploadServer
       Cache-Control:
-      - public, max-age=3600
+      - public, max-age=60
       Age:
-      - '430'
-      Alternate-Protocol:
-      - 80:quic,p=0.5
+      - '1'
     body:
       encoding: UTF-8
-      string: "<html>\n    <head>\n\t<title>beta.release.core-os.net/amd64-usr/</title>\n
-        \   </head>\n    <body>\n    <h1>beta.release.core-os.net/amd64-usr/</h1>\n
-        \   \n\t[dir] <a href=\"310.1.0/\">310.1.0/</a> </br>\n    \n\t[dir] <a href=\"324.3.0/\">324.3.0/</a>
-        </br>\n    \n\t[dir] <a href=\"324.5.0/\">324.5.0/</a> </br>\n    \n\t[dir]
-        <a href=\"353.0.0/\">353.0.0/</a> </br>\n    \n\t[dir] <a href=\"367.1.0/\">367.1.0/</a>
-        </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a> </br>\n    \n\t[dir]
-        <a href=\"440.0.0/\">440.0.0/</a> </br>\n    \n\t[dir] <a href=\"444.2.0/\">444.2.0/</a>
-        </br>\n    \n\t[dir] <a href=\"444.3.0/\">444.3.0/</a> </br>\n    \n\t[dir]
-        <a href=\"444.4.0/\">444.4.0/</a> </br>\n    \n\t[dir] <a href=\"444.5.0/\">444.5.0/</a>
-        </br>\n    \n\t[dir] <a href=\"494.0.0/\">494.0.0/</a> </br>\n    \n\t[dir]
-        <a href=\"494.1.0/\">494.1.0/</a> </br>\n    \n\t[dir] <a href=\"494.4.0/\">494.4.0/</a>
+      string: "<html>\n    <head>\n\t<title>stable.release.core-os.net/amd64-usr/</title>\n\t<meta
+        http-equiv=\"X-Clacks-Overhead\" content=\"GNU Terry Pratchett\" />\n    </head>\n
+        \   <body>\n    <h1>stable.release.core-os.net/amd64-usr/</h1>\n    \n\t[dir]
+        <a href=\"367.1.0/\">367.1.0/</a> </br>\n    \n\t[dir] <a href=\"410.0.0/\">410.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"410.1.0/\">410.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"410.2.0/\">410.2.0/</a> </br>\n    \n\t[dir] <a href=\"444.4.0/\">444.4.0/</a>
+        </br>\n    \n\t[dir] <a href=\"444.5.0/\">444.5.0/</a> </br>\n    \n\t[dir]
+        <a href=\"494.3.0/\">494.3.0/</a> </br>\n    \n\t[dir] <a href=\"494.4.0/\">494.4.0/</a>
         </br>\n    \n\t[dir] <a href=\"494.5.0/\">494.5.0/</a> </br>\n    \n\t[dir]
-        <a href=\"522.2.0/\">522.2.0/</a> </br>\n    \n\t[dir] <a href=\"522.3.0/\">522.3.0/</a>
-        </br>\n    \n\t[dir] <a href=\"522.4.0/\">522.4.0/</a> </br>\n    \n\t[dir]
-        <a href=\"522.5.0/\">522.5.0/</a> </br>\n    \n\t[dir] <a href=\"557.0.0/\">557.0.0/</a>
-        </br>\n    \n\t[dir] <a href=\"557.1.0/\">557.1.0/</a> </br>\n    \n\t[dir]
-        <a href=\"557.2.0/\">557.2.0/</a> </br>\n    \n\t[dir] <a href=\"584.0.0/\">584.0.0/</a>
-        </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a> </br>\n    \n\t[dir]
-        <a href=\"612.1.0/\">612.1.0/</a> </br>\n    \n\t[dir] <a href=\"current/\">current/</a>
+        <a href=\"522.4.0/\">522.4.0/</a> </br>\n    \n\t[dir] <a href=\"522.5.0/\">522.5.0/</a>
+        </br>\n    \n\t[dir] <a href=\"522.6.0/\">522.6.0/</a> </br>\n    \n\t[dir]
+        <a href=\"557.2.0/\">557.2.0/</a> </br>\n    \n\t[dir] <a href=\"607.0.0/\">607.0.0/</a>
+        </br>\n    \n\t[dir] <a href=\"633.1.0/\">633.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"647.0.0/\">647.0.0/</a> </br>\n    \n\t[dir] <a href=\"647.2.0/\">647.2.0/</a>
+        </br>\n    \n\t[dir] <a href=\"681.0.0/\">681.0.0/</a> </br>\n    \n\t[dir]
+        <a href=\"681.1.0/\">681.1.0/</a> </br>\n    \n\t[dir] <a href=\"681.2.0/\">681.2.0/</a>
+        </br>\n    \n\t[dir] <a href=\"717.1.0/\">717.1.0/</a> </br>\n    \n\t[dir]
+        <a href=\"717.3.0/\">717.3.0/</a> </br>\n    \n\t[dir] <a href=\"723.3.0/\">723.3.0/</a>
+        </br>\n    \n\t[dir] <a href=\"766.3.0/\">766.3.0/</a> </br>\n    \n\t[dir]
+        <a href=\"766.4.0/\">766.4.0/</a> </br>\n    \n\t[dir] <a href=\"766.5.0/\">766.5.0/</a>
+        </br>\n    \n\t[dir] <a href=\"835.8.0/\">835.8.0/</a> </br>\n    \n\t[dir]
+        <a href=\"835.9.0/\">835.9.0/</a> </br>\n    \n\t[dir] <a href=\"current/\">current/</a>
         </br>\n    \n    \n\t\n    \n    </body>\n</html>\n"
     http_version: 
-  recorded_at: Sat, 11 Apr 2015 14:30:10 GMT
+  recorded_at: Mon, 18 Jan 2016 05:11:36 GMT
 - request:
     method: get
-    uri: http://beta.release.core-os.net/amd64-usr/612.1.0/coreos_production_ami_all.json
+    uri: http://stable.release.core-os.net/amd64-usr/835.9.0/coreos_production_ami_all.json
     body:
       encoding: US-ASCII
       string: ''
@@ -136,43 +137,43 @@ http_interactions:
       code: 200
       message: OK
     headers:
+      X-Guploader-Uploadid:
+      - ***REMOVED***_OO1QIz9tQ-SvGwqDGvP7FO1HsQQy3Bqee3Su-1R3xPlLCg-3NjAQ
       Expires:
-      - Sat, 11 Apr 2015 15:23:18 GMT
+      - Mon, 18 Jan 2016 06:11:35 GMT
       Date:
-      - Sat, 11 Apr 2015 14:23:18 GMT
+      - Mon, 18 Jan 2016 05:11:35 GMT
       Last-Modified:
-      - Wed, 18 Mar 2015 17:02:27 GMT
+      - Tue, 08 Dec 2015 16:34:06 GMT
       Etag:
       - '"***REMOVED***"'
       X-Goog-Generation:
-      - '1426698147450000'
+      - '1449592446324000'
       X-Goog-Metageneration:
       - '1'
       X-Goog-Stored-Content-Encoding:
       - identity
       X-Goog-Stored-Content-Length:
-      - '928'
+      - '1031'
       Content-Type:
       - application/octet-stream
+      Content-Language:
+      - en
       X-Goog-Hash:
-      - crc32c=FpKn1w==
-      - md5=X3lbMN/RYGskG+x5757d4g==
+      - crc32c=cGqnew==
+      - md5=brNSthuggQRIDP0fp5wlwg==
       X-Goog-Storage-Class:
       - STANDARD
       Accept-Ranges:
       - bytes
-      Vary:
-      - Accept-Encoding
       Content-Length:
-      - '928'
+      - '1031'
       Server:
-      - UploadServer ("Built on Apr 2 2015 15:28:57 (1428013737)")
+      - UploadServer
       Cache-Control:
       - public, max-age=3600
       Age:
-      - '429'
-      Alternate-Protocol:
-      - 80:quic,p=0.5
+      - '0'
     body:
       encoding: UTF-8
       string: |
@@ -180,51 +181,56 @@ http_interactions:
           "amis": [
             {
               "name": "eu-central-1",
-              "pv":   "ami-ae2b16b3",
-              "hvm":  "ami-a82b16b5"
+              "pv":   "ami-72b2af1e",
+              "hvm":  "ami-ffafb293"
             },
             {
               "name": "ap-northeast-1",
-              "pv":   "ami-55bd4a55",
-              "hvm":  "ami-53bd4a53"
+              "pv":   "ami-06eac368",
+              "hvm":  "ami-dae8c1b4"
+            },
+            {
+              "name": "us-gov-west-1",
+              "pv":   "ami-a88934c9",
+              "hvm":  "ami-a98e33c8"
             },
             {
               "name": "sa-east-1",
-              "pv":   "ami-7744fc6a",
-              "hvm":  "ami-7544fc68"
+              "pv":   "ami-a89f1bc4",
+              "hvm":  "ami-4e981c22"
             },
             {
               "name": "ap-southeast-2",
-              "pv":   "ami-71a8d84b",
-              "hvm":  "ami-77a8d84d"
+              "pv":   "ami-ffaef69c",
+              "hvm":  "ami-eeadf58d"
             },
             {
               "name": "ap-southeast-1",
-              "pv":   "ami-20e5d472",
-              "hvm":  "ami-22e5d470"
+              "pv":   "ami-ef57978c",
+              "hvm":  "ami-085a9a6b"
             },
             {
               "name": "us-east-1",
-              "pv":   "ami-3e9cbe56",
-              "hvm":  "ami-3c9cbe54"
+              "pv":   "ami-05ffb06f",
+              "hvm":  "ami-cbfdb2a1"
             },
             {
               "name": "us-west-2",
-              "pv":   "ami-237f5313",
-              "hvm":  "ami-217f5311"
+              "pv":   "ami-35c8d554",
+              "hvm":  "ami-16cfd277"
             },
             {
               "name": "us-west-1",
-              "pv":   "ami-1d32d459",
-              "hvm":  "ami-1332d457"
+              "pv":   "ami-e9aec689",
+              "hvm":  "ami-0eacc46e"
             },
             {
               "name": "eu-west-1",
-              "pv":   "ami-a157c8d6",
-              "hvm":  "ami-af57c8d8"
+              "pv":   "ami-fd6ccd8e",
+              "hvm":  "ami-c26bcab1"
             }
           ]
         }
     http_version: 
-  recorded_at: Sat, 11 Apr 2015 14:30:10 GMT
+  recorded_at: Mon, 18 Jan 2016 05:11:36 GMT
 recorded_with: VCR 2.9.3
