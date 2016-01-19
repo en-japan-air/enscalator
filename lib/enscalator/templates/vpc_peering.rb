@@ -33,8 +33,7 @@ module Enscalator
       # 172.16.0.0/16	pcx-11112222
       def tpl
         connection_name = 'PrivateConnection'
-        local_vpc_id_ref, remote_vpc_id_ref, remote_route_table_id_ref =
-          %W(#{connection_name}VpcId #{connection_name}PeerVpcId #{connection_name}PeerRouteTable)
+        local_vpc_id_ref, remote_vpc_id_ref = %W(#{connection_name}VpcId #{connection_name}PeerVpcId)
 
         def validate_params(*params)
           params.each do |param|
@@ -45,10 +44,9 @@ module Enscalator
           exit 1
         end
 
-        validate_params(*[remote_vpc_id_ref, remote_route_table_id_ref])
+        validate_params(*[remote_vpc_id_ref])
 
         local_vpc, remote_vpc = [vpc, vpc(id: @parameters[remote_vpc_id_ref])]
-        remote_route_table_id = @parameters[remote_route_table_id_ref]
 
         description 'Stack to create peering connection between two VPCs'
 
@@ -60,14 +58,6 @@ module Enscalator
                          'VpcId where peering connection should go',
                          remote_vpc.id)
 
-        parameter remote_route_table_id_ref, {
-          Description: 'Route table for remote VPC',
-          Default: remote_route_table_id,
-          Type: 'String',
-          AllowedPattern: 'rtb-[a-zA-Z0-9]*',
-          ConstraintDescription: 'must be valid Route Table Id (rtb-*).'
-        }
-
         # Initialize Peering connection
         vpc_peering_init(connection_name,
                          tags: [
@@ -77,30 +67,45 @@ module Enscalator
                            }
                          ])
 
-        def route_table_from_stack(stack, logical_id)
-          res = stack.resource(logical_id)
-          res.resource_type == 'AWS::EC2::RouteTable' ? res.physical_resource_id : nil
+        def read_vpc_route_tables(vpc)
+          routes = []
+          vpc.route_tables.each do |rt|
+            routes << rt
+          end
+          routes
         end
 
-        local_route_table_id = route_table_from_stack(local_vpc_stack, 'PublicRouteTable')
+        # Add rules to local VPC routing table
+        read_vpc_route_tables(local_vpc).map(&:id).each_with_index do |rt_id, i|
+          local_vpc_route_rule = "LocalVPCPeeringRoute#{i + 1}"
+          resource local_vpc_route_rule,
+                   Type: 'AWS::EC2::Route',
+                   Properties: {
+                     RouteTableId: rt_id,
+                     DestinationCidrBlock: remote_vpc.cidr_block,
+                     VpcPeeringConnectionId: ref(connection_name)
+                   }
 
-        # Route for local VPC
-        resource 'VpcPeeringRouteLocalVPC',
-                 Type: 'AWS::EC2::Route',
-                 Properties: {
-                   RouteTableId: local_route_table_id,
-                   DestinationCidrBlock: remote_vpc.cidr_block,
-                   VpcPeeringConnectionId: ref(connection_name)
-                 }
+          output local_vpc_route_rule,
+                 Description: "Local VPC Peering connection for #{rt_id}",
+                 Value: ref(local_vpc_route_rule)
+        end
 
-        # Route for remote VPC
-        resource 'VpcPeeringRouteRemoteVPC',
-                 Type: 'AWS::EC2::Route',
-                 Properties: {
-                   RouteTableId: remote_route_table_id,
-                   DestinationCidrBlock: local_vpc.cidr_block,
-                   VpcPeeringConnectionId: ref(connection_name)
-                 }
+        # Add rules to remote VPC routing table
+        read_vpc_route_tables(remote_vpc).map(&:id).each_with_index do |rt_id, i|
+          remote_vpc_route_rule = "RemoteVPCPeeringRoute#{i + 1}"
+          resource remote_vpc_route_rule,
+                   Type: 'AWS::EC2::Route',
+                   Properties: {
+                     RouteTableId: rt_id,
+                     DestinationCidrBlock: local_vpc.cidr_block,
+                     VpcPeeringConnectionId: ref(connection_name)
+                   }
+
+          output remote_vpc_route_rule,
+                 Description: "Remote VPC Peering connection for #{rt_id}",
+                 Value: ref(remote_vpc_route_rule)
+        end
       end # tpl
     end # class VPCPeering
   end # module Plugins

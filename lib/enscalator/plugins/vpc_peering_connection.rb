@@ -35,6 +35,13 @@ module Enscalator
                  {
                    Type: 'AWS::EC2::VPCPeeringConnection'
                  }.merge(options)
+
+        output conn_name,
+               Description: 'VPC Peering connection name',
+               Value: ref(conn_name)
+
+        # return resource name
+        conn_name
       end
     end # module VPCPeeringConnection
   end # module Plugins
