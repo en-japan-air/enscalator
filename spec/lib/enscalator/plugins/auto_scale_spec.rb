@@ -27,13 +27,17 @@ describe Enscalator::Plugins::AutoScale do
         cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
         as_template = template_fixture.new(cmd_opts)
         dict = as_template.instance_variable_get(:@dict)
-        expect(dict[:Resources].keys).to include(*%w(LaunchConfig AutoScale))
-        test_autoscale = dict[:Resources]['AutoScale']
+
+        launch_config_resource_name = "#{template_name}LaunchConfig"
+        auto_scale_resource_name = "#{template_name}AutoScale"
+
+        expect(dict[:Resources].keys).to include(*[launch_config_resource_name, auto_scale_resource_name])
+        test_autoscale = dict[:Resources][auto_scale_resource_name]
         expect(test_autoscale[:Type]).to eq('AWS::AutoScaling::AutoScalingGroup')
-        expect(test_autoscale[:Properties][:LaunchConfigurationName]).to eq(Ref: 'LaunchConfig')
-        default_tag = { Key: 'Name', Value: "#{template_name.downcase}AutoScale", PropagateAtLaunch: true }
+        expect(test_autoscale[:Properties][:LaunchConfigurationName]).to eq(Ref: launch_config_resource_name)
+        default_tag = { Key: 'Name', Value: auto_scale_resource_name, PropagateAtLaunch: true }
         expect(test_autoscale[:Properties][:Tags]).to include(default_tag)
-        test_launchconfig = dict[:Resources]['LaunchConfig']
+        test_launchconfig = dict[:Resources][launch_config_resource_name]
         expect(test_launchconfig[:Type]).to eq('AWS::AutoScaling::LaunchConfiguration')
         expect(test_launchconfig[:Properties][:ImageId]).to eq(image_id)
       end
@@ -69,11 +73,11 @@ describe Enscalator::Plugins::AutoScale do
         cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
         as_template = template_fixture.new(cmd_opts)
         dict = as_template.instance_variable_get(:@dict)
-        test_autoscale = dict[:Resources]['AutoScale']
+        test_autoscale = dict[:Resources]["#{template_name}AutoScale"]
         expect(test_autoscale[:Properties][:DesiredCapacity]).to eq(auto_scale_props[:DesiredCapacity])
         expect(test_autoscale[:Properties][:Tags]).to include(*auto_scale_tags)
         expect(test_autoscale[:Properties][:Tags]).to_not include(auto_scale_props[:Tags])
-        test_launchconfig = dict[:Resources]['LaunchConfig']
+        test_launchconfig = dict[:Resources]["#{template_name}LaunchConfig"]
         expect(test_launchconfig[:Properties][:InstanceType]).to eq(launch_config_props[:InstanceType])
       end
     end
