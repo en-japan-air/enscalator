@@ -231,6 +231,7 @@ module Enscalator
       }
       options[:DependsOn] = depends_on unless depends_on.empty?
       resource name, options
+      name
     end
 
     # VPC Security group
@@ -264,6 +265,7 @@ module Enscalator
       }
       options[:DependsOn] = depends_on unless depends_on.empty?
       resource name, options
+      name
     end
 
     # Network interface

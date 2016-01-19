@@ -3,9 +3,10 @@ module Enscalator
     # Elasticsearch related configuration
     module ElasticsearchOpsworks
       include Enscalator::Helpers
+      include Enscalator::Plugins::Elb
 
       def elasticsearch_init(app_name,
-                             ssh_key,
+                             ssh_key:,
                              os: 'Amazon Linux 2015.09',
                              cookbook: 'https://github.com/en-japan/opsworks-elasticsearch-cookbook.git')
 
@@ -21,10 +22,10 @@ module Enscalator
                                 'operating system when you create the instance.'].join(' '),
                   Type: 'String'
 
-        parameter "EB#{app_name}SshKeyName",
-                  Default: ssh_key,
-                  Description: 'SSH key name for EC2 instances.',
-                  Type: 'String'
+        parameter "ES#{app_name}SshKeyName",
+          Default: ssh_key,
+          Description: 'SSH key name for EC2 instances.',
+          Type: 'String'
 
         resource 'InstanceRole',
                  Type: 'AWS::IAM::InstanceProfile',
@@ -110,13 +111,13 @@ module Enscalator
                    ]
                  }
 
-        security_group_vpc('elasticsearchtest', 'so that ES cluster can find other nodes', vpc.id)
+        instances_security_group = security_group_vpc("ES#{app_name}", 'so that ES cluster can find other nodes', vpc.id)
 
-        stack_name = "#{app_name}-ES"
+        ops_stack_name = "#{app_name}-ES"
         resource 'ESStack',
                  Type: 'AWS::OpsWorks::Stack',
                  Properties: {
-                   Name: stack_name,
+                   Name: ops_stack_name,
                    VpcId: vpc.id,
                    DefaultSubnetId: ref_resource_subnets.first,
                    ConfigurationManager: {
@@ -130,7 +131,7 @@ module Enscalator
                    },
                    DefaultOs: ref("ES#{app_name}InstanceDefaultOs"),
                    DefaultRootDeviceType: 'ebs',
-                   DefaultSshKeyName: ref("EB#{app_name}SshKeyName"),
+                   DefaultSshKeyName: ref("ES#{app_name}SshKeyName"),
                    CustomJson: {
                      java: {
                        jdk_version: '8',
@@ -164,7 +165,7 @@ module Enscalator
                          },
                          ec2: {
                            tag: {
-                             'opsworks:stack': stack_name
+                             'opsworks:stack': ops_stack_name
                            }
                          }
                        },
@@ -212,11 +213,25 @@ module Enscalator
                    ],
                    CustomSecurityGroupIds: [
                      {
-                       'Fn::GetAtt': %w(elasticsearchtest GroupId)
+                       'Fn::GetAtt': %W(#{instances_security_group} GroupId)
                      },
                      ref_private_security_group
                    ]
                  }
+
+        elb_ref = elb_init elb_name: "#{app_name}-es-elb",
+          web_server_port: 9200,
+          zone_name: private_hosted_zone,
+          dns_record_name: "elb.es.#{app_name.underscore.dasherize}.#{private_hosted_zone}",
+          ssl: false,
+          internal: true
+
+        resource 'ELBAttachment',
+          Type: 'AWS::OpsWorks::ElasticLoadBalancerAttachment',
+          Properties: {
+            ElasticLoadBalancerName: ref(elb_ref),
+            LayerId: ref('ESLayer')
+          }
       end
     end # module Elasticsearch
   end # module Plugins
