@@ -18,23 +18,24 @@ module Enscalator
                           auto_scale_props: {},
                           auto_scale_tags: [])
 
-        @launch_config_resource_name = 'LaunchConfig'
-        @auto_scale_resource_name = 'AutoScale'
-        @auto_scale_name = "#{auto_scale_name || app_template_name}AutoScale"
-        @auto_scale_key_name = gen_ssh_key_name @auto_scale_name.underscore, region, stack_name
+        name = auto_scale_name || app_template_name
+        auto_scale_name = "#{name}AutoScale"
+        launch_config_resource_name = "#{name}LaunchConfig"
+        auto_scale_resource_name = auto_scale_name
+        auto_scale_key_name = gen_ssh_key_name auto_scale_name.underscore, region, stack_name
 
         pre_run do
-          create_ssh_key @auto_scale_key_name,
+          create_ssh_key auto_scale_key_name,
                          region,
                          force_create: false
         end
 
-        resource @launch_config_resource_name,
+        resource launch_config_resource_name,
                  Type: 'AWS::AutoScaling::LaunchConfiguration',
                  Properties: {
                    ImageId: image_id,
                    InstanceType: 'm3.medium',
-                   KeyName: @auto_scale_key_name,
+                   KeyName: auto_scale_key_name,
                    AssociatePublicIpAddress: false,
                    SecurityGroups: [ref_private_security_group, ref_application_security_group]
                  }.merge(launch_config_props)
@@ -47,7 +48,7 @@ module Enscalator
         auto_scale_current_tags = [
           {
             Key: 'Name',
-            Value: @auto_scale_name,
+            Value: auto_scale_name,
             PropagateAtLaunch: true
           }
         ].concat(auto_scale_tags)
@@ -55,24 +56,24 @@ module Enscalator
         auto_scale_current_properties = {
           AvailabilityZones: availability_zones.values,
           VPCZoneIdentifier: ref_application_subnets,
-          LaunchConfigurationName: ref(@launch_config_resource_name),
+          LaunchConfigurationName: ref(launch_config_resource_name),
           MinSize: 0,
           MaxSize: 1,
           DesiredCapacity: 1,
           Tags: auto_scale_current_tags
         }.merge(auto_scale_props)
 
-        resource @auto_scale_resource_name,
+        resource auto_scale_resource_name,
                  Type: 'AWS::AutoScaling::AutoScalingGroup',
                  Properties: auto_scale_current_properties
 
         # return resource name
-        @auto_scale_resource_name
+        auto_scale_resource_name
       end
 
       # Callback to get name of the class which included this module
       def self.included(klass)
-        send(:define_method, :app_template_name) { "#{klass.name.demodulize.downcase}" }
+        send(:define_method, :app_template_name) { "#{klass.name.demodulize}" }
       end
     end # module AutoScale
   end # module Plugins
