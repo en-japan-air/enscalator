@@ -50,6 +50,8 @@ module Enscalator
         local_vpc, remote_vpc = [vpc, vpc(id: @parameters[remote_vpc_id_ref])]
         remote_route_table_id = @parameters[remote_route_table_id_ref]
 
+        description 'Stack to create peering connection between two VPCs'
+
         parameter_vpc_id(local_vpc_id_ref,
                          'VpcId from where connection gets created',
                          local_vpc.id)
