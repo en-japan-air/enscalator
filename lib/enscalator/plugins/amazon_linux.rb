@@ -12,12 +12,15 @@ module Enscalator
         # Supported Debian image architectures
         ARCH = [:x86_64, :i386]
 
+        # @param [Symbol, String] region name
         # @param [Symbol, String] release a codename or version number
         # @param [Symbol] storage storage kind
         # @param [Symbol] arch architecture
+        # @param [Symbol] ebs_type (:standard or :gp2)
+        # @param [Hash] custom filters for the search
         # @raise [ArgumentError] if storage is nil, empty or not one of supported values
         # @raise [ArgumentError] if arch is nil, empty or not one of supported values
-        # @return [Hash] mapping for Debian amis
+        # @return [String] first ami-id found for the query
         def get_ami(region:, release: '2015.09.1', storage: :ebs, arch: :x86_64, ebs_type: :gp2, filters: {})
           fail ArgumentError, "storage can only be one of #{STORAGE}" unless STORAGE.include? storage
           fail ArgumentError, "arch can only be one of #{ARCH}" unless ARCH.include? arch
@@ -64,10 +67,15 @@ module Enscalator
         end
       end
 
-      # Create new Debian instance
+      # Create AMI id parameter for an Amazon linux instance
       #
-      # @param [String] storage storage kind (usually ebs or ephemeral)
-      # @param [String] arch architecture (amd64 or i386)
+      # @param [String] storage storage kind (usually ebs or instance-store)
+      # @param [Symbol, String] region name
+      # @param [Symbol, String] release a codename or version number
+      # @param [Symbol] storage storage kind (ebs or instance_store)
+      # @param [String] arch architecture (x86_64 or i386)
+      # @param [Symbol] ebs_type (:standard or :gp2)
+      # @param [Hash] custom filters for the search
       def amazon_linux_init(region: self.region,
                             release: '2015.09.1',
                             storage: :ebs,
