@@ -2,22 +2,37 @@ require 'spec_helper'
 
 describe Enscalator::Plugins::Debian do
   describe '#debian_init' do
-    it 'creates mapping template for Debian using default parameter' do
-      VCR.use_cassette 'debian_mapping_default_options' do
-        # Test fixture for Debian template
-        class DebianTestTemplate < Enscalator::EnAppTemplateDSL
-          include Enscalator::Plugins::Debian
-          define_method :tpl do
-            debian_init
-          end
+    let(:app_name) { 'test_server' }
+    let(:description) { 'This is a test template for Debian' }
+
+    context 'when invoked with default parameters' do
+      let(:template_fixture) do
+        debian_test_app_name = app_name
+        debian_test_description = description
+        debian_test_template_name = app_name.humanize.delete(' ')
+        gen_richtemplate(debian_test_template_name,
+                         Enscalator::EnAppTemplateDSL,
+                         [described_class]) do
+          @app_name = debian_test_app_name
+          value(Description: debian_test_description)
+          mock_availability_zones
+          debian_init
         end
-        debian_template = DebianTestTemplate.new
-        dict = debian_template.instance_variable_get(:@dict)
-        mapping_under_test = dict[:Mappings]['AWSDebianAMI']
-        assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.values
+      end
+
+      it 'creates mapping template for Debian' do
+        VCR.use_cassette 'debian_mapping_default_options' do
+          cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
+          debian_template = template_fixture.new(cmd_opts)
+          dict = debian_template.instance_variable_get(:@dict)
+          mapping_under_test = dict[:Mappings]['AWSDebianAMI']
+          assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.values
+        end
       end
     end
+  end
 
+  describe '#get_mapping' do
     it 'returns ami mapping for Debian 8 Jessie' do
       VCR.use_cassette 'debian_mapping_version_jessie' do
         mapping = described_class.get_mapping(release: :jessie)

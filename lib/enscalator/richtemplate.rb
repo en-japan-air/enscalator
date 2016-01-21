@@ -9,15 +9,25 @@ module Enscalator
     # Cloudformation limit when sending template body directly
     TEMPLATE_BODY_LIMIT = 51_200
 
-    # TODO: pass additional params to TemplateDSL: https://github.com/bazaarvoice/cloudformation-ruby-dsl/issues/57
     # Create new RichTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
     def initialize(options = {})
       @options = options
+      init_aws_config(@options[:region], profile_name: @options[:profile])
+      super(parse_params(@options[:parameters]),
+            @options[:stack_name],
+            @options[:region],
+            false,
+            &proc { tpl })
+    end
 
-      block = proc { tpl }
-      super(&block)
+    # Parse semicolon separated parameter string
+    #
+    # @param [String] raw_parameters raw parameter string
+    # @return [Hash] parameter hash
+    def parse_params(raw_parameters)
+      Hash[(raw_parameters || '').split(/;/).map { |pair| pair.split(/=/, 2) }]
     end
 
     # Helper method to check if the current command is to create the stack
@@ -30,19 +40,8 @@ module Enscalator
     # Helper method to provide accessor for `region`
     #
     # @return [String] region
-    # (since there is an instance variable with same name, it will be modified in `super` initializer,
-    # thus `attr_reader` is not available)
     def region
-      @options[:region]
-    end
-
-    # Helper method to provide value accessor for `stack_name`
-    #
-    # @return [String] stack_name
-    # (since there is an instance variable with same name, it will be modified in `super` initializer,
-    # thus `attr_reader` is not available)
-    def stack_name
-      @options[:stack_name]
+      aws_region
     end
 
     # Helper method to provide value accessor for `vpc_stack_name`
@@ -51,15 +50,6 @@ module Enscalator
     # @raise [RuntimeError] if vpc-stack-name was not given
     def vpc_stack_name
       @options[:vpc_stack_name] || fail('Requires vpc-stack-name')
-    end
-
-    # Helper method to provide value accessor for `parameters`
-    #
-    # @return [Hash] parameters as key-value pairs
-    # (since there is an instance variable with same name, it will be modified in `super` initializer,
-    # thus `attr_reader` is not available)
-    def parameters
-      (@options[:parameters] || '').split(';').map { |s| s.split '=' }.to_h
     end
 
     # Adds trailing dot to make it proper FQDN
@@ -416,6 +406,11 @@ module Enscalator
       ref("#{role_name}InstanceProfile")
     end
 
+    # Ami image parameter
+    #
+    # @param [String] name ami of the ami
+    # @param [String] ami_id id of the ami
+    # @return [String] parameter name
     def parameter_ami(name, ami_id)
       parameter_name = "#{name}AMIId"
       parameter parameter_name,
@@ -549,8 +544,6 @@ module Enscalator
     def exec!
       init_assets_dir
 
-      init_aws_config(@options[:region], profile_name: @options[:profile])
-
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
       enqueue([@options[:expand] ? proc { puts JSON.pretty_generate(self) } : proc { cfn_cmd(self) }])
@@ -592,6 +585,7 @@ module Enscalator
         template_file = Tempfile.new('enscalator-template.json')
         begin
           template_file.write(template_body)
+          template_file.flush
           command.concat(%W(--template-body 'file://#{template_file.path}'))
           run_cmd(command)
         ensure

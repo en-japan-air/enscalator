@@ -305,8 +305,14 @@ module Enscalator
         STDERR.puts "Saved created key to: #{private_key}"
         File.chmod(0600, private_key)
       else
-        key_pair = Aws::EC2::KeyPair.new(key_name, client: client)
-        STDERR.puts "Found existing ssh key with fingerprint: #{key_pair.key_fingerprint}"
+        key_fingerprint =
+          begin
+            Aws::EC2::KeyPair.new(key_name, client: client).key_fingerprint
+          rescue NotImplementedError
+            # TODO: after upgrade of aws-sdk use only Aws::EC2::KeyPairInfo
+            Aws::EC2::KeyPairInfo.new(key_name, client: client).key_fingerprint
+          end
+        STDERR.puts "Found existing ssh key with fingerprint: #{key_fingerprint}"
       end
     end
 

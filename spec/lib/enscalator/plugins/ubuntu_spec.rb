@@ -2,28 +2,41 @@ require 'spec_helper'
 
 describe Enscalator::Plugins::Ubuntu do
   describe '#ubuntu_init' do
-    it 'creates mapping template for Ubuntu using default parameters' do
-      VCR.use_cassette 'ubuntu_mapping_default_options' do
-        # Testing fixture for Ubuntu Plugin
-        class UbuntuTestTemplate < Enscalator::EnAppTemplateDSL
-          include Enscalator::Plugins::Ubuntu
-          define_method :tpl do
-            mock_availability_zones
-            ubuntu_init('test_server')
-          end
+    let(:app_name) { 'test_server' }
+    let(:description) { 'This is a test template for Ubuntu' }
+
+    context 'when invoked with default parameters' do
+      let(:template_fixture) do
+        ubuntu_test_app_name = app_name
+        ubuntu_test_description = description
+        ubuntu_test_template_name = app_name.humanize.delete(' ')
+        gen_richtemplate(ubuntu_test_template_name,
+                         Enscalator::EnAppTemplateDSL,
+                         [described_class]) do
+          @app_name = ubuntu_test_app_name
+          value(Description: ubuntu_test_description)
+          mock_availability_zones
+          ubuntu_init(ubuntu_test_app_name)
         end
+      end
 
-        ubuntu_template = UbuntuTestTemplate.new
-        dict = ubuntu_template.instance_variable_get(:@dict)
+      it 'creates mapping template for Ubuntu' do
+        VCR.use_cassette 'ubuntu_mapping_default_options' do
+          cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
+          ubuntu_template = template_fixture.new(cmd_opts)
+          dict = ubuntu_template.instance_variable_get(:@dict)
 
-        mapping_under_test = dict[:Mappings]['AWSUbuntuAMI']
-        assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.values
+          mapping_under_test = dict[:Mappings]['AWSUbuntuAMI']
+          assert_mapping mapping_under_test, fields: AWS_VIRTUALIZATION.values
 
-        resource_under_test = dict[:Resources]
-        expect(resource_under_test.keys).to include('Ubuntutest_server')
+          resource_under_test = dict[:Resources]
+          expect(resource_under_test.keys).to include("Ubuntu#{app_name}")
+        end
       end
     end
+  end
 
+  describe '#get_mapping' do
     it 'returns ami mapping for Ubuntu latest version' do
       VCR.use_cassette 'ubuntu_mapping_version_vivid' do
         mapping = described_class.get_mapping(release: :vivid)
