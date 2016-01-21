@@ -111,7 +111,7 @@ module Enscalator
           MasterUsername: ref("RDS#{db_name}Username"),
           MasterUserPassword: ref("RDS#{db_name}Password"),
           DBInstanceClass: ref("RDS#{db_name}InstanceType"),
-          VPCSecurityGroups: [ref_resource_security_group],
+          VPCSecurityGroups: [ref_resource_security_group, ref_private_security_group],
           DBSubnetGroupName: ref("RDS#{db_name}SubnetGroup"),
           DBParameterGroupName: ref("RDS#{db_name}ParameterGroup"),
           AllocatedStorage: ref("RDS#{db_name}AllocatedStorage"),
@@ -128,6 +128,13 @@ module Enscalator
                Value: get_att("RDS#{db_name}Instance", 'Endpoint.Address')
 
         rds_instance_resource_name
+      end
+
+      # Ensure that plugin using this template is a subclass of EnAppTemplateDSL
+      def self.included(klass)
+        if klass.superclass != Enscalator::EnAppTemplateDSL
+          fail("Plugin #{name.to_s.demodulize} requires template to be subclass of #{EnAppTemplateDSL}")
+        end
       end
     end # RDS
   end # Plugins
