@@ -118,7 +118,7 @@ module Enscalator
         # use alias target to create proper cloudformation template for Route53 side of elb configuration
         alias_target = {
           HostedZoneId: get_att(elb_resource_name, 'CanonicalHostedZoneNameID'),
-          DNSName: get_att(elb_resource_name, 'CanonicalHostedZoneName')
+          DNSName: get_att(elb_resource_name, internal ? 'DNSName' : 'CanonicalHostedZoneName')
         }
 
         create_single_dns_record(nil,
