@@ -17,7 +17,7 @@ module Enscalator
         # @param [Symbol] storage storage kind
         # @param [Symbol] arch architecture
         # @param [Symbol] ebs_type (:standard or :gp2)
-        # @param [Hash] custom filters for the search
+        # @param [Hash] filters search filters
         # @raise [ArgumentError] if storage is nil, empty or not one of supported values
         # @raise [ArgumentError] if arch is nil, empty or not one of supported values
         # @return [String] first ami-id found for the query
@@ -33,7 +33,7 @@ module Enscalator
             filters: [
               {
                 name: 'name',
-                values: ["amzn-ami-hvm-#{release}*", "amzn-ami-pv-#{release}*"]
+                values: %W(amzn-ami-hvm-#{release}* amzn-ami-pv-#{release}*)
               },
               {
                 name: 'root-device-type',
@@ -69,13 +69,12 @@ module Enscalator
 
       # Create AMI id parameter for an Amazon linux instance
       #
-      # @param [String] storage storage kind (usually ebs or instance-store)
       # @param [Symbol, String] region name
       # @param [Symbol, String] release a codename or version number
       # @param [Symbol] storage storage kind (ebs or instance_store)
       # @param [String] arch architecture (x86_64 or i386)
       # @param [Symbol] ebs_type (:standard or :gp2)
-      # @param [Hash] custom filters for the search
+      # @param [Hash] filters filters for the search
       def amazon_linux_init(region: self.region,
                             release: '2015.09.1',
                             storage: :ebs,

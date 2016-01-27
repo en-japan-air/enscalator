@@ -1,13 +1,13 @@
 module Enscalator
   module Plugins
-    # Collection of methods to work with Elastic Cache
-    module ElasticCache
+    # Collection of methods to work with ElastiCache (Redis)
+    module ElastiCache
       include Enscalator::Helpers
 
-      # Create new ElasticCache instance
+      # Create ElastiCache cluster
       # @param [String] app_name application name
       # @param [String] cache_node_type instance node type
-      def elastic_cache(app_name, cache_node_type: 'cache.m1.small')
+      def elasticache_cluster_init(app_name, cache_node_type: 'cache.m1.small', num_cache_nodes: 1)
         resource "#{app_name}ElasticacheSubnetGroup",
                  Type: 'AWS::ElastiCache::SubnetGroup',
                  Properties: {
@@ -36,7 +36,7 @@ module Enscalator
                    Description: "#{app_name} redis parameter group",
                    CacheParameterGroupFamily: 'redis2.8',
                    Properties: {
-                     'reserved-memory': InstanceType.elastic_cache_instance_type.max_memory(cache_node_type) / 2
+                     'reserved-memory': InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
                    }
                  }
 
@@ -48,7 +48,7 @@ module Enscalator
                    CacheParameterGroupName: ref("#{app_name}RedisParameterGroup"),
                    CacheNodeType: cache_node_type,
                    Engine: 'redis',
-                   NumCacheNodes: '1'
+                   NumCacheNodes: "#{num_cache_nodes}"
                  }
       end
     end # module ElasticCache

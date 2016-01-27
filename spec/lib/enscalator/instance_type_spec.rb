@@ -16,8 +16,8 @@ describe Enscalator::InstanceType do
   end
 
   it 'provides ElasticCache instance type' do
-    el_cache_instance_type = described_class.elastic_cache_instance_type
-    expect(el_cache_instance_type.class).to be(Enscalator::InstanceType::ElasticCache)
+    el_cache_instance_type = described_class.elasticache_instance_type
+    expect(el_cache_instance_type.class).to be(Enscalator::InstanceType::ElastiCache)
     el_cache_instance_type.current_generation.values.flatten.each { |cg| assert_el_cache_instance_type(cg) }
     el_cache_instance_type.previous_generation.values.flatten.each { |pg| assert_el_cache_instance_type(pg) }
   end
@@ -100,7 +100,7 @@ describe Enscalator::InstanceType do
     end
   end
 
-  describe Enscalator::InstanceType::ElasticCache do
+  describe Enscalator::InstanceType::ElastiCache do
     it 'creates new ElasticCache instance type' do
       el_cache = described_class.new
       common_entries = [:standard, :memory_optimized]

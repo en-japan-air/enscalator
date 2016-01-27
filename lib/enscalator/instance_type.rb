@@ -84,8 +84,8 @@ module Enscalator
       end
     end # class EC2
 
-    # ElasticCache instance
-    class ElasticCache < AwsInstance
+    # ElastiCache instance
+    class ElastiCache < AwsInstance
       def initialize
         super(current_generation, previous_generation)
       end
@@ -193,9 +193,9 @@ module Enscalator
 
       # Creates ElasticCache instance type with corresponding values set
       #
-      # @return [Enscalator::InstanceType::ElasticCache]
-      def elastic_cache_instance_type
-        ElasticCache.new
+      # @return [Enscalator::InstanceType::ElastiCache]
+      def elasticache_instance_type
+        ElastiCache.new
       end
     end # class << self
   end # module InstanceType
