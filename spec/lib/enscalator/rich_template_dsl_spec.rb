@@ -174,7 +174,9 @@ describe Enscalator::RichTemplateDSL do
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_ec2_obsolete'
       test_instance_type = 'm1.small'
-      test_fixture.parameter_ec2_instance_type(test_instance_name, type: test_instance_type)
+      expect do
+        test_fixture.parameter_ec2_instance_type(test_instance_name, type: test_instance_type)
+      end.to output("Using obsolete instance type: #{test_instance_type}\n").to_stderr
       template_under_test = test_fixture.instance_variable_get(:@dict)
       expect(template_under_test[:Parameters]["#{test_instance_name}InstanceType"]).to_not be_nil
       ec2_instance_type = template_under_test[:Parameters]["#{test_instance_name}InstanceType"]
@@ -208,7 +210,9 @@ describe Enscalator::RichTemplateDSL do
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_rds_obsolete'
       test_instance_type = 'db.t1.micro'
-      test_fixture.parameter_rds_instance_type(test_instance_name, type: test_instance_type)
+      expect do
+        test_fixture.parameter_rds_instance_type(test_instance_name, type: test_instance_type)
+      end.to output("Using obsolete instance type: #{test_instance_type}\n").to_stderr
       template_under_test = test_fixture.instance_variable_get(:@dict)
       expect(template_under_test[:Parameters]["#{test_instance_name}InstanceType"]).to_not be_nil
       rds_instance_type = template_under_test[:Parameters]["#{test_instance_name}InstanceType"]

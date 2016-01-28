@@ -71,7 +71,10 @@ describe Enscalator::Plugins::AutoScale do
 
       it 'generates valid template using provided values' do
         cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
-        as_template = template_fixture.new(cmd_opts)
+        as_template = nil
+        expect do
+          as_template = template_fixture.new(cmd_opts)
+        end.to output(/Do not use auto_scale_props to set Tags/).to_stderr
         dict = as_template.instance_variable_get(:@dict)
         test_autoscale = dict[:Resources]["#{template_name}AutoScale"]
         expect(test_autoscale[:Properties][:DesiredCapacity]).to eq(auto_scale_props[:DesiredCapacity])
