@@ -4,10 +4,10 @@ module Enscalator
     module ElastiCache
       include Enscalator::Helpers
 
-      # Create ElastiCache cluster
-      # @param [String] app_name application name
-      # @param [String] cache_node_type instance node type
-      def elasticache_cluster_init(app_name, cache_node_type: 'cache.m1.small', num_cache_nodes: 1)
+      # Initialize resources common for all ElastiCache instances
+      # @param [Object] app_name application stack name
+      # @param [Object] cache_node_type node type
+      def init_cluster_resources(app_name, cache_node_type)
         resource "#{app_name}ElasticacheSubnetGroup",
                  Type: 'AWS::ElastiCache::SubnetGroup',
                  Properties: {
@@ -18,8 +18,8 @@ module Enscalator
         resource "#{app_name}RedisSecurityGroup",
                  Type: 'AWS::EC2::SecurityGroup',
                  Properties: {
-                   GroupDescription: 'Redis Security Group',
-                   VpcId: vpc.id,
+                   GroupDescription: "Redis Security Group for #{app_name}",
+                   VpcId: ref_vpc_id,
                    SecurityGroupIngress: [
                      {
                        IpProtocol: 'tcp',
@@ -39,8 +39,16 @@ module Enscalator
                      'reserved-memory': InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
                    }
                  }
+      end
 
-        resource "#{app_name}Redis",
+      # Create ElastiCache cluster
+      # @param [String] app_name application name
+      # @param [String] cache_node_type instance node type
+      def elasticache_cluster_init(app_name, cache_node_type: 'cache.m1.small', num_cache_nodes: 1)
+
+        init_cluster_resources(app_name, cache_node_type)
+
+        resource "#{app_name}RedisCluster",
                  Type: 'AWS::ElastiCache::CacheCluster',
                  Properties: {
                    VpcSecurityGroupIds: [get_att("#{app_name}RedisSecurityGroup", 'GroupId')],

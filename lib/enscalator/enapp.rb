@@ -56,6 +56,12 @@ module Enscalator
       availability_zones.map { |suffix, _| get_resource(vpc_stack, "PublicSubnet#{suffix.upcase}") }
     end
 
+    # Get VPC ID as reference to parameter
+    # @return [Hash]
+    def ref_vpc_id
+      ref('VpcId')
+    end
+
     # Reference to private security group
     # @return [Hash]
     def ref_private_security_group
