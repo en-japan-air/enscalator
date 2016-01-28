@@ -29,9 +29,9 @@ module Enscalator
                   Type: 'String'
 
         parameter "ES#{app_name}SshKeyName",
-          Default: ssh_key,
-          Description: 'SSH key name for EC2 instances.',
-          Type: 'String'
+                  Default: ssh_key,
+                  Description: 'SSH key name for EC2 instances.',
+                  Type: 'String'
 
         resource 'InstanceRole',
                  Type: 'AWS::IAM::InstanceProfile',
@@ -226,18 +226,18 @@ module Enscalator
                  }
 
         elb_ref = elb_init elb_name: "#{app_name}-es-elb",
-          web_server_port: 9200,
-          zone_name: private_hosted_zone,
-          dns_record_name: "elb.es.#{app_name.underscore.dasherize}.#{private_hosted_zone}",
-          ssl: false,
-          internal: true
+                           web_server_port: 9200,
+                           zone_name: private_hosted_zone,
+                           dns_record_name: "elb.es.#{app_name.underscore.dasherize}.#{private_hosted_zone}",
+                           ssl: false,
+                           internal: true
 
         resource 'ELBAttachment',
-          Type: 'AWS::OpsWorks::ElasticLoadBalancerAttachment',
-          Properties: {
-            ElasticLoadBalancerName: ref(elb_ref),
-            LayerId: ref('ESLayer')
-          }
+                 Type: 'AWS::OpsWorks::ElasticLoadBalancerAttachment',
+                 Properties: {
+                   ElasticLoadBalancerName: ref(elb_ref),
+                   LayerId: ref('ESLayer')
+                 }
       end
     end # module Elasticsearch
   end # module Plugins
