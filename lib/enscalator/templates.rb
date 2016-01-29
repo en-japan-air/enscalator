@@ -16,6 +16,7 @@ require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
+require_relative '***REMOVED***'
 require_relative 'templates/vpc_peering'
 
 module Enscalator
