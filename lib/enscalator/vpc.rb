@@ -235,6 +235,12 @@ module Enscalator
                        FromPort: '465',
                        ToPort: '465',
                        SourceSecurityGroupId: ref('PrivateSecurityGroup')
+                     },
+                     {
+                       IpProtocol: 'icmp',
+                       FromPort: '-1',
+                       ToPort: '-1',
+                       CidrIp: '10.0.0.0/8'
                      }
                    ],
                    SecurityGroupEgress: [
