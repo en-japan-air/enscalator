@@ -220,6 +220,12 @@ module Enscalator
                    SecurityGroupIngress: [
                      {
                        IpProtocol: 'tcp',
+                       FromPort: '22',
+                       ToPort: '22',
+                       SourceSecurityGroupId: ref('PrivateSecurityGroup')
+                     },
+                     {
+                       IpProtocol: 'tcp',
                        FromPort: '80',
                        ToPort: '80',
                        SourceSecurityGroupId: ref('PrivateSecurityGroup')
