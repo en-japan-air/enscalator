@@ -210,19 +210,15 @@ module Enscalator
                    ]
                  }
 
-        elb_ref = elb_init elb_name: "#{app_name}-es-elb",
-                           web_server_port: '9200',
-                           zone_name: private_hosted_zone,
-                           dns_record_name: "elb.es.#{app_name.underscore.dasherize}.#{private_hosted_zone}",
-                           ssl: false,
-                           internal: true
-
-        resource 'ELBAttachment',
-                 Type: 'AWS::OpsWorks::ElasticLoadBalancerAttachment',
+        resource 'ESMainInstance',
+                 Type: 'AWS::OpsWorks::Instance',
                  Properties: {
-                   ElasticLoadBalancerName: ref(elb_ref),
-                   LayerId: ref('ESLayer')
+                   #EbsOptimized: true,          # Not available for m3.medium
+                   InstanceType: 'm3.medium',
+                   LayerIds: [ref('ESLayer')],
+                   StackId: ref('ESStack'),
                  }
+
       end
     end # module Elasticsearch
   end # module Plugins
