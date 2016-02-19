@@ -15,20 +15,21 @@ module Enscalator
                    SubnetIds: ref_resource_subnets
                  }
 
-        resource "#{app_name}RedisSecurityGroup",
-                 Type: 'AWS::EC2::SecurityGroup',
-                 Properties: {
-                   GroupDescription: "Redis Security Group for #{app_name}",
-                   VpcId: ref_vpc_id,
-                   SecurityGroupIngress: [
-                     {
-                       IpProtocol: 'tcp',
-                       FromPort: '6379',
-                       ToPort: '6389',
-                       SourceSecurityGroupId: ref_application_security_group
-                     }
-                   ]
-                 }
+        security_group_vpc "#{app_name}RedisSecurityGroup",
+                           "Redis Security Group for #{app_name}",
+                           ref_vpc_id,
+                           security_group_ingress: [
+                             {
+                               IpProtocol: 'tcp',
+                               FromPort: '6379',
+                               ToPort: '6389',
+                               SourceSecurityGroupId: ref_application_security_group
+                             }
+                           ],
+                           tags: {
+                             Name: join('-', aws_stack_name, 'res', 'sg'),
+                             Application: aws_stack_name
+                           }
 
         resource "#{app_name}RedisParameterGroup",
                  Type: 'AWS::ElastiCache::ParameterGroup',
@@ -88,7 +89,10 @@ module Enscalator
                    CacheNodeType: cache_node_type,
                    CacheSubnetGroupName: ref("#{app_name}ElasticacheSubnetGroup"),
                    CacheParameterGroupName: ref("#{app_name}RedisParameterGroup"),
-                   SecurityGroupIds: [get_att("#{app_name}RedisSecurityGroup", 'GroupId')]
+                   SecurityGroupIds: [
+                     get_att("#{app_name}RedisSecurityGroup", 'GroupId'),
+                     ref_private_security_group
+                   ]
                  }
 
         output "#{app_name}RedisReplicationGroup",
