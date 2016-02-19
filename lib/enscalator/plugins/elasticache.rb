@@ -60,6 +60,10 @@ module Enscalator
                    VpcSecurityGroupIds: [get_att("#{app_name}RedisSecurityGroup", 'GroupId')]
                  }
         resource_name
+
+        # Unable to get created resource endpoint and port with Fn::GetAtt for engine == redis
+        # For more details see here:
+        # http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-elasticache-cache-cluster.html
       end
 
       # Create ElastiCache replication group
@@ -90,6 +94,22 @@ module Enscalator
         output "#{app_name}RedisReplicationGroup",
                Description: "Redis ReplicationGroup #{app_name}",
                Value: ref("#{app_name}RedisReplicationGroup")
+
+        output "#{app_name}RedisPrimaryEndpointAddress",
+               Description: "Redis Primary Endpoint Address #{app_name}",
+               Value: get_att(resource_name, 'PrimaryEndPoint.Address')
+
+        output "#{app_name}RedisPrimaryEndpointPort",
+               Description: "Redis Primary Endpoint Port #{app_name}",
+               Value: get_att(resource_name, 'PrimaryEndPoint.Port')
+
+        output "#{app_name}RedisReadOnlyEndpointAddresses",
+               Description: "Redis ReadOnly Endpoint Addresses #{app_name}",
+               Value: get_att(resource_name, 'ReadEndPoint.Addresses')
+
+        output "#{app_name}RedisReadOnlyEndpointPorts",
+               Description: "Redis ReadOnly Endpoint Ports #{app_name}",
+               Value: get_att(resource_name, 'ReadEndPoint.Ports')
 
         resource_name
       end
