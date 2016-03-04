@@ -13,6 +13,7 @@ module Enscalator
       # @param [String] cookbook chef cookbook
       def elasticsearch_init(app_name,
                              ssh_key:,
+                             es_config: {},
                              os: 'Amazon Linux 2015.09',
                              cookbook: 'https://github.com/en-japan/opsworks-elasticsearch-cookbook.git')
 
@@ -153,39 +154,23 @@ module Enscalator
                          'cloud-aws',
                          { name: 'elasticsearch-head', url: 'mobz/elasticsearch-head' }
                        ],
-                       cluster: {
-                         name: "#{app_name}-elasticsearch"
-                       },
-                       gateway: {
-                         expected_nodes: 1
-                       },
-                       discovery: {
-                         type: 'ec2',
-                         zen: {
-                           minimum_master_nodes: 1,
-                           ping: {
-                             multicast: {
-                               enabled: false
+                       config: {
+                         'cluster.name': "#{app_name}-elasticsearch",
+                         'path.data': '/mnt/elasticsearch-data',
+                         'network.bind_host': '0.0.0.0',
+                         'network.publish_host': '_non_loopback_',
+                         'cloud.aws.region': region,
+                         discovery: {
+                           type: 'ec2',
+                           ec2: {
+                             groups: [ ref(instances_security_group) ],
+                             tag: {
+                               'opsworks:stack': ops_stack_name
                              }
                            }
                          },
-                         ec2: {
-                           tag: {
-                             'opsworks:stack': ops_stack_name
-                           }
-                         }
-                       },
-                       path: {
-                         data: '/mnt/elasticsearch-data'
-                       },
-                       cloud: {
-                         aws: {
-                           region: region
-                         }
-                       },
-                       custom_config: {
-                         'cluster.routing.allocation.awareness.attributes': 'rack_id'
-                       }
+                         'cluster.routing.allocation.awareness.attributes': 'rack_id',
+                       }.merge(es_config)
                      }
                    },
                    ServiceRoleArn: {
@@ -225,19 +210,15 @@ module Enscalator
                    ]
                  }
 
-        elb_ref = elb_init elb_name: "#{app_name}-es-elb",
-                           web_server_port: 9200,
-                           zone_name: private_hosted_zone,
-                           dns_record_name: "elb.es.#{app_name.underscore.dasherize}.#{private_hosted_zone}",
-                           ssl: false,
-                           internal: true
-
-        resource 'ELBAttachment',
-                 Type: 'AWS::OpsWorks::ElasticLoadBalancerAttachment',
+        resource 'ESMainInstance',
+                 Type: 'AWS::OpsWorks::Instance',
                  Properties: {
-                   ElasticLoadBalancerName: ref(elb_ref),
-                   LayerId: ref('ESLayer')
+                   #EbsOptimized: true,          # Not available for m3.medium
+                   InstanceType: 'm3.medium',
+                   LayerIds: [ref('ESLayer')],
+                   StackId: ref('ESStack'),
                  }
+
       end
     end # module Elasticsearch
   end # module Plugins
