@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'securerandom'
 
 describe Enscalator::Plugins::Elasticache do
   let(:app_name) { 'el_cluster_test' }
@@ -6,19 +7,21 @@ describe Enscalator::Plugins::Elasticache do
 
   describe '#init_cluster_resources' do
     let(:cache_node_type) { 'cache.t2.medium' }
+    let(:seed) { SecureRandom.hex(6) }
     context 'when invoked with default parameters' do
       let(:template_fixture) do
         el_test_app_name = app_name
         el_test_description = description
         el_test_template_name = app_name.humanize.delete(' ')
         el_test_cache_node_type = cache_node_type
+        el_test_seed = seed
         gen_richtemplate(el_test_template_name,
                          Enscalator::EnAppTemplateDSL,
                          [described_class]) do
           @app_name = el_test_app_name
           value(Description: el_test_description)
           mock_availability_zones
-          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type, el_test_seed)
         end
       end
       let(:cmd_opts) { default_cmd_opts(template_fixture.name, template_fixture.name.underscore) }
@@ -42,25 +45,27 @@ describe Enscalator::Plugins::Elasticache do
         expect(security_group[:Type]).to eq('AWS::EC2::SecurityGroup')
 
         # redis parameter group
-        expect(resources).to have_key("#{app_name}RedisParameterGroup")
-        parameter_group = resources["#{app_name}RedisParameterGroup"]
+        expect(resources).to have_key("#{app_name}RedisParameterGroup#{seed}")
+        parameter_group = resources["#{app_name}RedisParameterGroup#{seed}"]
         expect(parameter_group[:Type]).to eq('AWS::ElastiCache::ParameterGroup')
       end
     end
 
     context 'when invoked with custom parameters' do
+      let(:seed) { SecureRandom.hex(6) }
       let(:template_fixture) do
         el_test_app_name = app_name
         el_test_description = description
         el_test_template_name = app_name.humanize.delete(' ')
         el_test_cache_node_type = cache_node_type
+        el_test_seed = seed
         gen_richtemplate(el_test_template_name,
                          Enscalator::EnAppTemplateDSL,
                          [described_class]) do
           @app_name = el_test_app_name
           value(Description: el_test_description)
           mock_availability_zones
-          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type, el_test_seed)
         end
       end
       let(:cmd_opts) { default_cmd_opts(template_fixture.name, template_fixture.name.underscore) }
@@ -69,7 +74,7 @@ describe Enscalator::Plugins::Elasticache do
         dict = elasticache_common_template.instance_variable_get(:@dict)
         expect(dict.key?(:Resources)).to be_truthy
         resources = dict[:Resources]
-        parameter_group = resources["#{app_name}RedisParameterGroup"]
+        parameter_group = resources["#{app_name}RedisParameterGroup#{seed}"]
         expected_reserved_mem =
           Enscalator::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
         expect(parameter_group[:Properties][:Properties][:'reserved-memory']).to eq(expected_reserved_mem)

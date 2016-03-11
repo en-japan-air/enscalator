@@ -7,7 +7,7 @@ module Enscalator
       # Initialize resources common for all ElastiCache instances
       # @param [Object] app_name application stack name
       # @param [Object] cache_node_type node type
-      def init_cluster_resources(app_name, cache_node_type)
+      def init_cluster_resources(app_name, cache_node_type, seed)
         resource "#{app_name}ElasticacheSubnetGroup",
                  Type: 'AWS::ElastiCache::SubnetGroup',
                  Properties: {
@@ -31,7 +31,7 @@ module Enscalator
                              Application: aws_stack_name
                            }
 
-        resource "#{app_name}RedisParameterGroup",
+        resource "#{app_name}RedisParameterGroup#{seed}",
                  Type: 'AWS::ElastiCache::ParameterGroup',
                  Properties: {
                    Description: "#{app_name} redis parameter group",
@@ -47,7 +47,8 @@ module Enscalator
       # @param [String] cache_node_type instance node type
       # @param [Integer] num_cache_nodes number of nodes to create
       def elasticache_cluster_init(app_name, cache_node_type: 'cache.m1.small', num_cache_nodes: 1)
-        init_cluster_resources(app_name, cache_node_type)
+        seed = SecureRandom.hex(6)
+        init_cluster_resources(app_name, cache_node_type, seed)
 
         resource_name = "#{app_name}RedisCluster"
         resource resource_name,
@@ -57,7 +58,7 @@ module Enscalator
                    NumCacheNodes: "#{num_cache_nodes}",
                    CacheNodeType: cache_node_type,
                    CacheSubnetGroupName: ref("#{app_name}ElasticacheSubnetGroup"),
-                   CacheParameterGroupName: ref("#{app_name}RedisParameterGroup"),
+                   CacheParameterGroupName: ref("#{app_name}RedisParameterGroup#{seed}"),
                    VpcSecurityGroupIds: [get_att("#{app_name}RedisSecurityGroup", 'GroupId')]
                  }
         resource_name
@@ -76,7 +77,8 @@ module Enscalator
         end
         fail 'Unable to create ElastiCache replication group with single cluster node' if num_cache_clusters <= 1
 
-        init_cluster_resources(app_name, cache_node_type)
+        seed = SecureRandom.hex(6)
+        init_cluster_resources(app_name, cache_node_type, seed)
 
         resource_name = "#{app_name}RedisReplicationGroup"
         resource resource_name,
@@ -88,7 +90,7 @@ module Enscalator
                    NumCacheClusters: num_cache_clusters,
                    CacheNodeType: cache_node_type,
                    CacheSubnetGroupName: ref("#{app_name}ElasticacheSubnetGroup"),
-                   CacheParameterGroupName: ref("#{app_name}RedisParameterGroup"),
+                   CacheParameterGroupName: ref("#{app_name}RedisParameterGroup#{seed}"),
                    SecurityGroupIds: [
                      get_att("#{app_name}RedisSecurityGroup", 'GroupId'),
                      ref_private_security_group
