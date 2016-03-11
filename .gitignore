@@ -14,3 +14,4 @@
 *.iml
 /.bin
 /tools/keys
+/tools/openvpn
