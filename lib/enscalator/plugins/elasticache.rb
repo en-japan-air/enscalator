@@ -70,9 +70,9 @@ module Enscalator
       # Create ElastiCache replication group
       # @param [String] app_name application name
       # @param [String] cache_node_type instance node type
-      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.m1.small', num_cache_clusters: 2)
-        if %w(t1 t2).map { |t| cache_node_type.include?(t) }.include?(true)
-          fail "T1 and T2 instance types are not supported, got '#{cache_node_type}'"
+      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2)
+        if %w(t1).map { |t| cache_node_type.include?(t) }.include?(true)
+          fail "T1 instance types are not supported, got '#{cache_node_type}'"
         end
         fail 'Unable to create ElastiCache replication group with single cluster node' if num_cache_clusters <= 1
 
