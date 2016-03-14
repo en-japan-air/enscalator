@@ -5,23 +5,55 @@ describe Enscalator::Plugins::Elasticache do
   let(:app_name) { 'el_cluster_test' }
   let(:description) { 'This is test template for elasticache cluster' }
 
+  describe '#magic_number' do
+    subject(:fixture) do
+      class TestFixture
+        include Enscalator::Plugins::Elasticache
+      end.new
+    end
+    subject(:digest) { Digest::SHA256.new }
+    context 'when input is String' do
+      let(:test_str) { ('a'..'z').to_a.shuffle.join }
+      it 'its generates magic number right away' do
+        expect(fixture.magic_number(test_str)).to eq(digest.hexdigest(test_str))
+      end
+    end
+    context 'when input is Array' do
+      let(:test_arr) { [1, 2, 3, 'b', [4, 'c']] }
+      it 'converts it to String and then generates magic number' do
+        expect(fixture.magic_number(test_arr)).to eq(digest.hexdigest('1&2&3&4&b&c'))
+      end
+      it 'produce valid magic number regardless of the order' do
+        expect(fixture.magic_number(test_arr.shuffle)).to eq(fixture.magic_number(test_arr))
+      end
+    end
+    context 'when input is Hash' do
+      let(:test_hash) { { a: { c: 'c' }, b: { b: 'b', d: 'd' } } }
+      let(:test_hash_reordered) { { b: { d: 'd', b: 'b' }, a: { c: 'c' } } }
+      it 'flattens it and then generates magic number' do
+        expect(fixture.magic_number(test_hash)).to eq(digest.hexdigest('a.c=c&b.b=b&b.d=d'))
+      end
+      it 'produce valid magic number regardless of the order' do
+        expect(fixture.magic_number(test_hash)).to eq(fixture.magic_number(test_hash_reordered))
+      end
+    end
+  end
+
   describe '#init_cluster_resources' do
     let(:cache_node_type) { 'cache.t2.medium' }
-    let(:seed) { SecureRandom.hex(6) }
     context 'when invoked with default parameters' do
       let(:template_fixture) do
         el_test_app_name = app_name
         el_test_description = description
         el_test_template_name = app_name.humanize.delete(' ')
         el_test_cache_node_type = cache_node_type
-        el_test_seed = seed
         gen_richtemplate(el_test_template_name,
                          Enscalator::EnAppTemplateDSL,
                          [described_class]) do
           @app_name = el_test_app_name
           value(Description: el_test_description)
           mock_availability_zones
-          init_cluster_resources(el_test_app_name, el_test_cache_node_type, el_test_seed)
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
         end
       end
       let(:cmd_opts) { default_cmd_opts(template_fixture.name, template_fixture.name.underscore) }
@@ -33,6 +65,7 @@ describe Enscalator::Plugins::Elasticache do
         resources = dict[:Resources]
 
         # TODO: add more tests for values in each resource group
+        binding.pry
 
         # subnet group
         expect(resources).to have_key("#{app_name}ElasticacheSubnetGroup")
@@ -45,27 +78,25 @@ describe Enscalator::Plugins::Elasticache do
         expect(security_group[:Type]).to eq('AWS::EC2::SecurityGroup')
 
         # redis parameter group
-        expect(resources).to have_key("#{app_name}RedisParameterGroup#{seed}")
-        parameter_group = resources["#{app_name}RedisParameterGroup#{seed}"]
+        expect(resources).to have_key("#{app_name}RedisParameterGroup")
+        parameter_group = resources["#{app_name}RedisParameterGroup"]
         expect(parameter_group[:Type]).to eq('AWS::ElastiCache::ParameterGroup')
       end
     end
 
     context 'when invoked with custom parameters' do
-      let(:seed) { SecureRandom.hex(6) }
       let(:template_fixture) do
         el_test_app_name = app_name
         el_test_description = description
         el_test_template_name = app_name.humanize.delete(' ')
         el_test_cache_node_type = cache_node_type
-        el_test_seed = seed
         gen_richtemplate(el_test_template_name,
                          Enscalator::EnAppTemplateDSL,
                          [described_class]) do
           @app_name = el_test_app_name
           value(Description: el_test_description)
           mock_availability_zones
-          init_cluster_resources(el_test_app_name, el_test_cache_node_type, el_test_seed)
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
         end
       end
       let(:cmd_opts) { default_cmd_opts(template_fixture.name, template_fixture.name.underscore) }
@@ -74,7 +105,7 @@ describe Enscalator::Plugins::Elasticache do
         dict = elasticache_common_template.instance_variable_get(:@dict)
         expect(dict.key?(:Resources)).to be_truthy
         resources = dict[:Resources]
-        parameter_group = resources["#{app_name}RedisParameterGroup#{seed}"]
+        parameter_group = resources["#{app_name}RedisParameterGroup"]
         expected_reserved_mem =
           Enscalator::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
         expect(parameter_group[:Properties][:Properties][:'reserved-memory']).to eq(expected_reserved_mem)

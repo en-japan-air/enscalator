@@ -1,7 +1,7 @@
 require 'trollop'
 require 'ipaddr'
 require 'ipaddress'
-require 'securerandom'
+require 'digest'
 require 'aws-sdk'
 require 'active_support'
 require 'active_support/core_ext'
