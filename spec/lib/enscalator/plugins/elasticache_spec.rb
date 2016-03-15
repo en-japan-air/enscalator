@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'securerandom'
 
 describe Enscalator::Plugins::Elasticache do
   let(:app_name) { 'el_cluster_test' }
@@ -65,7 +64,6 @@ describe Enscalator::Plugins::Elasticache do
         resources = dict[:Resources]
 
         # TODO: add more tests for values in each resource group
-        binding.pry
 
         # subnet group
         expect(resources).to have_key("#{app_name}ElasticacheSubnetGroup")
@@ -78,8 +76,10 @@ describe Enscalator::Plugins::Elasticache do
         expect(security_group[:Type]).to eq('AWS::EC2::SecurityGroup')
 
         # redis parameter group
-        expect(resources).to have_key("#{app_name}RedisParameterGroup")
-        parameter_group = resources["#{app_name}RedisParameterGroup"]
+        # have to get resource key with regex, using its known non-dynamic part
+        parameter_group_name = resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
+        expect(parameter_group_name).not_to be_nil
+        parameter_group = resources[parameter_group_name]
         expect(parameter_group[:Type]).to eq('AWS::ElastiCache::ParameterGroup')
       end
     end
@@ -105,7 +105,8 @@ describe Enscalator::Plugins::Elasticache do
         dict = elasticache_common_template.instance_variable_get(:@dict)
         expect(dict.key?(:Resources)).to be_truthy
         resources = dict[:Resources]
-        parameter_group = resources["#{app_name}RedisParameterGroup"]
+        parameter_group_name = resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
+        parameter_group = resources[parameter_group_name]
         expected_reserved_mem =
           Enscalator::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
         expect(parameter_group[:Properties][:Properties][:'reserved-memory']).to eq(expected_reserved_mem)
