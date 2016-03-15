@@ -121,6 +121,12 @@ TEMPLATE
                                   user_cert: user_files['crt'].basename,
                                   user_key: user_files['key'].basename)
       config.save_file(user_config_dir.join("#{operator}.ovpn"))
+
+      # create dmg bundle
+      create_dmg_bundle("OpenVPN Config #{operator}", user_config_dir.to_s, work_dir.join("#{operator}.dmg"))
+
+      # remove directory with intermediate files
+      FileUtils.rm_rf(user_config_dir)
     end
 
     def self.run!(argv)
