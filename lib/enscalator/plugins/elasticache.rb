@@ -23,7 +23,7 @@ module Enscalator
       # Initialize resources common for all ElastiCache instances
       # @param [Object] app_name application stack name
       # @param [Object] cache_node_type node type
-      def init_cluster_resources(app_name, cache_node_type)
+      def init_cluster_resources(app_name, cache_node_type, param_group_seed: nil)
         subnet_group_name = "#{app_name}ElasticacheSubnetGroup"
         resource subnet_group_name,
                  Type: 'AWS::ElastiCache::SubnetGroup',
@@ -56,7 +56,12 @@ module Enscalator
             'reserved-memory': InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
           }
         }
-        parameter_group_name = "#{app_name}RedisParameterGroup#{magic_number(properties)}"
+        # TODO: remove this workaround when related template gets fixed
+        parameter_group_name = if param_group_seed
+                                 "#{app_name}RedisParameterGroup#{param_group_seed}"
+                               else
+                                 "#{app_name}RedisParameterGroup#{magic_number(properties)}"
+                               end
         resource parameter_group_name,
                  Type: 'AWS::ElastiCache::ParameterGroup',
                  Properties: properties
@@ -96,13 +101,13 @@ module Enscalator
       # Create ElastiCache replication group
       # @param [String] app_name application name
       # @param [String] cache_node_type instance node type
-      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2)
+      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2, seed: nil)
         if %w(t1).map { |t| cache_node_type.include?(t) }.include?(true)
           fail "T1 instance types are not supported, got '#{cache_node_type}'"
         end
         fail 'Unable to create ElastiCache replication group with single cluster node' if num_cache_clusters <= 1
 
-        cluster_resources = init_cluster_resources(app_name, cache_node_type)
+        cluster_resources = init_cluster_resources(app_name, cache_node_type, param_group_seed: seed)
 
         resource_name = "#{app_name}RedisReplicationGroup"
         resource resource_name,
