@@ -1,6 +1,4 @@
-/.DS_S*
 /.bundle/
-/vendor/bundle
 /.yardoc
 /Gemfile.lock
 /_yardoc/
@@ -9,8 +7,4 @@
 /pkg/
 /spec/reports/
 /tmp/
-.*.swp
-/.idea
-*.iml
-/.bin
-/tools/keys
+/users
