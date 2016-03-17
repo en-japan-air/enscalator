@@ -119,6 +119,77 @@ describe Enscalator::Plugins::Elasticache do
         expect(parameter_group[:Properties][:Properties][:'reserved-memory']).to eq(expected_reserved_mem)
       end
     end
+
+    context 'when properties in cache parameter group gets generated' do
+      let(:template_fixture_low_spec) do
+        el_test_app_name = app_name
+        el_test_description = description
+        el_test_template_name = app_name.humanize.delete(' ')
+        el_test_cache_node_type = 'cache.t2.medium'
+        gen_richtemplate(el_test_template_name,
+                         Enscalator::EnAppTemplateDSL,
+                         [described_class]) do
+          @app_name = el_test_app_name
+          value(Description: el_test_description)
+          mock_availability_zones
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
+        end
+      end
+      let(:cmd_opts_low_spec) do
+        default_cmd_opts(template_fixture_low_spec.name, template_fixture_low_spec.name.underscore)
+      end
+      let(:template_fixture_high_spec) do
+        el_test_app_name = app_name
+        el_test_description = description
+        el_test_template_name = app_name.humanize.delete(' ')
+        el_test_cache_node_type = 'cache.m3.large'
+        gen_richtemplate(el_test_template_name,
+                         Enscalator::EnAppTemplateDSL,
+                         [described_class]) do
+          @app_name = el_test_app_name
+          value(Description: el_test_description)
+          mock_availability_zones
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
+        end
+      end
+      let(:cmd_opts_high_spec) do
+        default_cmd_opts(template_fixture_high_spec.name, template_fixture_high_spec.name.underscore)
+      end
+
+      it 'produces same magic number if properties didn\'t change' do
+        template1 = template_fixture_low_spec.new(cmd_opts_low_spec)
+        template2 = template_fixture_low_spec.new(cmd_opts_low_spec)
+        template1_body = template1.instance_variable_get(:@dict)
+        template2_body = template2.instance_variable_get(:@dict)
+
+        template1_resources = template1_body[:Resources]
+        template2_resources = template2_body[:Resources]
+
+        template1_parameter_group_name =
+          template1_resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
+        template2_parameter_group_name =
+          template2_resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
+
+        expect(template1_parameter_group_name).to eq(template2_parameter_group_name)
+      end
+
+      it 'generates new magic number if properties were updated' do
+        template1 = template_fixture_low_spec.new(cmd_opts_low_spec)
+        template2 = template_fixture_high_spec.new(cmd_opts_low_spec)
+        template1_body = template1.instance_variable_get(:@dict)
+        template2_body = template2.instance_variable_get(:@dict)
+
+        template1_resources = template1_body[:Resources]
+        template2_resources = template2_body[:Resources]
+
+        template1_parameter_group_name =
+          template1_resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
+        template2_parameter_group_name =
+          template2_resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
+
+        expect(template1_parameter_group_name).not_to eq(template2_parameter_group_name)
+      end
+    end
   end
 
   describe '#elasticache_cluster_init' do
@@ -185,7 +256,7 @@ describe Enscalator::Plugins::Elasticache do
         expect(redis_repl_group[:Properties][:AutomaticFailoverEnabled]).to eq(true.to_s)
         expect(redis_repl_group[:Properties][:NumCacheClusters]).to be >= 2
         expect(redis_repl_group[:Properties][:CacheNodeType]).to satisfy do |value|
-          %w(t1 t2).map { |t| value.include?(t) }.uniq.include?(false)
+          %w(t1).map { |t| value.include?(t) }.uniq.include?(false)
         end
       end
     end
