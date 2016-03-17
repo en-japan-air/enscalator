@@ -64,24 +64,30 @@ describe Enscalator::Plugins::Elasticache do
         expect(dict).to have_key(:Resources)
         resources = dict[:Resources]
 
-        # TODO: add more tests for values in each resource group
-
         # subnet group
         expect(resources).to have_key("#{app_name}ElasticacheSubnetGroup")
         subnet_group = resources["#{app_name}ElasticacheSubnetGroup"]
         expect(subnet_group[:Type]).to eq('AWS::ElastiCache::SubnetGroup')
+        expect(subnet_group[:Properties]).to have_key(:Description)
+        expect(subnet_group[:Properties]).to have_key(:SubnetIds)
 
         # security group
         expect(resources).to have_key("#{app_name}RedisSecurityGroup")
         security_group = resources["#{app_name}RedisSecurityGroup"]
         expect(security_group[:Type]).to eq('AWS::EC2::SecurityGroup')
+        expect(security_group[:Properties]).to have_key(:VpcId)
+        expect(security_group[:Properties]).to have_key(:GroupDescription)
+        expect(security_group[:Properties]).to have_key(:SecurityGroupIngress).or have_key(:SecurityGroupEgress)
 
         # redis parameter group
-        # have to get resource key with regex, using its known non-dynamic part
+        # get resource key with regex, using its known non-dynamic part
         parameter_group_name = resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
         expect(parameter_group_name).not_to be_nil
         parameter_group = resources[parameter_group_name]
         expect(parameter_group[:Type]).to eq('AWS::ElastiCache::ParameterGroup')
+        expect(parameter_group[:Properties]).to have_key(:Description)
+        expect(parameter_group[:Properties]).to have_key(:CacheParameterGroupFamily)
+        expect(parameter_group[:Properties]).to have_key(:Properties)
       end
     end
 
