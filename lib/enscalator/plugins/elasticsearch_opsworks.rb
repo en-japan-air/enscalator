@@ -163,13 +163,13 @@ module Enscalator
                          discovery: {
                            type: 'ec2',
                            ec2: {
-                             groups: [ ref(instances_security_group) ],
+                             groups: [ref(instances_security_group)],
                              tag: {
                                'opsworks:stack': ops_stack_name
                              }
                            }
                          },
-                         'cluster.routing.allocation.awareness.attributes': 'rack_id',
+                         'cluster.routing.allocation.awareness.attributes': 'rack_id'
                        }.merge(es_config)
                      }
                    },
@@ -213,12 +213,11 @@ module Enscalator
         resource 'ESMainInstance',
                  Type: 'AWS::OpsWorks::Instance',
                  Properties: {
-                   #EbsOptimized: true,          # Not available for m3.medium
+                   # EbsOptimized: true,          # Not available for m3.medium
                    InstanceType: 'm3.medium',
                    LayerIds: [ref('ESLayer')],
-                   StackId: ref('ESStack'),
+                   StackId: ref('ESStack')
                  }
-
       end
     end # module Elasticsearch
   end # module Plugins

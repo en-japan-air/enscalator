@@ -4,12 +4,13 @@ describe Enscalator::Plugins::Elasticache do
   let(:app_name) { 'el_cluster_test' }
   let(:description) { 'This is test template for elasticache cluster' }
 
+  # Test fixture class where plugin methods gets included
+  class TestFixture
+    include Enscalator::Plugins::Elasticache
+  end
+
   describe '#magic_number' do
-    subject(:fixture) do
-      class TestFixture
-        include Enscalator::Plugins::Elasticache
-      end.new
-    end
+    subject(:fixture) { TestFixture.new }
     subject(:digest) { Digest::SHA256.new }
     context 'when input is String' do
       let(:test_str) { ('a'..'z').to_a.shuffle.join }
