@@ -149,4 +149,12 @@ describe Enscalator::Helpers do
       end
     end
   end
+
+  describe '#flatten_hash' do
+    it 'converts Hash with nested values to flat structure' do
+      hash = { a: 'a', b: { c: 'c' } }
+      expected_hash = { a: 'a', 'b.c': 'c' }
+      expect(test_fixture.flatten_hash(hash)).to eq(expected_hash)
+    end
+  end
 end

@@ -7,4 +7,3 @@ AllCops:
     - vendor/**/*
     - tools/openvpn/vendor/**/*
     - lib/enscalator/templates/**/*
-
