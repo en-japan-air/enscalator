@@ -324,5 +324,20 @@ module Enscalator
       fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
       File.read(user_data_path)
     end
+
+    # Converts hash with nested values to flat hash
+    #
+    # @param [Hash] input that should be flatten
+    def flatten_hash(input)
+      input.each_with_object({}) do |(k, v), h|
+        if v.is_a?(Hash)
+          flatten_hash(v).map do |h_k, h_v|
+            h["#{k}.#{h_k}".to_sym] = h_v
+          end
+        else
+          h[k] = v
+        end
+      end
+    end
   end # module Helpers
 end # module Enscalator

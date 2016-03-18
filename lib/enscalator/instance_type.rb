@@ -156,7 +156,7 @@ module Enscalator
       # @return [Hash] instance family and type
       def current_generation
         {
-          standard: %w( db.m3.medium db.m3.large db.m3.xlarge db.m3.2xlarge ),
+          standard: %w( db.m4.large db.m4.xlarge db.m4.2xlarge db.m4.4xlarge db.m4.10xlarge ),
           memory_optimized: %w( db.r3.large db.r3.xlarge db.r3.2xlarge db.r3.4xlarge db.r3.8xlarge ),
           burstable_performance: %w( db.t2.micro db.t2.small db.t2.medium )
         }
@@ -168,7 +168,8 @@ module Enscalator
       # @return [Hash] instance family and type
       def previous_generation
         {
-          standard: %w( db.m1.small db.m1.medium db.m1.large db.m1.xlarge ),
+          standard: %w( db.m1.small db.m1.medium db.m1.large db.m1.xlarge
+                        db.m3.medium db.m3.large db.m3.xlarge db.m3.2xlarge ),
           memory_optimized: %w( db.m2.xlarge db.m2.2xlarge db.m2.4xlarge db.cr1.8xlarge ),
           micro: %w( db.t1.micro )
         }
