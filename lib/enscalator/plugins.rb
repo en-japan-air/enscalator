@@ -18,6 +18,7 @@ require_relative 'plugins/elasticache'
 require_relative 'plugins/elasticsearch_opsworks'
 require_relative 'plugins/amazon_linux'
 require_relative 'plugins/vpc_peering_connection'
+require_relative 'plugins/nat_gateway'
 
 module Enscalator
   # Namespace for enscalator plugins

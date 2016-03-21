@@ -2,8 +2,6 @@ module Enscalator
   module Templates
     # Amazon AWS Virtual Private Cloud template
     class VPC < Enscalator::RichTemplateDSL
-      include Enscalator::Helpers
-
       # Template method
       def tpl
         nat_key_name = gen_ssh_key_name 'vpc-nat',
