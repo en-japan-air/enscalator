@@ -283,6 +283,12 @@ module Enscalator
                      ]
                    }
 
+          # Important!
+          # When updating stack that was previously deployed using VPC template with NAT EC2 instance:
+          # 1. Comment out lines related to NAT device below
+          # 2. Update stack using this template (it will remove NAT instances and related security and routing rules)
+          # 3. Revert changes from 1. (i.e. uncomment lines below)
+          # 4. Update stack again (this time it will create new NAT Gateway, EIP and routing rule resources)
           nat_device_name = "NATDevice#{suffix.upcase}"
           nat_gateway_init(nat_device_name, public_subnet_name, private_route_table_name,
                            depends_on: [public_subnet_name, 'PublicRouteTable', 'GatewayToInternet'])
