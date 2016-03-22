@@ -13,6 +13,8 @@ require 'enscalator/core'
 require 'enscalator/plugins'
 require 'enscalator/richtemplate'
 require 'enscalator/vpc'
+require 'enscalator/vpc_with_nat_gateway'
+require 'enscalator/vpc_with_nat_instance'
 require 'enscalator/enapp'
 require 'enscalator/templates'
 

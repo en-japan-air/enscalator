@@ -1,7 +1,7 @@
 module Enscalator
   module Templates
     # Amazon AWS Virtual Private Cloud template
-    class VPC < Enscalator::RichTemplateDSL
+    class VPCWithNATInstance < Enscalator::RichTemplateDSL
       # Subnet size (256 addresses)
       SUBNET_CIDR_BLOCK_SIZE = 24
 

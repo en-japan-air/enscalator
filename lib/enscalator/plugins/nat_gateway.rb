@@ -16,6 +16,11 @@ module Enscalator
                  Properties: {
                    Domain: 'vpc'
                  }
+
+        output eip_resource_name,
+               Description: 'Elastic IP address for NAT Gateway',
+               Value: ref(eip_resource_name)
+
         get_att(eip_resource_name, 'AllocationId')
       end
 
@@ -54,6 +59,11 @@ module Enscalator
                    })
         nat_route_rule_name = "#{name}Route"
         add_route_rule(nat_route_rule_name, route_table_name, nat_gateway_name, dest_cidr_block, depends_on: depends_on)
+
+        output nat_gateway_name,
+               Description: 'NAT Gateway',
+               Value: ref(nat_gateway_name)
+
         nat_gateway_name
       end
     end
