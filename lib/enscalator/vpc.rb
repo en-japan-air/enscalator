@@ -2,11 +2,12 @@ module Enscalator
   module Templates
     # Amazon AWS Virtual Private Cloud template
     class VPC < Enscalator::RichTemplateDSL
+      # Subnet size (256 addresses)
+      SUBNET_CIDR_BLOCK_SIZE = 24
+
       # Template method
       def tpl
-        nat_key_name = gen_ssh_key_name 'vpc-nat',
-                                        region,
-                                        stack_name
+        nat_key_name = gen_ssh_key_name('vpc-nat', region, stack_name)
 
         description = <<-EOS.gsub(/^\s+\|/, '')
           |AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.
@@ -15,9 +16,7 @@ module Enscalator
           |corresponding subnets and security groups.
         EOS
 
-        pre_run do
-          create_ssh_key nat_key_name, region, force_create: false
-        end
+        pre_run { create_ssh_key nat_key_name, region, force_create: false }
 
         value Description: description
 
@@ -294,7 +293,8 @@ module Enscalator
                  }
 
         current_cidr_block = Core::NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]
-        public_cidr_blocks = IPAddress(current_cidr_block).subnet(24).map(&:to_string).first(availability_zones.size)
+        public_cidr_blocks =
+          IPAddress(current_cidr_block).subnet(SUBNET_CIDR_BLOCK_SIZE).map(&:to_string).first(availability_zones.size)
 
         availability_zones.zip(public_cidr_blocks).each do |pair, cidr_block|
           suffix = pair.first

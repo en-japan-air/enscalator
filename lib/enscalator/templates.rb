@@ -1,3 +1,4 @@
+require_relative 'templates/vpc_peering'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
@@ -17,7 +18,6 @@ require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
-require_relative 'templates/vpc_peering'
 
 module Enscalator
   # Namespace for template collection
