@@ -1,37 +1,22 @@
 module Enscalator
   module Templates
-    # Amazon AWS Virtual Private Cloud template with NAT instance
-    class VPCWithNATInstance < Enscalator::RichTemplateDSL
+    # Amazon AWS Virtual Private Cloud template with NAT gateway
+    class VPCWithNATGateway < Enscalator::RichTemplateDSL
+      include Enscalator::Plugins::NATGateway
+
       # Subnet size (256 addresses)
       SUBNET_CIDR_BLOCK_SIZE = 24
 
       # Template method
       def tpl
-        nat_key_name = gen_ssh_key_name('vpc-nat', region, stack_name)
-
         description = <<-EOS.gsub(/^\s+\|/, '')
-          |AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.
-          |The stack contains for each availability zone: the public subnet, NAT device for
-          |internet access from the private subnets, internet gateway, routing configuration for
-          |corresponding subnets and security groups.
+          |AWS CloudFormation template creating VPC environment.
+          |For each availability zone stack creates: the public subnet, internet and NAT gateways,
+          |internet access from the private subnets, routing configuration for corresponding subnets
+          |and security groups.
         EOS
 
-        pre_run { create_ssh_key nat_key_name, region, force_create: false }
-
         value Description: description
-
-        parameter_ec2_instance_type 'NAT', type: 'c4.large'
-
-        mapping 'AWSNATAMI',
-                'us-east-1': { AMI: 'ami-68115b02' },
-                'us-west-1': { AMI: 'ami-ef1a718f' },
-                'us-west-2': { AMI: 'ami-77a4b816' },
-                'eu-west-1': { AMI: 'ami-c0993ab3' },
-                'eu-central-1': { AMI: 'ami-0b322e67' },
-                'ap-northeast-1': { AMI: 'ami-f885ae96' },
-                'ap-southeast-1': { AMI: 'ami-e2fc3f81' },
-                'ap-southeast-2': { AMI: 'ami-e3217a80' },
-                'sa-east-1': { AMI: 'ami-8631b5ea' }
 
         mapping 'AWSRegionNetConfig', Core::NetworkConfig.mapping_vpc_net
 
@@ -208,60 +193,6 @@ module Enscalator
                    PortRange: { From: '0', To: '65535' }
                  }
 
-        resource 'NATSecurityGroup',
-                 DependsOn: ['PrivateSecurityGroup'],
-                 Type: 'AWS::EC2::SecurityGroup',
-                 Properties: {
-                   GroupDescription: 'Enable internal access to the NAT device',
-                   VpcId: ref('VPC'),
-                   SecurityGroupIngress: [
-                     {
-                       IpProtocol: 'tcp',
-                       FromPort: '22',
-                       ToPort: '22',
-                       SourceSecurityGroupId: ref('PrivateSecurityGroup')
-                     },
-                     {
-                       IpProtocol: 'tcp',
-                       FromPort: '80',
-                       ToPort: '80',
-                       SourceSecurityGroupId: ref('PrivateSecurityGroup')
-                     },
-                     {
-                       IpProtocol: 'tcp',
-                       FromPort: '443',
-                       ToPort: '443',
-                       SourceSecurityGroupId: ref('PrivateSecurityGroup')
-                     },
-                     {
-                       IpProtocol: 'tcp',
-                       FromPort: '465',
-                       ToPort: '465',
-                       SourceSecurityGroupId: ref('PrivateSecurityGroup')
-                     },
-                     {
-                       IpProtocol: 'icmp',
-                       FromPort: '-1',
-                       ToPort: '-1',
-                       CidrIp: '10.0.0.0/8'
-                     }
-                   ],
-                   SecurityGroupEgress: [
-                     {
-                       IpProtocol: '-1',
-                       FromPort: '0',
-                       ToPort: '65535',
-                       CidrIp: '0.0.0.0/0'
-                     }
-                   ],
-                   Tags: [
-                     {
-                       Key: 'Name',
-                       Value: 'NAT'
-                     }
-                   ]
-                 }
-
         resource 'PrivateSecurityGroup',
                  DependsOn: ['VPC'],
                  Type: 'AWS::EC2::SecurityGroup',
@@ -330,31 +261,6 @@ module Enscalator
                      RouteTableId: ref('PublicRouteTable')
                    }
 
-          nat_device_name = "NATDevice#{suffix.upcase}"
-          resource nat_device_name,
-                   DependsOn: [public_subnet_name, 'NATSecurityGroup'],
-                   Type: 'AWS::EC2::Instance',
-                   Properties: {
-                     InstanceType: ref('NATInstanceType'),
-                     KeyName: nat_key_name,
-                     SourceDestCheck: 'false',
-                     ImageId: find_in_map('AWSNATAMI', ref('AWS::Region'), 'AMI'),
-                     NetworkInterfaces: [
-                       {
-                         AssociatePublicIpAddress: 'true',
-                         DeviceIndex: '0',
-                         SubnetId: ref(public_subnet_name),
-                         GroupSet: [ref('NATSecurityGroup')]
-                       }
-                     ],
-                     Tags: [
-                       {
-                         Key: 'Name',
-                         Value: nat_device_name
-                       }
-                     ]
-                   }
-
           private_route_table_name = "PrivateRouteTable#{suffix.upcase}"
           resource private_route_table_name,
                    DependsOn: ['VPC'],
@@ -377,19 +283,14 @@ module Enscalator
                      ]
                    }
 
-          resource "PrivateRoute#{suffix.upcase}",
-                   DependsOn: [private_route_table_name, nat_device_name],
-                   Type: 'AWS::EC2::Route',
-                   Properties: {
-                     RouteTableId: ref(private_route_table_name),
-                     DestinationCidrBlock: '0.0.0.0/0',
-                     InstanceId: ref(nat_device_name)
-                   }
+          nat_device_name = "NATDevice#{suffix.upcase}"
+          nat_gateway_init(nat_device_name, public_subnet_name, private_route_table_name,
+                           depends_on: [public_subnet_name, 'PublicRouteTable', 'GatewayToInternet'])
 
           output public_subnet_name,
                  Description: "Created Subnet #{suffix.upcase}",
                  Value: ref(public_subnet_name)
-        end
+        end # each availability zone
 
         output 'VpcId',
                Description: 'Created VPC',
