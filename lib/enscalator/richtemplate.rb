@@ -4,7 +4,7 @@ module Enscalator
   # DSL specific for enscalator
   class RichTemplateDSL < TemplateDSL
     include Enscalator::Helpers
-    include Enscalator::Route53
+    include Enscalator::Plugins::Route53
 
     # Cloudformation limit when sending template body directly
     TEMPLATE_BODY_LIMIT = 51_200

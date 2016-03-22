@@ -3,6 +3,7 @@ require 'open-uri'
 require 'nokogiri'
 require 'semantic'
 
+require_relative 'plugins/route53'
 require_relative 'plugins/core_os'
 require_relative 'plugins/elb'
 require_relative 'plugins/auto_scale'
