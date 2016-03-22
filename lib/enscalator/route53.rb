@@ -1,8 +1,6 @@
 module Enscalator
   # Collection of methods to work with Route53
   module Route53
-    include Enscalator::Helpers
-
     # Valid types for Route53 healthcheck
     HEALTH_CHECK_TYPE = %w(HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP)
 
@@ -66,7 +64,7 @@ module Enscalator
                Properties: properties
     end
 
-    # [RESERVED] Create multiple record sets for a hosted zone
+    # [RESERVED] Create new hosted zone
     def create_hosted_zone
       fail('method "create_hosted_zone" is not implemented yet')
     end

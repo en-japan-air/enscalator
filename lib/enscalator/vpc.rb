@@ -34,7 +34,7 @@ module Enscalator
                 'ap-southeast-2': { AMI: 'ami-e3217a80' },
                 'sa-east-1': { AMI: 'ami-8631b5ea' }
 
-        mapping 'AWSRegionNetConfig', NetworkConfig.mapping_vpc_net
+        mapping 'AWSRegionNetConfig', Core::NetworkConfig.mapping_vpc_net
 
         resource 'VPC',
                  Type: 'AWS::EC2::VPC',
@@ -293,7 +293,7 @@ module Enscalator
                    ]
                  }
 
-        current_cidr_block = NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]
+        current_cidr_block = Core::NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]
         public_cidr_blocks = IPAddress(current_cidr_block).subnet(24).map(&:to_string).first(availability_zones.size)
 
         availability_zones.zip(public_cidr_blocks).each do |pair, cidr_block|

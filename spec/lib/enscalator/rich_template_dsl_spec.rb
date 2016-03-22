@@ -197,7 +197,7 @@ describe Enscalator::RichTemplateDSL do
       opts = default_cmd_opts(richtemplate.name, richtemplate.name.underscore)
       test_fixture = richtemplate.new(opts)
       test_instance_name = 'test_rds'
-      test_instance_type = 'db.m3.medium'
+      test_instance_type = 'db.t2.medium'
       test_fixture.parameter_rds_instance_type(test_instance_name, type: test_instance_type)
       template_under_test = test_fixture.instance_variable_get(:@dict)
       expect(template_under_test[:Parameters]["#{test_instance_name}InstanceType"]).to_not be_nil

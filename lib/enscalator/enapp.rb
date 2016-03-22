@@ -83,7 +83,7 @@ module Enscalator
     # Get all CIRD blocks for current VPC
     # @return [Hash]
     def get_all_cidr_blocks
-      IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
+      IPAddress(Core::NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
     end
 
     # Get currently used CIDR blocks
