@@ -1,9 +1,7 @@
 module Enscalator
   module Plugins
     # Elasticsearch related configuration
-    module Elasticsearch
-      include Enscalator::Helpers
-
+    module ElasticsearchBitnami
       # Retrieves mapping for Elasticsearch Bitnami stack
       class << self
         # Supported storage types in AWS
@@ -114,24 +112,16 @@ module Enscalator
       # @param [String] instance_type instance type
       # @param [Hash] properties additional properties
       # @param [String] zone_name route53 zone name
-      # @param [Integer] ttl time to live value
       def elasticsearch_init(storage_name,
                              allocated_storage: 5,
                              instance_type: 't2.medium',
                              properties: {},
-                             zone_name: nil,
-                             ttl: 300)
+                             zone_name: nil)
 
-        @es_key_name = gen_ssh_key_name "Elasticsearch#{storage_name}",
-                                        region,
-                                        stack_name
-        pre_run do
-          create_ssh_key @es_key_name,
-                         region,
-                         force_create: false
-        end
+        @es_key_name = gen_ssh_key_name("Elasticsearch#{storage_name}", region, stack_name)
+        pre_run { create_ssh_key(@es_key_name, region, force_create: false) }
 
-        mapping 'AWSElasticsearchAMI', Elasticsearch.get_mapping
+        mapping 'AWSElasticsearchAMI', ElasticsearchBitnami.get_mapping
 
         parameter_allocated_storage "Elasticsearch#{storage_name}",
                                     default: allocated_storage,
@@ -145,7 +135,7 @@ module Enscalator
 
         version_tag = {
           Key: 'Version',
-          Value: Elasticsearch.get_release_version
+          Value: ElasticsearchBitnami.get_release_version
         }
 
         cluster_name_tag = {
@@ -170,31 +160,22 @@ module Enscalator
         # Assign IAM role to instance
         properties[:IamInstanceProfile] = iam_instance_profile_with_full_access(storage_name, *%w(ec2 s3))
 
-        instance_vpc "Elasticsearch#{storage_name}",
+        storage_resource_name = "Elasticsearch#{storage_name}"
+        instance_vpc storage_resource_name,
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
                      ref_application_subnets.first,
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: properties
 
-        post_run do
-          cfn = cfn_resource(cfn_client(region))
-
-          # wait for the stack to be created
-          stack = wait_stack(cfn, stack_name)
-
-          # get elasticsearch instance IP address
-          es_ip_addr = get_resource(stack, "Elasticsearch#{storage_name}PrivateIpAddress")
-
-          # create a DNS record in route53
-          upsert_dns_record zone_name: zone_name,
-                            record_name: "elasticsearch.#{storage_name.downcase}.#{zone_name}",
-                            type: 'A',
-                            values: [es_ip_addr],
-                            ttl: ttl,
-                            region: region
-        end
+        # create a DNS record in route53 for instance private ip
+        record_name = %W(#{storage_name.downcase.dasherize} #{region} #{zone_name}).join('.')
+        create_single_dns_record("#{storage_name}PrivateZone",
+                                 stack_name,
+                                 zone_name,
+                                 record_name,
+                                 resource_records: [get_att(storage_resource_name, 'PrivateIp')])
       end
-    end # module Elasticsearch
+    end # module ElasticsearchBitnami
   end # module Plugins
 end # module Enscalator

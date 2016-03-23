@@ -2,7 +2,6 @@ module Enscalator
   module Plugins
     # Elasticsearch related configuration
     module ElasticsearchOpsworks
-      include Enscalator::Helpers
       include Enscalator::Plugins::Elb
 
       # Create Elasticsearch cluster using Opsworks

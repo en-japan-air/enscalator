@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Enscalator::Plugins::Elasticsearch do
+describe Enscalator::Plugins::ElasticsearchBitnami do
   describe '#elasticsearch_init' do
     let(:app_name) { 'es_test' }
     let(:description) { 'This is test template for elasticsearch' }
