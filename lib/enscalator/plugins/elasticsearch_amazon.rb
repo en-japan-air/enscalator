@@ -2,7 +2,6 @@ module Enscalator
   module Plugins
     # Amazon Elasticsearch Service (Amazon ES)
     module ElasticsearchAmazon
-
       # Create new service instance
       # @param [String] cluster_name name of the cluster resource
       # @param [Hash] properties additional parameters for cluster configuration
