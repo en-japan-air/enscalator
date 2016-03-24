@@ -450,8 +450,8 @@ module Enscalator
     #
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
-    def parameter_ec2_instance_type(instance_name, type:)
-      type = type ? type : Core::InstanceType.ec2_instance_type.current_generation[:general_purpose].first
+    def parameter_ec2_instance_type(instance_name,
+                                    type: Core::InstanceType.rds_instance_type.current_generation[:general_purpose].first)
       fail("Not supported instance type: #{type}") unless Core::InstanceType.ec2_instance_type.supported?(type)
       warn("Using obsolete instance type: #{type}") if Core::InstanceType.ec2_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
@@ -463,8 +463,8 @@ module Enscalator
     #
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
-    def parameter_rds_instance_type(instance_name, type:)
-      type = type ? type : Core::InstanceType.rds_instance_type.current_generation[:general_purpose].first
+    def parameter_rds_instance_type(instance_name,
+                                    type: Core::InstanceType.rds_instance_type.current_generation[:general_purpose].first)
       fail("Not supported instance type: #{type}") unless Core::InstanceType.rds_instance_type.supported?(type)
       warn("Using obsolete instance type: #{type}") if Core::InstanceType.rds_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
