@@ -259,6 +259,26 @@ describe Enscalator::Plugins::Route53 do
         end.to raise_exception(RuntimeError)
       end
     end
+
+    context 'when invoked with hosted zone id parameter' do
+      it 'used instead of HostedZoneName' do
+        route53_template = template_fixture.new(cmd_opts)
+        test_record_name = 'test-entry-hosted-zone-id'
+        test_zone_id = '4AA389A6BB1A99'
+
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  zone_id: test_zone_id)
+
+        dict = route53_template.instance_variable_get(:@dict)
+        test_hostname = dict[:Resources]["#{app_name}Hostname"]
+        expect(test_hostname[:Properties]).to have_key(:HostedZoneId)
+        expect(test_hostname[:Properties][:HostedZoneId]).to eq(test_zone_id)
+        expect(test_hostname[:Properties]).not_to have_key(:HostedZoneName)
+      end
+    end
   end
 
   describe '#create_multiple_dns_records' do

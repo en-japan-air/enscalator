@@ -90,6 +90,7 @@ module Enscalator
                                    ttl: 300,
                                    type: 'A',
                                    healthcheck: nil,
+                                   zone_id: nil,
                                    alias_target: {},
                                    resource_records: [])
         if type && !RECORD_TYPE.include?(type)
@@ -106,9 +107,15 @@ module Enscalator
         properties = {
           Name: record_name,
           Comment: "#{type} record for #{[app_name, 'in '].join(' ') if app_name}#{stack_name} stack",
-          HostedZoneName: zone_name,
           Type: type
         }
+
+        # HostedZoneId and HostedZoneName options are mutually exclusive
+        if zone_id && !zone_id.nil?
+          properties[:HostedZoneId] = zone_id
+        else
+          properties[:HostedZoneName] = zone_name
+        end
 
         if alias_target && (alias_target.is_a?(Hash) && !alias_target.empty?)
           fail('AliasTarget can be created only for A or AAAA type records') unless %w(A AAAA).include?(type)
