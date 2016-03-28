@@ -45,14 +45,14 @@ module Enscalator
         # @param [Array] items in its raw form
         def parse_raw_entries(items)
           header, *entries = items.map do |item|
-            item.downcase.split('||').map(&:strip).map { |i| i.gsub(/[']/, '') }.reject(&:empty?)
-          end
-
-          amis = entries.flat_map do |entry|
+            if (item.include?('Region'))..(item.include?('paravirtual'))
+              item.downcase.split('||').map(&:strip).map { |i| i.gsub(/[']/, '') }.reject(&:empty?)
+            end
+          end.compact
+          amis = entries.select { |e| e.first =~ /[a-z]{2}-/ }.flat_map do |entry|
             region, *images = entry
             images.map.with_index(1).map do |ami, i|
-              header = header[i].nil? ? '' : header[i].split
-              [region, ami, header].flatten
+              [region, ami, header[i].nil? ? '' : header[i].split].flatten
             end
           end
 
