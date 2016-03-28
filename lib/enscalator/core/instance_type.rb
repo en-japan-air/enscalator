@@ -21,7 +21,7 @@ module Enscalator
         # @param [String] type instance type
         # @return [Boolean]
         def supported?(type)
-          @current_generation.values.dup.concat(@previous_generation.values).flatten.include? type
+          (@current_generation.values + @previous_generation.values).flatten.include? type
         end
 
         # Checks if given instance type is in previous generation

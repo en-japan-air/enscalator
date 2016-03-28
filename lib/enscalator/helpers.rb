@@ -374,8 +374,7 @@ module Enscalator
                           suffix: '')
       client = route53_client(region: region)
       zone = client.list_hosted_zones[:hosted_zones].find { |x| x.name == zone_name }
-
-      record_tokens = [].concat([record_name.gsub(zone_name, ''), region])
+      record_tokens = [record_name.gsub(zone_name, ''), region]
       record_tokens << suffix if suffix && !suffix.empty?
       record_name = [record_tokens.join, zone_name].join('.')
 

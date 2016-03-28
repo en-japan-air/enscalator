@@ -32,7 +32,7 @@ module Enscalator
         options = {
           Type: 'AWS::EC2::Route'
         }
-        options[:DependsOn] = depends_on if depends_on && !depends_on.empty?
+        options[:DependsOn] = depends_on unless depends_on.blank?
         resource name,
                  options.merge(
                    Properties: {
@@ -50,7 +50,7 @@ module Enscalator
         nat_gateway_options = {
           Type: 'AWS::EC2::NatGateway'
         }
-        nat_gateway_options[:DependsOn] = depends_on if depends_on && !depends_on.empty?
+        nat_gateway_options[:DependsOn] = depends_on unless depends_on.blank?
         resource nat_gateway_name,
                  nat_gateway_options.merge(
                    Properties: {

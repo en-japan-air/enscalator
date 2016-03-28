@@ -1,6 +1,6 @@
 module Enscalator
   module Plugins
-    # Collection of methods to work with Route53
+    # Create Route53 resources
     module Route53
       # Valid types for Route53 healthcheck
       HEALTH_CHECK_TYPE = %w(HTTP HTTPS HTTP_STR_MATCH HTTPS_STR_MATCH TCP)
@@ -33,7 +33,7 @@ module Enscalator
         unless HEALTH_CHECK_TYPE.include?(type)
           fail("Route53 healthcheck type can only be one of the following: #{HEALTH_CHECK_TYPE.join(',')}")
         end
-        fail('Route53 healthcheck requires either fqdn or ip address') if [fqdn, ip_address].compact.empty?
+        fail('Route53 healthcheck requires either fqdn or ip address') unless fqdn || ip_address
 
         properties = {
           HealthCheckConfig: {
@@ -58,7 +58,7 @@ module Enscalator
           }
         ]
 
-        properties[:HealthCheckTags].concat(tags) if tags && !tags.empty?
+        properties[:HealthCheckTags].concat(tags) unless tags.blank?
 
         resource "#{app_name}Healthcheck",
                  Type: 'AWS::Route53::HealthCheck',
@@ -103,7 +103,7 @@ module Enscalator
           fail('AliasTarget must be a Hash')
         end
 
-        name = app_name ? app_name : stack_name.titleize.remove(/\s/)
+        name = app_name || stack_name.titleize.remove(/\s/)
         properties = {
           Name: record_name,
           Comment: "#{type} record for #{[app_name, 'in '].join(' ') if app_name}#{stack_name} stack",
@@ -117,7 +117,7 @@ module Enscalator
           properties[:HostedZoneName] = zone_name
         end
 
-        if alias_target && (alias_target.is_a?(Hash) && !alias_target.empty?)
+        if !alias_target.blank?
           fail('AliasTarget can be created only for A or AAAA type records') unless %w(A AAAA).include?(type)
           unless alias_target.key?(:HostedZoneId) && alias_target.key?(:DNSName)
             fail('AliasTarget must have HostedZoneId and DNSName properties')
