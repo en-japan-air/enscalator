@@ -53,7 +53,7 @@ module Enscalator
           Description: "#{app_name} redis parameter group",
           CacheParameterGroupFamily: 'redis2.8',
           Properties: {
-            'reserved-memory': InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
+            'reserved-memory': Core::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
           }
         }
         # TODO: remove this workaround when related template gets fixed

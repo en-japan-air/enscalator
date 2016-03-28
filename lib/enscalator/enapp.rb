@@ -10,13 +10,15 @@ module Enscalator
 
     Struct.new('Subnet', :availability_zone, :suffix, :cidr_block)
 
+    # Subnet size (256 addresses)
+    SUBNET_CIDR_BLOCK_SIZE = 24
+
     # Create new EnAppTemplateDSL instance
     #
     # @param [Hash] options command-line arguments
     def initialize(options = {})
       # application name taken from template name by default
       @app_name = self.class.name.demodulize
-
       super
     end
 
@@ -83,7 +85,8 @@ module Enscalator
     # Get all CIRD blocks for current VPC
     # @return [Hash]
     def get_all_cidr_blocks
-      IPAddress(NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(24).map(&:to_string)
+      IPAddress(
+        Core::NetworkConfig.mapping_vpc_net[region.to_sym][:VPC]).subnet(SUBNET_CIDR_BLOCK_SIZE).map(&:to_string)
     end
 
     # Get currently used CIDR blocks

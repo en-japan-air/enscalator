@@ -1,28 +1,28 @@
 require 'spec_helper'
 
-describe Enscalator::InstanceType do
+describe Enscalator::Core::InstanceType do
   it 'provides EC2 instance type' do
     ec2_instance_type = described_class.ec2_instance_type
-    expect(ec2_instance_type.class).to be(Enscalator::InstanceType::EC2)
+    expect(ec2_instance_type.class).to be(Enscalator::Core::InstanceType::EC2)
     ec2_instance_type.current_generation.values.flatten.each { |cg| assert_ec2_instance_type(cg) }
     ec2_instance_type.previous_generation.values.flatten.each { |pg| assert_ec2_instance_type(pg) }
   end
 
   it 'provides RDS instance type' do
     rds_instance_type = described_class.rds_instance_type
-    expect(rds_instance_type.class).to be(Enscalator::InstanceType::RDS)
+    expect(rds_instance_type.class).to be(Enscalator::Core::InstanceType::RDS)
     rds_instance_type.current_generation.values.flatten.each { |cg| assert_rds_instance_type(cg) }
     rds_instance_type.previous_generation.values.flatten.each { |pg| assert_rds_instance_type(pg) }
   end
 
   it 'provides ElasticCache instance type' do
     el_cache_instance_type = described_class.elasticache_instance_type
-    expect(el_cache_instance_type.class).to be(Enscalator::InstanceType::ElastiCache)
+    expect(el_cache_instance_type.class).to be(Enscalator::Core::InstanceType::ElastiCache)
     el_cache_instance_type.current_generation.values.flatten.each { |cg| assert_el_cache_instance_type(cg) }
     el_cache_instance_type.previous_generation.values.flatten.each { |pg| assert_el_cache_instance_type(pg) }
   end
 
-  describe Enscalator::InstanceType::AwsInstance do
+  describe Enscalator::Core::InstanceType::AwsInstance do
     it 'creates instance using constructor with provided values' do
       test_current_gen = { general: %w(gen1.small gen2.big) }
       test_previous_gen = { micro: %w(micro1.small micro2.supersmall) }
@@ -78,7 +78,7 @@ describe Enscalator::InstanceType do
     end
   end
 
-  describe Enscalator::InstanceType::EC2 do
+  describe Enscalator::Core::InstanceType::EC2 do
     it 'creates new EC2 instance type' do
       ec2 = described_class.new
       common_entries = [:general_purpose, :compute_optimized, :memory_optimized, :gpu]
@@ -89,7 +89,7 @@ describe Enscalator::InstanceType do
     end
   end
 
-  describe Enscalator::InstanceType::RDS do
+  describe Enscalator::Core::InstanceType::RDS do
     it 'creates new RDS instance type' do
       rds = described_class.new
       common_entries = [:standard, :memory_optimized]
@@ -100,7 +100,7 @@ describe Enscalator::InstanceType do
     end
   end
 
-  describe Enscalator::InstanceType::ElastiCache do
+  describe Enscalator::Core::InstanceType::ElastiCache do
     it 'creates new ElasticCache instance type' do
       el_cache = described_class.new
       common_entries = [:standard, :memory_optimized]

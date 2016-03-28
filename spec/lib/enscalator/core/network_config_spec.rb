@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Enscalator::NetworkConfig do
+describe Enscalator::Core::NetworkConfig do
   it 'returns valid vpc networking configuration' do
     network_conf = described_class.mapping_vpc_net
     expect(network_conf.keys).to include(*AWS_REGIONS)

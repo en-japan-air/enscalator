@@ -115,7 +115,7 @@ describe Enscalator::Plugins::Elasticache do
         parameter_group_name = resources.keys.detect { |k| k.to_s =~ /#{app_name}RedisParameterGroup/ }
         parameter_group = resources[parameter_group_name]
         expected_reserved_mem =
-          Enscalator::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
+          Enscalator::Core::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
         expect(parameter_group[:Properties][:Properties][:'reserved-memory']).to eq(expected_reserved_mem)
       end
     end

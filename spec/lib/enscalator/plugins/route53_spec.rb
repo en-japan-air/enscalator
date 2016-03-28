@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Enscalator::Route53 do
+describe Enscalator::Plugins::Route53 do
   describe '#create_healthcheck' do
     let(:app_name) { 'route53_healthcheck_test' }
     let(:description) { 'This is a template for route53 healthcheck test entries' }

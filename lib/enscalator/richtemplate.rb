@@ -4,7 +4,7 @@ module Enscalator
   # DSL specific for enscalator
   class RichTemplateDSL < TemplateDSL
     include Enscalator::Helpers
-    include Enscalator::Route53
+    include Enscalator::Plugins::Route53
 
     # Cloudformation limit when sending template body directly
     TEMPLATE_BODY_LIMIT = 51_200
@@ -451,12 +451,12 @@ module Enscalator
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
     def parameter_ec2_instance_type(instance_name,
-                                    type: InstanceType.ec2_instance_type.current_generation[:general_purpose].first)
-      fail("Not supported instance type: #{type}") unless InstanceType.ec2_instance_type.supported?(type)
-      warn("Using obsolete instance type: #{type}") if InstanceType.ec2_instance_type.obsolete?(type)
+                                    type: Core::InstanceType.rds_instance_type.current_generation[:general_purpose].first)
+      fail("Not supported instance type: #{type}") unless Core::InstanceType.ec2_instance_type.supported?(type)
+      warn("Using obsolete instance type: #{type}") if Core::InstanceType.ec2_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
                               type,
-                              allowed_values: InstanceType.ec2_instance_type.allowed_values(type))
+                              allowed_values: Core::InstanceType.ec2_instance_type.allowed_values(type))
     end
 
     # RDS Instance type parameter
@@ -464,12 +464,12 @@ module Enscalator
     # @param [String] instance_name name of the instance
     # @param [String] type instance type
     def parameter_rds_instance_type(instance_name,
-                                    type: InstanceType.rds_instance_type.current_generation[:general_purpose].first)
-      fail("Not supported instance type: #{type}") unless InstanceType.rds_instance_type.supported?(type)
-      warn("Using obsolete instance type: #{type}") if InstanceType.rds_instance_type.obsolete?(type)
+                                    type: Core::InstanceType.rds_instance_type.current_generation[:general_purpose].first)
+      fail("Not supported instance type: #{type}") unless Core::InstanceType.rds_instance_type.supported?(type)
+      warn("Using obsolete instance type: #{type}") if Core::InstanceType.rds_instance_type.obsolete?(type)
       parameter_instance_type(instance_name,
                               type,
-                              allowed_values: InstanceType.rds_instance_type.allowed_values(type))
+                              allowed_values: Core::InstanceType.rds_instance_type.allowed_values(type))
     end
 
     # Create ec2 instance in given vpc

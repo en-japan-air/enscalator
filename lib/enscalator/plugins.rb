@@ -3,6 +3,7 @@ require 'open-uri'
 require 'nokogiri'
 require 'semantic'
 
+require_relative 'plugins/route53'
 require_relative 'plugins/core_os'
 require_relative 'plugins/elb'
 require_relative 'plugins/auto_scale'
@@ -18,6 +19,7 @@ require_relative 'plugins/elasticache'
 require_relative 'plugins/elasticsearch_opsworks'
 require_relative 'plugins/amazon_linux'
 require_relative 'plugins/vpc_peering_connection'
+require_relative 'plugins/nat_gateway'
 
 module Enscalator
   # Namespace for enscalator plugins
