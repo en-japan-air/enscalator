@@ -21,7 +21,7 @@ describe Enscalator::Plugins::Debian do
       end
 
       it 'creates mapping template for Debian' do
-        VCR.use_cassette 'debian_mapping_default_options' do
+        VCR.use_cassette 'debian_mapping_version_jessie', allow_playback_repeats: true do
           cmd_opts = default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
           debian_template = template_fixture.new(cmd_opts)
           dict = debian_template.instance_variable_get(:@dict)
@@ -34,14 +34,14 @@ describe Enscalator::Plugins::Debian do
 
   describe '#get_mapping' do
     it 'returns ami mapping for Debian 8 Jessie' do
-      VCR.use_cassette 'debian_mapping_version_jessie' do
+      VCR.use_cassette 'debian_mapping_version_jessie', allow_playback_repeats: true do
         mapping = described_class.get_mapping(release: :jessie)
         assert_mapping mapping, fields: AWS_VIRTUALIZATION.values
       end
     end
 
     it 'returns ami mapping for Debian 7 Wheezy' do
-      VCR.use_cassette 'debian_mapping_version_wheezy' do
+      VCR.use_cassette 'debian_mapping_version_wheezy', allow_playback_repeats: true do
         mapping = described_class.get_mapping(release: :wheezy)
         assert_mapping mapping, fields: AWS_VIRTUALIZATION.values
       end
@@ -49,14 +49,14 @@ describe Enscalator::Plugins::Debian do
 
     # Testing edge cases
     it 'fails when fetching mapping for Debian 8 Jessie for i386 arch' do
-      VCR.use_cassette 'debian_mapping_version_jessie_i386' do
+      VCR.use_cassette 'debian_mapping_version_jessie', allow_playback_repeats: true do
         mapping = described_class.get_mapping(release: :jessie, arch: :i386)
         expect(mapping).to be_empty
       end
     end
 
     it 'fails when fetching mapping for Debian 8 Jessie for i386 arch' do
-      VCR.use_cassette 'debian_mapping_version_jessie_instance_store' do
+      VCR.use_cassette 'debian_mapping_version_jessie', allow_playback_repeats: true do
         mapping = described_class.get_mapping(release: :jessie, storage: :'instance-store')
         expect(mapping).to be_empty
       end
