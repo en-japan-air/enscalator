@@ -1,27 +1,29 @@
 require 'spec_helper'
 
 describe Enscalator::Plugins::Route53 do
-  describe '#create_healthcheck' do
-    let(:app_name) { 'route53_healthcheck_test' }
-    let(:description) { 'This is a template for route53 healthcheck test entries' }
-    let(:healthcheck_template_fixture_default) do
-      route53_test_app_name = app_name
-      route53_test_description = description
-      route53_test_template_name = app_name.humanize.delete(' ')
-      gen_richtemplate(route53_test_template_name,
-                       Enscalator::EnAppTemplateDSL) do
-        @app_name = route53_test_app_name
-        value(Description: route53_test_description)
-        mock_availability_zones
-      end
+  let(:app_name) { 'route53_test_fixture' }
+  let(:description) { 'This is a template test fixture for route53' }
+  let(:template_fixture_config) do
+    route53_test_app_name = app_name
+    route53_test_description = description
+    proc do
+      instance_variable_set(:@app_name, route53_test_app_name)
+      description(route53_test_description)
+      mock_availability_zones
     end
+  end
+  subject(:template_fixture) do
+    route53_test_template_name = app_name.humanize.delete(' ')
+    gen_richtemplate(route53_test_template_name, Enscalator::EnAppTemplateDSL, [], &template_fixture_config)
+  end
+  subject(:cmd_opts) do
+    default_cmd_opts(template_fixture.name, template_fixture.name.underscore)
+  end
 
+  describe '#create_healthcheck' do
     context 'when invoked with default parameters and fqdn' do
       it 'generates valid template with fqdn and empty ip address' do
-        cmd_opts = default_cmd_opts(healthcheck_template_fixture_default.name,
-                                    healthcheck_template_fixture_default.name.underscore)
-        route53_template = healthcheck_template_fixture_default.new(cmd_opts)
-
+        route53_template = template_fixture.new(cmd_opts)
         test_fqdn = 'somedomain.test.japan.en'
         route53_template.create_healthcheck(app_name,
                                             cmd_opts[:stack_name],
@@ -42,9 +44,7 @@ describe Enscalator::Plugins::Route53 do
 
     context 'when invoked with default parameters and ip address' do
       it 'generates valid template with ip address and without fqdn' do
-        cmd_opts = default_cmd_opts(healthcheck_template_fixture_default.name,
-                                    healthcheck_template_fixture_default.name.underscore)
-        route53_template = healthcheck_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_ip_addr = '172.0.0.55'
         route53_template.create_healthcheck(app_name,
                                             cmd_opts[:stack_name],
@@ -61,9 +61,7 @@ describe Enscalator::Plugins::Route53 do
 
     context 'when invoked with not supported healthcheck type' do
       it 'raises a Runtime exception' do
-        cmd_opts = default_cmd_opts(healthcheck_template_fixture_default.name,
-                                    healthcheck_template_fixture_default.name.underscore)
-        route53_template = healthcheck_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_fqdn = 'nonvalid.type.japan.en'
 
         expect do
@@ -77,53 +75,28 @@ describe Enscalator::Plugins::Route53 do
   end
 
   describe '#create_hosted_zone' do
-    let(:app_name) { 'route53_hosted_zone_test' }
-    let(:description) { 'This is a template for route53 hosted zone' }
-    let(:hosted_zone_template_fixture_default) do
-      route53_test_app_name = app_name
-      route53_test_description = description
-      route53_test_template_name = app_name.humanize.delete(' ')
-      gen_richtemplate(route53_test_template_name,
-                       Enscalator::EnAppTemplateDSL) do
-        @app_name = route53_test_app_name
-        value(Description: route53_test_description)
-        mock_availability_zones
-      end
+    let(:test_hosted_zone) { 'private.enjapan.test' }
+    subject(:cmd_opts) do
+      default_cmd_opts(template_fixture.name, template_fixture.name.underscore).merge(hosted_zone: test_hosted_zone)
     end
 
     # TODO: remove before adding tests and method implementation
     context 'when not implemented method gets invoked' do
       it 'raises Runtime exception' do
-        cmd_opts = default_cmd_opts(
-          hosted_zone_template_fixture_default.name,
-          hosted_zone_template_fixture_default.name.underscore).merge(hosted_zone: 'private.enjapan.test')
-        route53_template = hosted_zone_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         expect { route53_template.create_hosted_zone }.to raise_exception(RuntimeError)
       end
     end
   end
 
   describe '#create_single_dns_record' do
-    let(:app_name) { 'route53_dns_record_test' }
-    let(:description) { 'This is a template for route53 test dns records' }
-    let(:dns_record_template_fixture_default) do
-      route53_test_app_name = app_name
-      route53_test_description = description
-      route53_test_template_name = app_name.humanize.delete(' ')
-      gen_richtemplate(route53_test_template_name,
-                       Enscalator::EnAppTemplateDSL) do
-        @app_name = route53_test_app_name
-        value(Description: route53_test_description)
-        mock_availability_zones
-      end
+    let(:test_hosted_zone) { 'private.enjapan.test' }
+    subject(:cmd_opts) do
+      default_cmd_opts(template_fixture.name, template_fixture.name.underscore).merge(hosted_zone: test_hosted_zone)
     end
-
     context 'when invoked with default parameters' do
       it 'generates resource template for single dns A record entry' do
-        cmd_opts = default_cmd_opts(
-          dns_record_template_fixture_default.name,
-          dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_record_name = 'test-entry-default'
         route53_template.create_single_dns_record(app_name,
                                                   cmd_opts[:stack_name],
@@ -145,10 +118,7 @@ describe Enscalator::Plugins::Route53 do
 
     context 'when invoked with default parameters without app_name' do
       it 'uses stack_name to generate application like name' do
-        cmd_opts = default_cmd_opts(
-          dns_record_template_fixture_default.name,
-          dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
 
         test_record_name = 'test-entry-default'
         route53_template.create_single_dns_record(nil,
@@ -164,10 +134,7 @@ describe Enscalator::Plugins::Route53 do
 
     context 'when invoked with type parameter set to non-default value' do
       it 'includes valid dns record type in generated template' do
-        cmd_opts =
-          default_cmd_opts(dns_record_template_fixture_default.name,
-                           dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
 
         test_record_name = 'test-entry-valid-type-default'
         test_record_type = 'CNAME'
@@ -183,10 +150,7 @@ describe Enscalator::Plugins::Route53 do
       end
 
       it 'raises Runtime exception if supplied value is not valid' do
-        cmd_opts =
-          default_cmd_opts(dns_record_template_fixture_default.name,
-                           dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_record_name = 'test-entry-wrong-type-default'
 
         expect do
@@ -217,10 +181,7 @@ describe Enscalator::Plugins::Route53 do
 
     context 'when invoked with healthcheck parameter with non-default value' do
       it 'includes valid healthcheck reference in generated template' do
-        cmd_opts =
-          default_cmd_opts(dns_record_template_fixture_default.name,
-                           dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_record_name = 'test-entry-healthy-default'
         test_healthcheck = "#{app_name}Healthcheck"
         route53_template.create_single_dns_record(app_name,
@@ -234,10 +195,7 @@ describe Enscalator::Plugins::Route53 do
       end
 
       it 'raises Runtime exception if its not valid' do
-        cmd_opts =
-          default_cmd_opts(dns_record_template_fixture_default.name,
-                           dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_record_name = 'test-entry-nonhealthy-default'
 
         expect do
@@ -249,12 +207,10 @@ describe Enscalator::Plugins::Route53 do
         end.to raise_exception(RuntimeError)
       end
     end
+
     context 'when invoked with alias_target parameter with non-default value' do
       it 'includes valid alias_target reference in generated template' do
-        cmd_opts =
-          default_cmd_opts(dns_record_template_fixture_default.name,
-                           dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_record_name = 'test-entry-aliastarget'
         test_aliastarget = {
           HostedZoneId: get_att('TestResource', 'CanonicalHostedZoneNameID'),
@@ -271,10 +227,7 @@ describe Enscalator::Plugins::Route53 do
       end
 
       it 'raises Runtime exception if its not valid' do
-        cmd_opts =
-          default_cmd_opts(dns_record_template_fixture_default.name,
-                           dns_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.test')
-        route53_template = dns_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         test_record_name = 'test-entry-aliastarget'
         expect do
           route53_template.create_single_dns_record(app_name,
@@ -306,30 +259,38 @@ describe Enscalator::Plugins::Route53 do
         end.to raise_exception(RuntimeError)
       end
     end
+
+    context 'when invoked with hosted zone id parameter' do
+      it 'used instead of HostedZoneName' do
+        route53_template = template_fixture.new(cmd_opts)
+        test_record_name = 'test-entry-hosted-zone-id'
+        test_zone_id = '4AA389A6BB1A99'
+
+        route53_template.create_single_dns_record(app_name,
+                                                  cmd_opts[:stack_name],
+                                                  cmd_opts[:hosted_zone],
+                                                  test_record_name,
+                                                  zone_id: test_zone_id)
+
+        dict = route53_template.instance_variable_get(:@dict)
+        test_hostname = dict[:Resources]["#{app_name}Hostname"]
+        expect(test_hostname[:Properties]).to have_key(:HostedZoneId)
+        expect(test_hostname[:Properties][:HostedZoneId]).to eq(test_zone_id)
+        expect(test_hostname[:Properties]).not_to have_key(:HostedZoneName)
+      end
+    end
   end
 
   describe '#create_multiple_dns_records' do
-    let(:app_name) { 'route53_multi_dns_record_test' }
-    let(:description) { 'This is a template for route53 multiple test dns records' }
-    let(:dns_multi_record_template_fixture_default) do
-      route53_test_app_name = app_name
-      route53_test_description = description
-      route53_test_template_name = app_name.humanize.delete(' ')
-      gen_richtemplate(route53_test_template_name,
-                       Enscalator::EnAppTemplateDSL) do
-        @app_name = route53_test_app_name
-        value(Description: route53_test_description)
-        mock_availability_zones
-      end
+    let(:test_hosted_zone) { 'private.enjapan.test' }
+    subject(:cmd_opts) do
+      default_cmd_opts(template_fixture.name, template_fixture.name.underscore).merge(hosted_zone: test_hosted_zone)
     end
 
     # TODO: remove before adding tests and method implementation
     context 'when not implemented method gets invoked' do
       it 'raises Runtime exception' do
-        cmd_opts = default_cmd_opts(
-          dns_multi_record_template_fixture_default.name,
-          dns_multi_record_template_fixture_default.name.underscore).merge(hosted_zone: 'private.enjapan.test')
-        route53_template = dns_multi_record_template_fixture_default.new(cmd_opts)
+        route53_template = template_fixture.new(cmd_opts)
         expect { route53_template.create_multiple_dns_records }.to raise_exception(RuntimeError)
       end
     end
