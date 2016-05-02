@@ -22,6 +22,8 @@ tls-auth ta.key 1
 
 comp-lzo
 verb 3
+fragment 1444
+mssfix 1444
 TEMPLATE
       template
     end
