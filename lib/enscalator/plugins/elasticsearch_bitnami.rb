@@ -103,7 +103,14 @@ module Enscalator
           end
           str.gsub(Regexp.new(pattern), ['=', token, '-'].join)
         end
+
       end # class << self
+
+      # Get aws account id
+      # @return [String] account id
+      def aws_account_id
+        Aws::IAM::Client.new.get_user.user.arn.split(':')[4]
+      end
 
       # Create new elasticsearch instance
       #
@@ -167,6 +174,16 @@ module Enscalator
                      [ref_private_security_group, ref_resource_security_group],
                      dependsOn: [],
                      properties: properties
+
+        # create s3 bucket for cluster snapshots
+        account_id = aws_account_id
+        bucket_name = "elasticsearch-bitnami-#{region}-#{account_id}"
+        resource "Elasticsearch#{storage_name}S3Bucket",
+                 Type: 'AWS::S3::Bucket',
+                 DeletionPolicy: 'Retain',
+                 Properties: {
+                   BucketName: bucket_name
+                 }
 
         # create a DNS record in route53 for instance private ip
         record_name = %W(#{storage_name.downcase.dasherize} #{region} #{zone_name}).join('.')

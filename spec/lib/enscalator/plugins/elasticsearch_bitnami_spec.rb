@@ -4,7 +4,6 @@ describe Enscalator::Plugins::ElasticsearchBitnami do
   describe '#elasticsearch_init' do
     let(:app_name) { 'es_test' }
     let(:description) { 'This is test template for elasticsearch' }
-
     context 'when invoked with default parameters' do
       let(:template_fixture) do
         es_test_app_name = app_name
@@ -16,6 +15,7 @@ describe Enscalator::Plugins::ElasticsearchBitnami do
           @app_name = es_test_app_name
           value(Description: es_test_description)
           mock_availability_zones
+          class_eval { define_method('aws_account_id') { '0***REMOVED***' } }
           elasticsearch_init(es_test_app_name)
         end
       end
@@ -57,6 +57,7 @@ describe Enscalator::Plugins::ElasticsearchBitnami do
           @app_name = es_test_app_name
           value(Description: es_test_description)
           mock_availability_zones
+          class_eval { define_method('aws_account_id') { '0***REMOVED***' } }
           elasticsearch_init(es_test_app_name,
                              properties: es_test_properties)
         end
