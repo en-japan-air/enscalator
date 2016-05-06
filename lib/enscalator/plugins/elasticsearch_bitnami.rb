@@ -103,7 +103,14 @@ module Enscalator
           end
           str.gsub(Regexp.new(pattern), ['=', token, '-'].join)
         end
+
       end # class << self
+
+      # Get aws account id
+      # @return [String] account id
+      def aws_account_id
+        Aws::IAM::Client.new.get_user.user.arn.split(':')[4]
+      end
 
       # Create new elasticsearch instance
       #
@@ -169,8 +176,8 @@ module Enscalator
                      properties: properties
 
         # create s3 bucket for cluster snapshots
-        aws_account_id = Aws::IAM::Client.new.get_user.user.arn.split(':')[4]
-        bucket_name = "elasticsearch-bitnami-#{region}-#{aws_account_id}"
+        account_id = aws_account_id
+        bucket_name = "elasticsearch-bitnami-#{region}-#{account_id}"
         resource "Elasticsearch#{storage_name}S3Bucket",
                  Type: 'AWS::S3::Bucket',
                  DeletionPolicy: 'Retain',
