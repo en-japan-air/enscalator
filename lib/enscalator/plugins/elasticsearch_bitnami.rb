@@ -168,6 +168,16 @@ module Enscalator
                      dependsOn: [],
                      properties: properties
 
+        # create s3 bucket for cluster snapshots
+        aws_account_id = Aws::IAM::Client.new.get_user.user.arn.split(':')[4]
+        bucket_name = "elasticsearch-bitnami-#{region}-#{aws_account_id}"
+        resource "Elasticsearch#{storage_name}S3Bucket",
+                 Type: 'AWS::S3::Bucket',
+                 DeletionPolicy: 'Retain',
+                 Properties: {
+                   BucketName: bucket_name
+                 }
+
         # create a DNS record in route53 for instance private ip
         record_name = %W(#{storage_name.downcase.dasherize} #{region} #{zone_name}).join('.')
         create_single_dns_record("#{storage_name}PrivateZone",
