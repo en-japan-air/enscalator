@@ -158,6 +158,7 @@ module Enscalator
                          'path.data': '/mnt/elasticsearch-data',
                          'network.bind_host': '0.0.0.0',
                          'network.publish_host': '_non_loopback_',
+                         'index.routing.allocation.disable_allocation': 'false',
                          'cloud.aws.region': region,
                          discovery: {
                            type: 'ec2',

@@ -22,6 +22,7 @@ require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
 require_relative '***REMOVED***'
+require_relative '***REMOVED***_logstash'
 
 module Enscalator
   # Namespace for template collection
