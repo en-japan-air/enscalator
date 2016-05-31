@@ -103,7 +103,6 @@ module Enscalator
           end
           str.gsub(Regexp.new(pattern), ['=', token, '-'].join)
         end
-
       end # class << self
 
       # Get aws account id
