@@ -101,11 +101,10 @@ module Enscalator
       # Create ElastiCache replication group
       # @param [String] app_name application name
       # @param [String] cache_node_type instance node type
-      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2, seed: nil)
+      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2, seed: nil, properties:{})
         if %w(t1).map { |t| cache_node_type.include?(t) }.include?(true)
           fail "T1 instance types are not supported, got '#{cache_node_type}'"
         end
-        fail 'Unable to create ElastiCache replication group with single cluster node' if num_cache_clusters <= 1
 
         cluster_resources = init_cluster_resources(app_name, cache_node_type, param_group_seed: seed)
 
@@ -115,7 +114,7 @@ module Enscalator
                  Properties: {
                    Engine: 'redis',
                    ReplicationGroupDescription: "Redis Replication group for #{app_name}",
-                   AutomaticFailoverEnabled: 'true',
+                   AutomaticFailoverEnabled: num_cache_clusters > 1 ? 'true' : 'false',
                    NumCacheClusters: num_cache_clusters,
                    CacheNodeType: cache_node_type,
                    CacheSubnetGroupName: ref("#{app_name}ElasticacheSubnetGroup"),
@@ -124,7 +123,7 @@ module Enscalator
                      get_att("#{app_name}RedisSecurityGroup", 'GroupId'),
                      ref_private_security_group
                    ]
-                 }
+                 }.merge(properties)
 
         output "#{app_name}RedisReplicationGroup",
                Description: "Redis ReplicationGroup #{app_name}",
