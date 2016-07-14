@@ -42,7 +42,7 @@ module Enscalator
         # @return [Hash] CoreOS mapping
         def fetch_mapping(base_url, tag)
           fail ArgumentError, 'url cannot be empty or nil' if base_url.blank?
-          versions = fetch_versions(base_url)
+          versions = fetch_versions(base_url.ends_with?('/') ? base_url : base_url + '/')
           version = if tag && !tag.empty?
                       versions.find { |v| v == Semantic::Version.new(tag) }.to_s
                     else

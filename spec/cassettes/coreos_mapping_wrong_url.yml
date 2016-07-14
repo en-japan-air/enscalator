@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: http://stable.release.core-os.net/sparc-usr
+    uri: http://stable.release.core-os.net/sparc-usr/
     body:
       encoding: US-ASCII
       string: ''

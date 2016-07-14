@@ -153,7 +153,7 @@ describe Enscalator::Plugins::CoreOS do
 
     it 'raises exception when base_url could be accessed, but required data is not found there' do
       VCR.use_cassette 'coreos_mapping_wrong_url' do
-        test_url = 'http://stable.release.core-os.net/sparc-usr'
+        test_url = 'http://stable.release.core-os.net/sparc-usr/'
         expect { described_class.send(:fetch_mapping, test_url, nil) }.to raise_exception OpenURI::HTTPError
       end
     end
@@ -165,7 +165,7 @@ describe Enscalator::Plugins::CoreOS do
 
     it 'parses html from stable channel and returns a list of Semantic::Version' do
       VCR.use_cassette 'coreos_versions_in_stable_release_channel' do
-        test_url = 'http://stable.release.core-os.net/amd64-usr'
+        test_url = 'http://stable.release.core-os.net/amd64-usr/'
         versions = described_class.send(:fetch_versions, test_url)
         expect(versions.size).to eq(14)
         expect(versions).to include(Semantic::Version.new('367.1.0'))
@@ -177,7 +177,7 @@ describe Enscalator::Plugins::CoreOS do
 
     it 'parses html from beta channel and returns a list of Semantic::Version' do
       VCR.use_cassette 'coreos_versions_in_beta_release_channel' do
-        test_url = 'http://beta.release.core-os.net/amd64-usr'
+        test_url = 'http://beta.release.core-os.net/amd64-usr/'
         versions = described_class.send(:fetch_versions, test_url)
         expect(versions.size).to eq(25)
         expect(versions).to include(Semantic::Version.new('522.3.0'))
@@ -188,7 +188,7 @@ describe Enscalator::Plugins::CoreOS do
 
     it 'parses html from alpha channel and returns a list of Semantic::Version' do
       VCR.use_cassette 'coreos_versions_in_alpha_release_channel' do
-        test_url = 'http://alpha.release.core-os.net/amd64-usr'
+        test_url = 'http://alpha.release.core-os.net/amd64-usr/'
         versions = described_class.send(:fetch_versions, test_url)
         expect(versions.size).to eq(138)
         expect(versions).to include(Semantic::Version.new('261.0.0'))
