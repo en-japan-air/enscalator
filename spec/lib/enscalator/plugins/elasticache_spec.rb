@@ -280,25 +280,5 @@ describe Enscalator::Plugins::Elasticache do
         expect { template_fixture.new(cmd_opts) }.to raise_error
       end
     end
-
-    context 'when invoked with num_cache_clusters < 2' do
-      let(:template_fixture) do
-        el_test_app_name = app_name
-        el_test_description = description
-        el_test_template_name = app_name.humanize.delete(' ')
-        gen_richtemplate(el_test_template_name,
-                         Enscalator::EnAppTemplateDSL,
-                         [described_class]) do
-          @app_name = el_test_app_name
-          value(Description: el_test_description)
-          mock_availability_zones
-          elasticache_repl_group_init(el_test_app_name, num_cache_clusters: 1)
-        end
-      end
-      let(:cmd_opts) { default_cmd_opts(template_fixture.name, template_fixture.name.underscore) }
-      it 'raises error' do
-        expect { template_fixture.new(cmd_opts) }.to raise_error
-      end
-    end
   end
 end
