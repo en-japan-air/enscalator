@@ -156,6 +156,7 @@ module Enscalator
                        config: {
                          'cluster.name': "#{app_name}-elasticsearch",
                          'path.data': '/mnt/elasticsearch-data',
+                         'path.logs': '/mnt/elasticsearch-data/logs/',
                          'network.bind_host': '0.0.0.0',
                          'network.publish_host': '_non_loopback_',
                          'index.routing.allocation.disable_allocation': 'false',
