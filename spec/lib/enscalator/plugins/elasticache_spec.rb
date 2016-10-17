@@ -92,18 +92,26 @@ describe Enscalator::Plugins::Elasticache do
     end
 
     context 'when invoked with custom parameters' do
+      let(:extra_parameter_group_props) do
+        {
+          parameter_group_properties: {
+            'somekey': 'somevalue'
+          }
+        }
+      end
       let(:template_fixture) do
         el_test_app_name = app_name
         el_test_description = description
         el_test_template_name = app_name.humanize.delete(' ')
         el_test_cache_node_type = cache_node_type
+        el_test_extra_param_grp_props = extra_parameter_group_props
         gen_richtemplate(el_test_template_name,
                          Enscalator::EnAppTemplateDSL,
                          [described_class]) do
           @app_name = el_test_app_name
           value(Description: el_test_description)
           mock_availability_zones
-          init_cluster_resources(el_test_app_name, el_test_cache_node_type)
+          init_cluster_resources(el_test_app_name, el_test_cache_node_type, el_test_extra_param_grp_props)
         end
       end
       let(:cmd_opts) { default_cmd_opts(template_fixture.name, template_fixture.name.underscore) }
@@ -117,6 +125,10 @@ describe Enscalator::Plugins::Elasticache do
         expected_reserved_mem =
           Enscalator::Core::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
         expect(parameter_group[:Properties][:Properties][:'reserved-memory']).to eq(expected_reserved_mem)
+        extra_parameter_group_props[:parameter_group_properties].keys.each do |prop|
+          expect(parameter_group[:Properties][:Properties][prop])
+            .to eq(extra_parameter_group_props[:parameter_group_properties][prop])
+        end
       end
     end
 

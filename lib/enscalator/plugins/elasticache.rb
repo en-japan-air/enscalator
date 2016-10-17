@@ -23,7 +23,7 @@ module Enscalator
       # Initialize resources common for all ElastiCache instances
       # @param [Object] app_name application stack name
       # @param [Object] cache_node_type node type
-      def init_cluster_resources(app_name, cache_node_type, param_group_seed: nil)
+      def init_cluster_resources(app_name, cache_node_type, param_group_seed: nil, **properties)
         subnet_group_name = "#{app_name}ElasticacheSubnetGroup"
         resource subnet_group_name,
                  Type: 'AWS::ElastiCache::SubnetGroup',
@@ -49,22 +49,31 @@ module Enscalator
                                Application: aws_stack_name
                              }
 
-        properties = {
-          Description: "#{app_name} redis parameter group",
-          CacheParameterGroupFamily: 'redis2.8',
-          Properties: {
-            'reserved-memory': Core::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
-          }
+        parameter_group_required_props = {
+          'reserved-memory': Core::InstanceType.elasticache_instance_type.max_memory(cache_node_type) / 2
         }
+
+        parameter_group_props = (
+        if !properties.nil? && properties.key?(:parameter_group_properties)
+          properties[:parameter_group_properties]
+        else
+          {}
+        end).merge(parameter_group_required_props)
+
         # TODO: remove this workaround when related template gets fixed
         parameter_group_name = if param_group_seed
                                  "#{app_name}RedisParameterGroup#{param_group_seed}"
                                else
-                                 "#{app_name}RedisParameterGroup#{magic_number(properties)}"
+                                 "#{app_name}RedisParameterGroup#{magic_number(parameter_group_props)}"
                                end
+
         resource parameter_group_name,
                  Type: 'AWS::ElastiCache::ParameterGroup',
-                 Properties: properties
+                 Properties: {
+                   Description: "#{app_name} redis parameter group",
+                   CacheParameterGroupFamily: 'redis2.8',
+                   Properties: parameter_group_props
+                 }
 
         {
           subnet_group: subnet_group_name,
@@ -101,7 +110,7 @@ module Enscalator
       # Create ElastiCache replication group
       # @param [String] app_name application name
       # @param [String] cache_node_type instance node type
-      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2, seed: nil, properties:{})
+      def elasticache_repl_group_init(app_name, cache_node_type: 'cache.t2.small', num_cache_clusters: 2, seed: nil, properties: {})
         if %w(t1).map { |t| cache_node_type.include?(t) }.include?(true)
           fail "T1 instance types are not supported, got '#{cache_node_type}'"
         end
