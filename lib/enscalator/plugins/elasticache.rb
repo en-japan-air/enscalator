@@ -71,7 +71,7 @@ module Enscalator
                  Type: 'AWS::ElastiCache::ParameterGroup',
                  Properties: {
                    Description: "#{app_name} redis parameter group",
-                   CacheParameterGroupFamily: 'redis2.8',
+                   CacheParameterGroupFamily: 'redis3.2',
                    Properties: parameter_group_props
                  }
 
