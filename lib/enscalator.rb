@@ -30,6 +30,7 @@ module Enscalator
 
       opt :list_templates, 'List all available templates', default: false, short: 'l'
       opt :template, 'Template name', type: String, short: 't'
+      opt :template_file, 'Template filename', type: String, short: 'f'
       opt :region, 'AWS Region', type: String, default: 'us-east-1', short: 'r'
       opt :parameters, "Parameters 'Key1=Value1;Key2=Value2'", type: String, short: 'p'
       opt :stack_name, 'Stack name', type: String, short: 's'
@@ -57,6 +58,21 @@ module Enscalator
       valid_values = ('a'..'e').to_a << 'all'
       unless valid_values.include? opts[:availability_zone]
         STDERR.puts %(Availability zone can be only one off "#{valid_values.join(',')}")
+        exit
+      end
+    end
+
+    # load template from given file and update template list
+    if opts[:template_file]
+      unless File.exist?(opts[:template_file])
+        abort('Unable to find file "%s"' % opts[:template_file])
+      end
+      load(opts[:template_file])
+      unless Enscalator::Templates.all_valid?
+        STDERR.puts 'Some templates missing required tpl method:'
+        Enscalator::Templates.all.select { |a| !a.instance_methods.include?(:tpl) }.each do |tpl|
+          STDERR.puts tpl.name.demodulize
+        end
         exit
       end
     end
