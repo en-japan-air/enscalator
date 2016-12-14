@@ -22,7 +22,7 @@ module Enscalator
       end
 
       def redis_user_data
-        Base64.encode64(%q(
+        Base64.encode64(%(
           #!/usr/bin/env bash
           apt-get update
           apt-get upgrade -y
