@@ -20,9 +20,9 @@ module Enscalator
       # VPC Peering connection can be created only if
       #
       # - both VPCs has to be in the same region
-      # - CIDR blocks in connected VPCs has be different
+      # - CIDR blocks in connected VPCs has to be different
       #
-      # Route tables has to be created in the following way:
+      # Route tables should to be created in the following way:
       #
       # VPC Local's route table
       # 172.16.0.0/16	-> Local

@@ -65,7 +65,7 @@ module Enscalator
     # load template from given file and update template list
     if opts[:template_file]
       unless File.exist?(opts[:template_file])
-        abort('Unable to find file "%s"' % opts[:template_file])
+        abort(format('Unable to find file "%s"', opts[:template_file]))
       end
       load(opts[:template_file])
       unless Enscalator::Templates.all_valid?
