@@ -17,12 +17,12 @@ module Enscalator
         Aws::EC2::Vpc.new(id: id, region: region)
       end
 
-      # VPC Peering connection can be created only if
+      # VPC Peering connection can be created only when
       #
-      # - both VPCs has to be in the same region
-      # - CIDR blocks in connected VPCs has to be different
+      # - both VPCs are in the same region
+      # - connected VPCs has distinct CIDR blocks
       #
-      # Route tables should to be created in the following way:
+      # Route tables should be created in the following way:
       #
       # VPC Local's route table
       # 172.16.0.0/16	-> Local
