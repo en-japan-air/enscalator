@@ -62,6 +62,11 @@ module Enscalator
       end
     end
 
+    # fallback to create_stack action when no action was given
+    if !opts[:create_stack] && !opts[:update_stack]
+      opts[:create_stack] = true
+    end
+
     # load template from given file and update template list
     if opts[:template_file]
       unless File.exist?(opts[:template_file])
