@@ -44,13 +44,10 @@ module Enscalator
     # @param [String] region valid aws region
     # @param [String] profile_name aws credentials profile name
     def init_aws_config(region, profile_name: nil)
-      fail ArgumentError,
-           'Unable to proceed without region' if region.blank?
+      fail ArgumentError, 'Unable to proceed without region' if region.blank?
       opts = {}
       opts[:region] = region
-      unless profile_name.blank?
-        opts[:credentials] = Aws::SharedCredentials.new(profile_name: profile_name)
-      end
+      opts[:credentials] = Aws::SharedCredentials.new(profile_name: profile_name) unless profile_name.blank?
       Aws.config.update(opts)
     end
 
@@ -74,8 +71,7 @@ module Enscalator
     # @return [Aws::CloudFormation::Client]
     # @raise [ArgumentError] when region is not given
     def cfn_client(region)
-      fail ArgumentError,
-           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
+      fail ArgumentError, 'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
       opts = {}
       opts[:region] = region unless Aws.config.key?(:region)
       Aws::CloudFormation::Client.new(opts)
@@ -98,8 +94,7 @@ module Enscalator
     # @return [Aws::EC2::Client]
     # @raise [ArgumentError] when region is not given
     def ec2_client(region)
-      fail ArgumentError,
-           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
+      fail ArgumentError, 'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
       opts = {}
       opts[:region] = region unless Aws.config.key?(:region)
       Aws::EC2::Client.new(opts)
@@ -111,8 +106,7 @@ module Enscalator
     # @return [Aws::Route53::Client]
     # @raise [ArgumentError] when region is not given
     def route53_client(region)
-      fail ArgumentError,
-           'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
+      fail ArgumentError, 'Unable to proceed without region' if region.blank? && !Aws.config.key?(:region)
       opts = {}
       opts[:region] = region unless Aws.config.key?(:region)
       Aws::Route53::Client.new(opts)
@@ -124,8 +118,7 @@ module Enscalator
     # @return [Hash] images satisfying query conditions
     # @raise [ArgumentError] when client is not provided or its not expected class type
     def find_ami(client, owners: ['self'], filters: nil)
-      fail ArgumentError,
-           'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
+      fail ArgumentError, 'must be instance of Aws::EC2::Client' unless client.instance_of?(Aws::EC2::Client)
       query = {}
       query[:dry_run] = false
       query[:owners] = owners if owners.is_a?(Array) && owners.any?
@@ -282,6 +275,12 @@ module Enscalator
     # @param [String] region aws region
     # @param [Boolean] force_create force to create a new ssh key
     def create_ssh_key(key_name, region, force_create: false)
+      # Ignoring attempts to generate new ssh key when not deploying
+      if @options && @options[:expand]
+        warn '[Warning] SSH key can be generated only for create or update stack actions'
+        return
+      end
+
       client = ec2_client(region)
       aws_profile = if Aws.config.key?(:credentials)
                       creds = Aws.config[:credentials]

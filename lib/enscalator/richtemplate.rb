@@ -548,7 +548,7 @@ module Enscalator
 
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
-      enqueue([@options[:expand] ? proc { puts JSON.pretty_generate(self) } : proc { STDOUT.puts deploy(self) }])
+      enqueue([@options[:expand] ? proc { STDOUT.puts(JSON.pretty_generate(self)) } : proc { STDOUT.puts(deploy(self)) }])
 
       enqueue(@post_run_blocks) if @options[:post_run]
 
