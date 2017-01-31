@@ -548,55 +548,32 @@ module Enscalator
 
       enqueue(@pre_run_blocks) if @options[:pre_run]
 
-      enqueue([@options[:expand] ? proc { puts JSON.pretty_generate(self) } : proc { cfn_cmd(self) }])
+      enqueue([@options[:expand] ? proc { puts JSON.pretty_generate(self) } : proc { STDOUT.puts deploy(self) }])
 
       enqueue(@post_run_blocks) if @options[:post_run]
 
       @run_queue.each(&:call) if @run_queue
     end
 
-    # Run aws sdk cloud-formation command with stack configuration and parameters
-    #
-    # @param [RichTemplateDSL] template cloudformation template
-    def cfn_cmd(template)
-      command = %w(aws)
-
-      if @options[:profile]
-        aws_credentials_profile = @options[:profile]
-        command.concat(%W(--profile #{aws_credentials_profile}))
-      end
-
-      command << 'cloudformation'
-      command << (@options[:create_stack] ? 'create-stack' : 'update-stack')
-
-      command.concat(%W(--stack-name '#{stack_name}')) if stack_name
-      command.concat(%W(--region '#{region}')) if region
-
-      if @options[:capabilities]
-        capabilities = @options[:capabilities]
-        command.concat(%W(--capabilities '#{capabilities}'))
-      end
-
-      unless parameters.empty?
-        params = parameters.map { |key, val| { ParameterKey: key, ParameterValue: val } }
-        command.concat(%W(--parameters '#{params.to_json}'))
-      end
-
+    # Pass generated template to underlying cloudformation client to actually create/update stack
+    # @param [TemplateDSL] template instance of template
+    # @raise [RuntimeError] when generated template exceeds 51200 size limit
+    def deploy(template)
       template_body = template.to_json
-      if template_body.bytesize < TEMPLATE_BODY_LIMIT
-        template_file = Tempfile.new('enscalator-template.json')
-        begin
-          template_file.write(template_body)
-          template_file.flush
-          command.concat(%W(--template-body 'file://#{template_file.path}'))
-          run_cmd(command)
-        ensure
-          template_file.close
-          template_file.unlink
-        end
-      else
-        fail("Unable to deploy template exceeding #{TEMPLATE_BODY_LIMIT} limit: #{template_body.bytesize}")
+      if template_body.bytesize > TEMPLATE_BODY_LIMIT
+        fail(RuntimeError, "Unable to deploy template exceeding #{TEMPLATE_BODY_LIMIT} limit: #{template_body.bytesize}")
       end
+
+      options = {
+        stack_name: stack_name,
+        capabilities: [@options[:capabilities]],
+        template_body: template_body
+      }
+
+      options[:parameters] = parameters.map { |k, v| { parameter_key: k, parameter_value: v } } unless parameters.empty?
+      action = @options[:update_stack] ? :update_stack : :create_stack
+      resp = cfn_client(region).send(action, options)
+      resp.stack_id
     end
   end # class RichTemplateDSL
 end # module Enscalator
