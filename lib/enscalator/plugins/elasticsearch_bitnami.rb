@@ -108,6 +108,7 @@ module Enscalator
       # Get aws account id
       # @return [String] account id
       def aws_account_id
+        # noinspection RubyArgCount
         Aws::IAM::Client.new.get_user.user.arn.split(':')[4]
       end
 
@@ -171,7 +172,7 @@ module Enscalator
                      find_in_map('AWSElasticsearchAMI', ref('AWS::Region'), :hvm),
                      ref_application_subnets.first,
                      [ref_private_security_group, ref_resource_security_group],
-                     dependsOn: [],
+                     depends_on: [],
                      properties: properties
 
         # create s3 bucket for cluster snapshots

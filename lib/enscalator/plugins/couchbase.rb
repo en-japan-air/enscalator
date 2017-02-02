@@ -30,7 +30,7 @@ module Enscalator
                      find_in_map('AWSCouchbaseAMI', ref('AWS::Region'), 'amd64'),
                      ref_resource_subnets.first,
                      [ref_private_security_group, ref_resource_security_group],
-                     dependsOn: [],
+                     depends_on: [],
                      properties: {
                        KeyName: ref("Couchbase#{db_name}KeyName"),
                        InstanceType: ref("Couchbase#{db_name}InstanceType"),

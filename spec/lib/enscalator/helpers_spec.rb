@@ -88,9 +88,7 @@ describe Enscalator::Helpers do
       test_app_name = 'TestBox'
       test_region = 'africa-1'
       test_stack_name = 'BatchProcessing'
-      generated_key_name = test_fixture.gen_ssh_key_name(test_app_name,
-                                                         test_region,
-                                                         test_stack_name)
+      generated_key_name = test_fixture.gen_ssh_key_name(test_app_name, test_region, test_stack_name)
       expect(generated_key_name).to include(test_app_name.underscore)
       expect(generated_key_name).to include(test_region.underscore)
       expect(generated_key_name).to include(test_stack_name.underscore)
