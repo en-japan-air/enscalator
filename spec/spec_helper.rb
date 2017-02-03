@@ -63,6 +63,11 @@ VCR.configure do |c|
   end
 end
 
+RSpec.configure do |config|
+  config.before(:each) { Aws.config = {} }
+  config.after(:each) { Aws.config = {} }
+end
+
 # Methods common for multiple tests
 require_relative 'helpers/asserts'
 require_relative 'helpers/mocks'

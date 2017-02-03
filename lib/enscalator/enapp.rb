@@ -1,5 +1,5 @@
 require 'cloudformation-ruby-dsl/cfntemplate'
-require_relative 'richtemplate'
+require_relative 'rich_template_dsl'
 
 module Enscalator
   # Template DSL for common enJapan application stack

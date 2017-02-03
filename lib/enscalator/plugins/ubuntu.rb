@@ -74,7 +74,7 @@ module Enscalator
                      find_in_map('AWSUbuntuAMI', ref('AWS::Region'), 'hvm'),
                      ref_application_subnets.first,
                      [ref_private_security_group, ref_application_security_group],
-                     dependsOn: [],
+                     depends_on: [],
                      properties: {
                        KeyName: ref("Ubuntu#{instance_name}KeyName"),
                        InstanceType: ref("Ubuntu#{instance_name}InstanceType")
