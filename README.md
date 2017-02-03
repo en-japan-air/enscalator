@@ -83,7 +83,7 @@ Everything gets attached to a `VPC`, that was created using `enjapan_vpc` templa
 That's why you always need to precise the start_ip_idx as a parameter of basic_setup,
 it's the starting ip address in the subnet.
 
-Check [lib/enscalator/templates/auth_service.rb](lib/enscalator/templates/auth_service.rb) for an example.
+Check [lib/enscalator/templates/vpc_peering.rb](lib/enscalator/templates/vpc_peering.rb) for an example.
 
 
 ### How to write a plugin and include it?

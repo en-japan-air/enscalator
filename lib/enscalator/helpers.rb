@@ -104,7 +104,7 @@ module Enscalator
     #
     # @param [String] app_name application name
     def read_user_data(app_name)
-      user_data_path = File.join(File.expand_path('..', __FILE__), 'confs', 'user-data', app_name)
+      user_data_path = File.join(File.expand_path('..', __FILE__), 'plugins', 'user-data', app_name)
       fail("User data path #{user_data_path} not exists") unless File.exist?(user_data_path)
       File.read(user_data_path)
     end

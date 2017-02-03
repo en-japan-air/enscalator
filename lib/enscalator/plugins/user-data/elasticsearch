@@ -1,0 +1,367 @@
+#cloud-config
+
+packages:
+  - ruby
+
+bootcmd:
+  - update-rc.d monit disable
+  - update-rc.d bitnami disable
+
+runcmd:
+  - gem install aws-sdk semantic backports elasticsearch --no-ri --no-rdoc
+  - . /usr/local/bin/configure-boot-env
+  - /etc/init.d/monit stop
+  - /opt/bitnami/ctlscript.sh stop apache
+  - /opt/bitnami/ctlscript.sh stop elasticsearch
+  - sleep 5
+  - kill $(pgrep -f elasticsearch)
+  - /usr/local/bin/configure-cluster
+  - /etc/init.d/monit start
+  - /opt/bitnami/ctlscript.sh start apache
+  - /opt/bitnami/ctlscript.sh start elasticsearch
+  - echo "Verifying if hourly cronjob was installed correctly.." && run-parts --test /etc/cron.hourly
+  - /usr/local/bin/backup-cluster --restore-snapshot
+
+write_files:
+  - path: /usr/local/bin/configure-boot-env
+    owner: root:root
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+      #
+      # Configure boot environment to properly detect bitnami stack
+
+      BITNAMI_DIR=/opt/bitnami
+      ELASTICSEARCH_DIR=$BITNAMI_DIR/elasticsearch
+      APACHE2_DIR=$BITNAMI_DIR/apache2
+      BITNAMI_COMMON_DIR=$BITNAMI_DIR/common
+      JAVA_DIR=$BITNAMI_DIR/java
+      SYSTEM_PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+      export PATH=$ELASTICSEARCH_DIR/bin:$APACHE2_DIR/bin:$BITNAMI_COMMON_DIR/bin:$JAVA_DIR/bin:$SYSTEM_PATH
+      export JAVA_HOME=$JAVA_DIR
+
+  - path: /usr/local/bin/configure-cluster
+    owner: root:root
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env ruby
+      #
+      # Elasticsearch configuration
+      #
+      # PURPOSE: update elasticsearch configuration using values from instance tags
+      #
+      # WARNING: since this script also modifies ip address settings, make sure
+      # to stop elasticsearch BEFORE using this script
+
+      require 'yaml'
+      require 'open-uri'
+      require 'json'
+      require 'ostruct'
+      require 'fileutils'
+      require 'aws-sdk'
+      require 'semantic'
+      require 'backports'
+
+      BITNAMI_INSTALL_PATH='/opt/bitnami'
+      ELASTICSEARCH_INSTALL_PATH=File.join(BITNAMI_INSTALL_PATH, 'elasticsearch')
+      ELASTICSEARCH_CONFIG_FILE=File.join(ELASTICSEARCH_INSTALL_PATH, 'config', 'elasticsearch.yml')
+
+      class Plugin
+        attr_reader :install_prefix, :install_link, :mapping, :es_version
+        def initialize(install_prefix, link, mapping, es_version)
+          @install_prefix ||= install_prefix
+          @install_link ||= link
+          @mapping ||= mapping.map {|k,v| [Semantic::Version.new(k.to_s), v] }.to_h
+          @es_version ||= Semantic::Version.new(es_version)
+        end
+
+        def find_plugin_version
+          @mapping[@mapping.keys.select { |v| v.major == @es_version.major && v.minor == @es_version.minor }.first]
+        end
+
+        def install
+          path = [@install_link, find_plugin_version].join('/')
+          cmd = [File.join(@install_prefix, 'bin/plugin'), 'install', path].join(' ')
+          IO.popen(cmd) { |io| io.read }
+        end
+      end
+
+      document = 'http://169.254.169.254/latest/dynamic/instance-identity/document/'
+      metadata = OpenStruct.new(JSON.parse(open(document){|d| d.read }))
+      ec2 = Aws::EC2::Client.new(region: metadata.region)
+
+      tags = nil
+      ec2.describe_tags.each do |response|
+        tags = response[:tags].select { |t| t.resource_id == metadata.instanceId && t.resource_type == 'instance' }
+      end
+
+      cluster_name = tags.select { |t| t.key == 'ClusterName' }.first.value
+      cluster_version = tags.select { |t| t.key == 'Version' }.first.value
+
+      # generate elasticsearch configuration using instance metadata
+      config = {}
+      config['cluster.name'] = cluster_name
+      config['network.host'] = metadata.privateIp
+      config['http.port'] = 9200
+      config['transport.tcp.port'] = 9300
+      config['node.max_local_storage_nodes'] = 1
+      config['plugin.mandatory'] = 'cloud-aws'
+      config['discovery.type'] = 'ec2'
+      config['discovery.zen.ping.multicast.enabled'] = false
+      config['discovery.ec2.tag.ClusterName'] = cluster_name
+      config['discovery.ec2.ping_timeout'] = '20s'
+
+      # if configuration file already present, create its backup and remove original file
+      if File.exists?(ELASTICSEARCH_CONFIG_FILE)
+        FileUtils.move(ELASTICSEARCH_CONFIG_FILE, [ELASTICSEARCH_CONFIG_FILE, 'bak'].join('.'))
+      end
+
+      # write generated configuration file
+      File.open(ELASTICSEARCH_CONFIG_FILE, 'w+') { |file| file.write(config.to_yaml) }
+
+      # install necessary plugins
+      aws = Plugin.new(ELASTICSEARCH_INSTALL_PATH, 'cloud-aws', {}, cluster_version)
+      kuromoji = Plugin.new(ELASTICSEARCH_INSTALL_PATH, 'analysis-kuromoji', {}, cluster_version)
+
+      # execute plugin install command
+      [aws, kuromoji].map(&:install).each { |r| puts r }
+
+  - path: /usr/local/bin/backup-cluster
+    owner: root:root
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env ruby
+
+      require 'elasticsearch'
+      require 'optparse'
+      require 'ostruct'
+      require 'open-uri'
+      require 'json'
+      require 'backports'
+
+      module Storage
+        class Backup
+          attr_reader :instance, :repository, :config
+
+          def initialize(host, opts = {})
+            defaults = {
+                port: 9200,
+                repository: 'backup',
+                config: nil
+            }
+            opts = defaults.merge(opts)
+
+            @instance = ESInstance.new(host, opts[:port])
+            @instance.wait_for_cluster_to_start
+            @config = opts[:config].nil? || opts[:config].empty? ? s3_config : opts[:config]
+            @repository = opts[:repository]
+          end
+
+          def fs_config
+            {
+                type: 'fs',
+                settings: {
+                    location: '/tmp/backup',
+                    compress: true
+                }
+            }
+          end
+
+          def instance_metadata
+            document = 'http://169.254.169.254/latest/dynamic/instance-identity/document/'
+            OpenStruct.new(JSON.parse(open(document){|d| d.read }))
+          end
+
+          # TODO: adjust configuration to be more flexible
+          def s3_config
+            metadata = instance_metadata
+            path_in_bucket = get_cluster_name # for now use cluster name
+            {
+                type: 's3',
+                settings: {
+                    bucket: "elasticsearch-bitnami-#{metadata.region}-#{metadata.accountId}",
+                    region: metadata.region,
+                    base_path: path_in_bucket
+                }
+            }
+          end
+
+          # Create/Init snapshot repository
+          def create_repository
+            @instance.client
+                .snapshot
+                .create_repository({repository: @repository,
+                                    body: @config})
+          end
+
+          # Get list of registered snapshots
+          def get_all_snapshots
+            raw_snapshots = @instance.client
+                                .snapshot
+                                .get(repository: @repository,
+                                     snapshot: '_all')
+            raw_snapshots['snapshots'].map { |rs| OpenStruct.new(rs) }
+          end
+
+          # Determine last snapshot in the list and invoke restore call with it
+          # TODO: algorithm to determine which snapshot to use, should take into account failures
+          # TODO: provide ability to override/use specific snapshot when instance gets created
+          def restore_from_last_snapshot
+            snapshots = get_all_snapshots.select { |s| s.state.eql? 'SUCCESS' }
+            last = snapshots.sort_by { |x| [x.start_time_in_millis, x.end_time_in_millis] }.last
+            if last
+              restore_snapshot(last)
+            else
+              puts 'Failed to find a list of valid snapshots for the cluster'
+            end
+          end
+
+          def get_cluster_name
+            @instance.client.cluster.state['cluster_name']
+          end
+
+          # Create new snapshot
+          # snapshot pattern: %{cluster_name}_%{increment}
+          def take_snapshot(opts = {})
+            defaults = {
+                create_opts: nil,
+                master_timeout: nil,
+                wait_for_completion: false
+            }
+            defaults.merge(opts)
+
+            cluster_name = get_cluster_name
+            registered_snapshots = get_all_snapshots.map(&:snapshot)
+            default_index = 1
+            index = if !registered_snapshots.empty?
+                      last_index = registered_snapshots
+                                       .map { |s| s.split('_').last }
+                                       .select { |s| s =~ /^[0-9][0-9]*/ }.sort.last
+                      last_index.to_i + 1
+                    else
+                      default_index
+                    end
+            options = {}
+            options[:body] = opts[:create_opts] if opts[:create_opts].instance_of?(Hash) && !opts[:create_opts].empty?
+            options[:repository] = @repository
+            options[:snapshot] = [cluster_name, index].join('_')
+            options[:master_timeout] = opts[:master_timeout] if opts[:master_timeout]
+            options[:wait_for_completion] = opts[:wait_for_completion]
+            @instance.client.snapshot.create(options)
+          end
+
+          # Restore given snapshot
+          def restore_snapshot(snapshot, opts = {})
+            raise ArgumentError, 'instance with snapshot fields is required' unless (snapshot.instance_of?(OpenStruct) || snapshot.snapshot.empty?)
+            defaults = {
+                restore_opts: nil,
+                master_timeout: nil,
+                wait_for_completion: false
+            }
+
+            opts = defaults.merge(opts)
+
+            options = {}
+            options[:repository] = @repository
+            options[:snapshot] = snapshot.snapshot
+            options[:body] = opts[:restore_opts] if opts[:restore_opts].instance_of?(Hash) && !opts[:restore_opts].empty?
+            options[:master_timeout] = opts[:master_timeout] if opts[:master_timeout]
+            options[:wait_for_completion] = opts[:wait_for_completion]
+            @instance.client.snapshot.restore(options)
+          end
+
+        end
+
+        # Create elasticsearch instance reference and setup elasticsearch client
+        class ESInstance
+          attr_reader :host, :port, :client
+
+          def initialize(host, port)
+            @host = host
+            @port = port
+            @client = es_client(host, port)
+          end
+
+          def es_client(host, port, opts = {})
+            defaults = {
+                debug: true
+            }
+            opts = defaults.merge(opts)
+            Elasticsearch::Client.new({host: "#{host}:#{port}", log: opts[:debug]})
+          end
+
+          # Wait for cluster to become alive and ready to accept writes
+          def wait_for_cluster_to_start(retries = 10)
+
+            # check until cluster start to receive web requests
+            health =
+                begin
+                  @client.cluster.health
+                rescue
+                  sleep 5
+                  retry
+                end
+
+            if health['status'] == 'red'
+              sleep 5
+              retries == 0 && puts('Reached limit of retries')
+              retries > 0 && wait_for_cluster_to_start(retries - 1)
+            else
+              puts 'Cluster is ready to accept requests'
+            end
+
+          end
+
+        end
+
+      end
+
+      # Using built-in command-line options parser to reduce dependencies
+      options = {}
+      opt_parser =OptionParser.new do |opts|
+
+        opts.on('-c', '--create-snapshot', 'Create elasticsearch snapshot') do |cs|
+          options[:create_snapshot] = cs
+        end
+        opts.on('-r', '--restore-snapshot', 'Restore elasticsearch snapshot') do |rs|
+          options[:restore_snapshot] = rs
+        end
+
+      end
+
+      begin
+        opt_parser.parse!
+
+        document = 'http://169.254.169.254/latest/dynamic/instance-identity/document/'
+        metadata = OpenStruct.new(JSON.parse(open(document){|d| d.read }))
+        backup = Storage::Backup.new(metadata.privateIp)
+
+        if options[:create_snapshot]
+          puts 'Creating new snapshot'
+          backup.create_repository
+          backup.take_snapshot(master_timeout: 60)
+        end
+
+        if options[:restore_snapshot]
+          puts 'Trying to restore cluster state from snapshot'
+          backup.create_repository
+          backup.restore_from_last_snapshot(master_timeout: 60)
+        end
+
+        if options.empty?
+          puts opt_parser
+          exit 1
+        end
+
+      rescue RuntimeError => e
+        puts e
+      end
+
+  - path: /etc/cron.hourly/take_cluster_snapshot
+    owner: root:root
+    permissions: '0755'
+    content: |
+      #!/usr/bin/env bash
+
+      /usr/local/bin/backup-cluster --create-snapshot

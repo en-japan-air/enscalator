@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in enscalator.gemspec
+# All gem dependencies are specified in enscalator.gemspec
 gemspec
