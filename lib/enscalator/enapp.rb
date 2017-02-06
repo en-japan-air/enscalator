@@ -174,7 +174,7 @@ module Enscalator
         subnet application_subnet_name,
                vpc.id,
                application_cidr_block,
-               availabilityZone: availability_zone,
+               availability_zone: availability_zone,
                tags: {
                  Network: 'Private',
                  Application: aws_stack_name,
@@ -185,7 +185,7 @@ module Enscalator
         subnet resource_subnet_name,
                vpc.id,
                resource_cidr_block,
-               availabilityZone: availability_zone,
+               availability_zone: availability_zone,
                tags: {
                  Network: 'Private',
                  Application: aws_stack_name
