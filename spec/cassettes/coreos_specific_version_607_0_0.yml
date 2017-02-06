@@ -64,7 +64,7 @@ http_interactions:
       Last-Modified:
       - Thu, 09 Apr 2015 17:07:30 GMT
       Etag:
-      - '"***REMOVED***"'
+      - '"80eb9f664722cb1eb7e108753be69bb3"'
       X-Goog-Generation:
       - '1428599250435000'
       X-Goog-Metageneration:
@@ -77,7 +77,7 @@ http_interactions:
       - text/html; charset=utf-8
       X-Goog-Hash:
       - crc32c=h8wcHg==
-      - ***REMOVED***
+      - md5=gOufZkciyx634Qh1O+absw==
       X-Goog-Storage-Class:
       - STANDARD
       Accept-Ranges:
@@ -220,7 +220,7 @@ http_interactions:
       Last-Modified:
       - Sat, 28 Feb 2015 21:03:03 GMT
       Etag:
-      - '"***REMOVED***"'
+      - '"7fa21482e945d025c70781f5b4b04e92"'
       X-Goog-Generation:
       - '1425157383686000'
       X-Goog-Metageneration:

@@ -43,7 +43,7 @@ http_interactions:
       X-Rack-Cache:
       - miss
       Set-Cookie:
-      - _bitnami_***REMOVED***--***REMOVED***;
+      - _bitnami_session=BAh7CEkiD3Nlc3Npb25faWQGOgZFVEkiJTBmOThmM2VmYWJhNTYxMDJhMjQ5ZTlkMjFhN2FmMDkxBjsAVEkiFmFjY291bnRfcmV0dXJuX3RvBjsARiImL3N0YWNrL2VsYXN0aWNzZWFyY2gvY2xvdWQvYW1hem9uSSIQX2NzcmZfdG9rZW4GOwBGSSIxalRCUkZqZUlXeEFoTzh4eDhUQVNwaHlOSEd5c3Vnc1k2SXBZa1p6WmVvOD0GOwBG--d87246d477428649a1f72926a87370fa896297ea;
         path=/; HttpOnly
       X-Powered-By:
       - Phusion Passenger
@@ -57,9 +57,9 @@ http_interactions:
         content=\"118019878217429\" property=\"fb:app_id\">\n\n<link href=\"http://feeds2.feedburner.com/BitnamiBlog\"
         rel=\"alternate\" title=\"Bitnami Blog RSS Feed\">\n<link href=\"http://feeds2.feedburner.com/bitnami/latest/releases\"
         rel=\"alternate\" title=\"Bitnami Blog RSS Feed\">\n<meta content=\"authenticity_token\"
-        name=\"csrf-param\" />\n<meta content=\"***REMOVED***\"
+        name=\"csrf-param\" />\n<meta content=\"jTBRFjeIWxAhO8xx8TASphyNHGysugsY6IpYkZzZeo8=\"
         name=\"csrf-token\" />\n<script type=\"text/javascript\"> \n  var _veroq =
-        _veroq || [];\n  _veroq.push(['init', { api_key: '***REMOVED***'
+        _veroq || [];\n  _veroq.push(['init', { api_key: '6b05a0160d3124bb9b50b8f8397d8424d033531e'
         } ]);\n  _veroq.push(['trackPageview']);\n  (function() {var ve = document.createElement('script');
         ve.type = 'text/javascript'; ve.async = true; ve.src = '//d3qxef4rp70elm.cloudfront.net/m.js';
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ve,
@@ -71,11 +71,11 @@ http_interactions:
         ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';\n    var
         s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga,
         s);\n    })();\n\n//]]>\n</script>\n<title>Elasticsearch Cloud Hosting on
-        Amazon EC2</title>\n\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/webfontloader-***REMOVED***.js\"
+        Amazon EC2</title>\n\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/webfontloader-2b504d3458be4f0942a946c399ca7785.js\"
         type=\"text/javascript\"></script>\n<script>\n  //<![CDATA[\n    WebFontConfig
         = {\n      typekit: { id: 'yvn2smh' },\n      custom: { families: [], urls:
         [] }\n    }\n  //]]>\n</script>\n<script>\n  //<![CDATA[\n    WebFont.load(WebFontConfig);\n
-        \ //]]>\n</script>\n\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application-***REMOVED***.css\"
+        \ //]]>\n</script>\n\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application-aaf1cbd7b507e0edb2386bd56f9945fc.css\"
         media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<!--[if lte IE 9]>\n<link
         href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split2-***REMOVED***.css\"
         media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split3-***REMOVED***.css\"
@@ -90,8 +90,8 @@ http_interactions:
         class=\"navbar-toggle\" data-target=\"header nav\" data-toggle=\"collapse\"
         type=\"button\"><span class=\"sr-only\">Toggle navigation</span>\n<span class=\"icon-bar\"></span>\n<span
         class=\"icon-bar\"></span>\n<span class=\"icon-bar\"></span>\n</button><a
-        href=\"/\" id=\"logo\"><img alt=\"Cloud Hosting - Bitnami\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/logo@2x-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/new/logo-***REMOVED***.png\"
+        href=\"/\" id=\"logo\"><img alt=\"Cloud Hosting - Bitnami\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/logo@2x-a9fa7f69b256867f4834a067abefdf34.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/new/logo-8775428002414243bc8e4040a826cab7.png\"
         />\n</a></div>\n<nav>\n<ul>\n<li class=\"active\"><a href=\"/stacks\">Applications</a></li>\n<li><a
         href=\"/cloud\">Cloud</a></li>\n<li><a href=\"/support\">Support</a></li>\n<li><a
         href=\"/learn_more\">What is Bitnami?</a></li>\n</ul>\n<div id=\"account\">\n<a
@@ -136,7 +136,7 @@ http_interactions:
         href=\"/launch/elasticsearch/aws\" role=\"button\" style=\"display: none !important\">Launch
         Elasticsearch Now</a>\n\n<p class=\"small\">Launch a free demo server now!</p>\n</div>\n</div>\n</div>\n<div
         class=\"panel-footer\">\n<img alt=\"Aws-logo\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo@2x-***REMOVED***.png\"
-        height=\"50\" src=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo-***REMOVED***.png\"
+        height=\"50\" src=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo-cc3b9db4f2da017348e1a630539872d0.png\"
         />\n</div>\n</div>\n<article>\n\n<p>In addition to providing free, ready to
         deploy Cloud Images, we also offer Bitnami Cloud Hosting, a subscription service
         that simplifies the process of deploying and managing open source applications
@@ -168,9 +168,9 @@ http_interactions:
         Paulo)</option></select>\n</div>\n</div>\n<ul class=\"list-unstyled\">\n<li
         class=\"download\" data-region=\"us-east-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (PV)\n<small>US East (Virginia)</small>\n</h4>\n</div>\n<div class=\"col-md-2\">\n<div
-        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"us-east-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -184,9 +184,9 @@ http_interactions:
         target=\"_blank\">ami-06a7f46e</a>\n</td>\n</tr>\n</tbody>\n</thead>\n</table>\n</div>\n</div>\n</li>\n<li
         class=\"download\" data-region=\"us-east-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (HVM)\n<small>US East (Virginia)</small>\n</h4>\n</div>\n<div class=\"col-md-2\">\n<div
-        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"us-east-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -195,9 +195,9 @@ http_interactions:
         class=\"download\" data-region=\"us-west-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (PV)\n<small>US West (N. California)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"us-west-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -212,9 +212,9 @@ http_interactions:
         class=\"download\" data-region=\"us-west-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (HVM)\n<small>US West (N. California)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"us-west-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -222,9 +222,9 @@ http_interactions:
         target=\"_blank\">ami-33ca2f77</a></strong>\n</td>\n</tr>\n</tbody>\n</thead>\n</table>\n</div>\n</div>\n</li>\n<li
         class=\"download\" data-region=\"us-west-2\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (PV)\n<small>US West (Oregon)</small>\n</h4>\n</div>\n<div class=\"col-md-2\">\n<div
-        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"us-west-2\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -238,9 +238,9 @@ http_interactions:
         target=\"_blank\">ami-4b76577b</a>\n</td>\n</tr>\n</tbody>\n</thead>\n</table>\n</div>\n</div>\n</li>\n<li
         class=\"download\" data-region=\"us-west-2\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (HVM)\n<small>US West (Oregon)</small>\n</h4>\n</div>\n<div class=\"col-md-2\">\n<div
-        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"us-west-2\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -248,9 +248,9 @@ http_interactions:
         target=\"_blank\">ami-9d7657ad</a></strong>\n</td>\n</tr>\n</tbody>\n</thead>\n</table>\n</div>\n</div>\n</li>\n<li
         class=\"download\" data-region=\"eu-west-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (PV)\n<small>Europe (Ireland)</small>\n</h4>\n</div>\n<div class=\"col-md-2\">\n<div
-        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"eu-west-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -264,9 +264,9 @@ http_interactions:
         target=\"_blank\">ami-4548df32</a>\n</td>\n</tr>\n</tbody>\n</thead>\n</table>\n</div>\n</div>\n</li>\n<li
         class=\"download\" data-region=\"eu-west-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (HVM)\n<small>Europe (Ireland)</small>\n</h4>\n</div>\n<div class=\"col-md-2\">\n<div
-        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        class=\"stack-with-os\">\n<img alt=\"Elasticsearch\" data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"eu-west-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -275,9 +275,9 @@ http_interactions:
         class=\"download\" data-region=\"eu-central-1\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (PV)\n<small>Europe (Frankfurt)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"eu-central-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -289,9 +289,9 @@ http_interactions:
         class=\"download\" data-region=\"eu-central-1\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (HVM)\n<small>Europe (Frankfurt)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"eu-central-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -300,9 +300,9 @@ http_interactions:
         class=\"download\" data-region=\"ap-southeast-1\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (PV)\n<small>Asia Pacific (Singapore)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"ap-southeast-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -317,9 +317,9 @@ http_interactions:
         class=\"download\" data-region=\"ap-southeast-1\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (HVM)\n<small>Asia Pacific (Singapore)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"ap-southeast-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -328,9 +328,9 @@ http_interactions:
         class=\"download\" data-region=\"ap-northeast-1\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (PV)\n<small>Asia Pacific (Tokyo)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"ap-northeast-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -345,9 +345,9 @@ http_interactions:
         class=\"download\" data-region=\"ap-northeast-1\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (HVM)\n<small>Asia Pacific (Tokyo)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"ap-northeast-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -356,9 +356,9 @@ http_interactions:
         class=\"download\" data-region=\"ap-southeast-2\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (PV)\n<small>Asia Pacific (Sydney)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"ap-southeast-2\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -373,9 +373,9 @@ http_interactions:
         class=\"download\" data-region=\"ap-southeast-2\">\n<div class=\"row\">\n<div
         class=\"col-md-12\">\n<h4>\nUbuntu 14.04.1 (HVM)\n<small>Asia Pacific (Sydney)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"ap-southeast-2\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -384,9 +384,9 @@ http_interactions:
         class=\"download\" data-region=\"sa-east-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (PV)\n<small>South America (Sao Paulo)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"sa-east-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -401,9 +401,9 @@ http_interactions:
         class=\"download\" data-region=\"sa-east-1\">\n<div class=\"row\">\n<div class=\"col-md-12\">\n<h4>\nUbuntu
         14.04.1 (HVM)\n<small>South America (Sao Paulo)</small>\n</h4>\n</div>\n<div
         class=\"col-md-2\">\n<div class=\"stack-with-os\">\n<img alt=\"Elasticsearch\"
-        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
-        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-***REMOVED***.png\"
-        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-***REMOVED***.png\"
+        data-at1x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
+        data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-220x234-52a40363137f2e2d8d7543727d745718.png\"
+        src=\"//d33np9n32j53g7.cloudfront.net/assets/stacks/elasticsearch/img/elasticsearch-stack-110x117-db915773197e7a591b504c89be3e772d.png\"
         />\n<span class=\"icon-ubuntu\"></span>\n</div>\n</div>\n<div class=\"col-md-10\">\n<table
         class=\"download-table\" width=\"100%\">\n<thead>\n<tr>\n<th>Version</th>\n<th>Instance
         Store</th>\n<th>EBS</th>\n</tr>\n<tbody>\n<tr data-content-for-region=\"sa-east-1\">\n<td>\nElasticsearch\n\n1.4.4-0\n\n(64-bit)\n</td>\n<td
@@ -441,7 +441,7 @@ http_interactions:
         href=\"https://wiki.bitnami.com\">Wiki</a></li>\n<li><a href=\"http://helpdesk.bitnami.com\">Helpdesk</a></li>\n</ul>\n</div>\n</div>\n</div>\n</div>\n</footer>\n<!--
         Include all compiled plugins (below), or include individual files as needed
         -->\n<script src=\"//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js\"
-        type=\"text/javascript\"></script>\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/application-***REMOVED***.js\"
+        type=\"text/javascript\"></script>\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/application-f028d65c8f62f24a7eb18d60a8775fc0.js\"
         type=\"text/javascript\"></script>\n<div aria-hidden=\"true\" aria-labelledby=\"consoleModalLabel\"
         class=\"modal fade\" id=\"consoleModal\" role=\"dialog\" tabindex=\"-1\">\n<div
         class=\"modal-dialog\">\n<div class=\"modal-inner\">\n<div class=\"modal-header\">\n<button

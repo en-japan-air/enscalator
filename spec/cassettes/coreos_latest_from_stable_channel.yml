@@ -19,7 +19,7 @@ http_interactions:
       message: Moved Permanently
     headers:
       X-Guploader-Uploadid:
-      - ***REMOVED***
+      - AEnB2UpGD1AwlJtU5EZ4VmzEdpd51IPtdOmBYZ0kpTL38UHDNvByl23g6Q0QSmrvcoiPp7ju9qQIf9eAGAcKXq9KlNqoicMnrw
       Location:
       - http://stable.release.core-os.net/amd64-usr/index.html
       Date:
@@ -58,7 +58,7 @@ http_interactions:
       message: OK
     headers:
       X-Guploader-Uploadid:
-      - ***REMOVED***-UEWYEzFUlF-***REMOVED***_5yavf-hnQMlLU3kg7ljg
+      - AEnB2UpENvRE1C8IcrY9S0OBoiKFSZxoZkg09A-UEWYEzFUlF-v5i0Ce8HVBsoKQA6USklC4z9SHc_5yavf-hnQMlLU3kg7ljg
       Date:
       - Mon, 18 Jan 2016 05:11:34 GMT
       Cache-Control:
@@ -68,7 +68,7 @@ http_interactions:
       Last-Modified:
       - Tue, 08 Dec 2015 16:39:07 GMT
       Etag:
-      - '"***REMOVED***"'
+      - '"d126962aa171f084f2f94fba760be78d"'
       X-Goog-Generation:
       - '1449592747332000'
       X-Goog-Metageneration:
@@ -136,7 +136,7 @@ http_interactions:
       message: OK
     headers:
       X-Guploader-Uploadid:
-      - ***REMOVED***_OO1QIz9tQ-SvGwqDGvP7FO1HsQQy3Bqee3Su-1R3xPlLCg-3NjAQ
+      - AEnB2Uowu0dR0P8U2CrColHwutWCJi1noPXlPDI4JPAAm_OO1QIz9tQ-SvGwqDGvP7FO1HsQQy3Bqee3Su-1R3xPlLCg-3NjAQ
       Expires:
       - Mon, 18 Jan 2016 06:11:35 GMT
       Date:
@@ -146,7 +146,7 @@ http_interactions:
       Last-Modified:
       - Tue, 08 Dec 2015 16:34:06 GMT
       Etag:
-      - '"***REMOVED***"'
+      - '"6eb352b61ba08104480cfd1fa79c25c2"'
       X-Goog-Generation:
       - '1449592446324000'
       X-Goog-Metageneration:

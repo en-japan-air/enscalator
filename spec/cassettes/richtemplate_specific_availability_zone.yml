@@ -18,7 +18,7 @@ http_interactions:
       Host:
       - ec2.us-east-1.amazonaws.com
       X-Amz-Content-Sha256:
-      - ***REMOVED***
+      - a4541cc6cd06d90dbf380a65d6eaab5b64476077df590c1b7d34985c7100f489
       Authorization:
       - AWS4-HMAC-SHA256 ***REMOVED***-east-1/ec2/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,

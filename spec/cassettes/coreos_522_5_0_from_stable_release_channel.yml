@@ -64,7 +64,7 @@ http_interactions:
       Last-Modified:
       - Tue, 17 Mar 2015 17:02:02 GMT
       Etag:
-      - '"***REMOVED***"'
+      - '"df9f842e8495100df0090dd4bf93fda3"'
       X-Goog-Generation:
       - '1426611722488000'
       X-Goog-Metageneration:
@@ -136,7 +136,7 @@ http_interactions:
       Last-Modified:
       - Sat, 07 Feb 2015 00:14:12 GMT
       Etag:
-      - '"***REMOVED***"'
+      - '"daa50466e3e1ef62473d2d8a63f59c11"'
       X-Goog-Generation:
       - '1423268052480000'
       X-Goog-Metageneration:
