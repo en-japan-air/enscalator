@@ -43,7 +43,7 @@ http_interactions:
       X-Rack-Cache:
       - miss
       Set-Cookie:
-      - _bitnami_session=BAh7CEkiD3Nlc3Npb25faWQGOgZFVEkiJTMzYTlkNDM4MGE3ODU2ZWI1Y2MyM2YyZjY4YmZiYjg4BjsAVEkiFmFjY291bnRfcmV0dXJuX3RvBjsARiImL3N0YWNrL2VsYXN0aWNzZWFyY2gvY2xvdWQvYW1hem9uSSIQX2NzcmZfdG9rZW4GOwBGSSIxTVFqRzRoUUhRM2ZBT1NKQ1ZZOHorREx4Y0poTjBMamdmcnZ3b0p5TjBodz0GOwBG--***REMOVED***;
+      - _bitnami_session=BAh7CEkiD3Nlc3Npb25faWQGOgZFVEkiJTMzYTlkNDM4MGE3ODU2ZWI1Y2MyM2YyZjY4YmZiYjg4BjsAVEkiFmFjY291bnRfcmV0dXJuX3RvBjsARiImL3N0YWNrL2VsYXN0aWNzZWFyY2gvY2xvdWQvYW1hem9uSSIQX2NzcmZfdG9rZW4GOwBGSSIxTVFqRzRoUUhRM2ZBT1NKQ1ZZOHorREx4Y0poTjBMamdmcnZ3b0p5TjBodz0GOwBG--05d5e4f45bc0116c83d65ce0e569ee09ddbdebc3;
         path=/; HttpOnly
       X-Powered-By:
       - Phusion Passenger
@@ -77,13 +77,13 @@ http_interactions:
         [] }\n    }\n  //]]>\n</script>\n<script>\n  //<![CDATA[\n    WebFont.load(WebFontConfig);\n
         \ //]]>\n</script>\n\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application-aaf1cbd7b507e0edb2386bd56f9945fc.css\"
         media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<!--[if lte IE 9]>\n<link
-        href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split2-***REMOVED***.css\"
-        media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split3-***REMOVED***.css\"
+        href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split2-0af88783b36e3a8de9f35d328bdd4ab5.css\"
+        media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split3-17fdf0d5a9f13941cd777c2db71f4349.css\"
         media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<![endif]-->\n<link
-        href=\"//d33np9n32j53g7.cloudfront.net/assets/new/favicon-***REMOVED***.png\"
+        href=\"//d33np9n32j53g7.cloudfront.net/assets/new/favicon-1b3baea7fd1b9182e71366507efa5d6e.png\"
         rel=\"shortcut icon\">\n<!-- HTML5 Shim and Respond.js IE8 support of HTML5
         elements and media queries -->\n<!-- WARNING: Respond.js doesn't work if you
-        view the page via file:// -->\n<!--[if lt IE 9]>\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/ie-***REMOVED***.js\"
+        view the page via file:// -->\n<!--[if lt IE 9]>\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/ie-1b067d2a3ec9d72b71693aa05193a525.js\"
         type=\"text/javascript\"></script>\n<![endif]-->\n</head>\n<body class=\"stacks-cloud_amazon
         stacks-cloud_amazon-elasticsearch \">\n<div id=\"fb-root\"></div>\n<header
         role=\"navigation\">\n<div class=\"container\">\n<div class=\"navbar-header\">\n<button
@@ -135,7 +135,7 @@ http_interactions:
         data-target=\"#launchImageModal-elasticsearch-aws\" data-toggle=\"modal\"
         href=\"/launch/elasticsearch/aws\" role=\"button\" style=\"display: none !important\">Launch
         Elasticsearch Now</a>\n\n<p class=\"small\">Launch a free demo server now!</p>\n</div>\n</div>\n</div>\n<div
-        class=\"panel-footer\">\n<img alt=\"Aws-logo\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo@2x-***REMOVED***.png\"
+        class=\"panel-footer\">\n<img alt=\"Aws-logo\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo@2x-11eb59ad7454131c142634bc7bc4972c.png\"
         height=\"50\" src=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo-cc3b9db4f2da017348e1a630539872d0.png\"
         />\n</div>\n</div>\n<article>\n\n<p>In addition to providing free, ready to
         deploy Cloud Images, we also offer Bitnami Cloud Hosting, a subscription service
@@ -542,13 +542,13 @@ http_interactions:
         [] }\n    }\n  //]]>\n</script>\n<script>\n  //<![CDATA[\n    WebFont.load(WebFontConfig);\n
         \ //]]>\n</script>\n\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application-aaf1cbd7b507e0edb2386bd56f9945fc.css\"
         media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<!--[if lte IE 9]>\n<link
-        href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split2-***REMOVED***.css\"
-        media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split3-***REMOVED***.css\"
+        href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split2-0af88783b36e3a8de9f35d328bdd4ab5.css\"
+        media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<link href=\"//d33np9n32j53g7.cloudfront.net/assets/application_split3-17fdf0d5a9f13941cd777c2db71f4349.css\"
         media=\"screen\" rel=\"stylesheet\" type=\"text/css\" />\n<![endif]-->\n<link
-        href=\"//d33np9n32j53g7.cloudfront.net/assets/new/favicon-***REMOVED***.png\"
+        href=\"//d33np9n32j53g7.cloudfront.net/assets/new/favicon-1b3baea7fd1b9182e71366507efa5d6e.png\"
         rel=\"shortcut icon\">\n<!-- HTML5 Shim and Respond.js IE8 support of HTML5
         elements and media queries -->\n<!-- WARNING: Respond.js doesn't work if you
-        view the page via file:// -->\n<!--[if lt IE 9]>\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/ie-***REMOVED***.js\"
+        view the page via file:// -->\n<!--[if lt IE 9]>\n<script src=\"//d33np9n32j53g7.cloudfront.net/assets/ie-1b067d2a3ec9d72b71693aa05193a525.js\"
         type=\"text/javascript\"></script>\n<![endif]-->\n</head>\n<body class=\"stacks-cloud_amazon
         stacks-cloud_amazon-elasticsearch \">\n<div id=\"fb-root\"></div>\n<header
         role=\"navigation\">\n<div class=\"container\">\n<div class=\"navbar-header\">\n<button
@@ -600,7 +600,7 @@ http_interactions:
         data-target=\"#launchImageModal-elasticsearch-aws\" data-toggle=\"modal\"
         href=\"/launch/elasticsearch/aws\" role=\"button\" style=\"display: none !important\">Launch
         Elasticsearch Now</a>\n\n<p class=\"small\">Launch a free demo server now!</p>\n</div>\n</div>\n</div>\n<div
-        class=\"panel-footer\">\n<img alt=\"Aws-logo\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo@2x-***REMOVED***.png\"
+        class=\"panel-footer\">\n<img alt=\"Aws-logo\" data-at2x=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo@2x-11eb59ad7454131c142634bc7bc4972c.png\"
         height=\"50\" src=\"//d33np9n32j53g7.cloudfront.net/assets/new/partners/aws-logo-cc3b9db4f2da017348e1a630539872d0.png\"
         />\n</div>\n</div>\n<article>\n\n<p>In addition to providing free, ready to
         deploy Cloud Images, we also offer Bitnami Cloud Hosting, a subscription service

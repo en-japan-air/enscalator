@@ -142,8 +142,8 @@ http_interactions:
         update && apt-get upgrade -y && apt-get install -y unattended-upgrades python-pip\r\n}}}\r\n\r\nHowever
         [[http://cloudinit.readthedocs.org/en/latest/topics/examples.html|other formats]]
         for !UserData are also supported, such as:\r\n\r\n{{{\r\ncloud-config:\r\npackages:\r\n
-        - pwgen\r\npackage_upgrade: true\r\nssh_keys:\r\n  rsa_public: ssh-rsa ***REMOVED***\r\n
-        \ rsa_public: ssh-rsa ***REMOVED***\r\n}}}\r\n\r\nThe
+        - pwgen\r\npackage_upgrade: true\r\nssh_keys:\r\n  rsa_public: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAGEAoPRhIfLvedSDKw7XdewmZ3h8eIXJD7TRHtVExampleOne\r\n
+        \ rsa_public: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAGEAoPRhIfLvedSDKw7XdewmZ3h8eIXJD7TRHtVExampleTwo\r\n}}}\r\n\r\nThe
         {{{unattended-upgrades}}} package is described on UnattendedUpgrades.\r\n\r\n\r\n----\r\nSee
         also [[Cloud]] and [[Teams/Cloud]].\r\n"
     http_version: 

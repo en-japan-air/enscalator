@@ -19,7 +19,7 @@ module Enscalator
                    multizone: 'false',
                    engine: 'MySQL',
                    engine_version: '5.6',
-                   parameter_group: '***REMOVED***',
+                   parameter_group: 'default.mysql5.6',
                    instance_type: 'db.t2.small',
                    properties: {})
 

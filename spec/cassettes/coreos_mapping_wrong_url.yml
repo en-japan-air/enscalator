@@ -19,7 +19,7 @@ http_interactions:
       message: Not Found
     headers:
       X-Guploader-Uploadid:
-      - ***REMOVED***
+      - AEnB2UrYLMoMTDK7Ibkm67Y3AN115n3tu7SVFhLu4FduWCL9LU2tXfS3mmzK6QnKSgRQGkrhRBq03NKXNUPkgmdkrZSKARQ2iA
       Content-Type:
       - application/xml; charset=UTF-8
       Content-Length:

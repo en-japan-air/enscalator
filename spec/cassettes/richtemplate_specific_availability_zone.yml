@@ -20,9 +20,9 @@ http_interactions:
       X-Amz-Content-Sha256:
       - a4541cc6cd06d90dbf380a65d6eaab5b64476077df590c1b7d34985c7100f489
       Authorization:
-      - AWS4-HMAC-SHA256 ***REMOVED***-east-1/ec2/aws4_request,
+      - AWS4-HMAC-SHA256 Credential=<AWS_ACCESS_KEY_ID>/20150715/us-east-1/ec2/aws4_request,
         SignedHeaders=content-type;host;user-agent;x-amz-content-sha256;x-amz-date,
-        Signature=***REMOVED***
+        Signature=badd1d7cf1c4bdb6c866297fa8f5c5e554c34a40d6974fe0690a6b71f2ec8fff
       Content-Length:
       - '51'
       Accept:
@@ -75,6 +75,6 @@ http_interactions:
                 </item>
             </availabilityZoneInfo>
         </DescribeAvailabilityZonesResponse>
-    http_version: 
+    http_version:
   recorded_at: Wed, 15 Jul 2015 03:13:14 GMT
 recorded_with: VCR 2.9.3

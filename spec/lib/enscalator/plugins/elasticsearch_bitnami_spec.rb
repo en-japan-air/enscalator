@@ -15,7 +15,7 @@ describe Enscalator::Plugins::ElasticsearchBitnami do
           @app_name = es_test_app_name
           value(Description: es_test_description)
           mock_availability_zones
-          class_eval { define_method('aws_account_id') { '0***REMOVED***' } }
+          class_eval { define_method('aws_account_id') { '0123456789012' } }
           elasticsearch_init(es_test_app_name)
         end
       end
@@ -57,7 +57,7 @@ describe Enscalator::Plugins::ElasticsearchBitnami do
           @app_name = es_test_app_name
           value(Description: es_test_description)
           mock_availability_zones
-          class_eval { define_method('aws_account_id') { '0***REMOVED***' } }
+          class_eval { define_method('aws_account_id') { '0123456789012' } }
           elasticsearch_init(es_test_app_name,
                              properties: es_test_properties)
         end
