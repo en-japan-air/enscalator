@@ -121,7 +121,7 @@ module Enscalator
         rds_instance_resource_name = "RDS#{db_name}Instance"
         resource rds_instance_resource_name,
                  Type: 'AWS::RDS::DBInstance',
-                 Properties: props.merge(rds_props)
+                 Properties: rds_props.merge(props)
 
         output "RDS#{db_name}EndpointAddress",
                Description: "#{db_name} Endpoint Address",
