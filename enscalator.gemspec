@@ -6,20 +6,17 @@ require 'enscalator/version'
 Gem::Specification.new do |spec|
   spec.name = 'enscalator'
   spec.version = Enscalator::VERSION
-  spec.authors = ['Ugo Bataillard']
-  spec.email = ['ugo.bataillard@en-japan.io']
-
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] =
-      "TODO: Set to 'http://mygemserver.com' to prevent pushes to rubygems.org (delete to allow pushes to any server.)"
-  end
-
-  spec.required_ruby_version = '~> 2.0'
-
-  spec.summary = 'Make enjapan apps webscale'
   spec.description = 'Make them really webscale'
-  spec.homepage = 'https://www.github.com/en-japan/enscalator'
+  spec.summary = 'Make enjapan apps webscale'
   spec.license = 'None'
+  spec.authors = ['Ugo Bataillard', 'Denis Vazhenin', 'David Hagege', 'Yongyu Lee', 'Junji Watanabe']
+  spec.email = ['ugo@bataillard.me',
+                'denis.vazhenin@me.com',
+                'david.hagege@gmail.com',
+                'aleeyyu+01@gmail.com',
+                'watanabe0621@gmail.com']
+  spec.required_ruby_version = '~> 2.0'
+  spec.homepage = 'https://www.github.com/en-japan/enscalator'
 
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir = 'exe'
