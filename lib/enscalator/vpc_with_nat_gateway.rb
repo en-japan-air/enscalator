@@ -10,9 +10,9 @@ module Enscalator
       # Template method
       def tpl
         description = <<-EOS.gsub(/^\s+\|/, '')
-          |AWS CloudFormation template creating VPC environment.
+          |AWS CloudFormation template for the VPC environment.
           |For each availability zone stack creates: the public subnet, internet and NAT gateways,
-          |internet access from the private subnets, routing configuration for corresponding subnets
+          |internet access from private subnets, routing configuration for corresponding subnets
           |and security groups.
         EOS
 

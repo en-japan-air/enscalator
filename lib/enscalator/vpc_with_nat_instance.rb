@@ -7,18 +7,16 @@ module Enscalator
 
       # Template method
       def tpl
-        nat_key_name = gen_ssh_key_name('vpc-nat', region, stack_name)
-
         description = <<-EOS.gsub(/^\s+\|/, '')
-          |AWS CloudFormation for en-japan vpc: template creating en japan environment in a VPC.
-          |The stack contains for each availability zone: the public subnet, NAT device for
-          |internet access from the private subnets, internet gateway, routing configuration for
-          |corresponding subnets and security groups.
+          |AWS CloudFormation template for the VPC environment.
+          |For each availability zone stack creates: the public subnet, internet gateway, NAT EC2 instance
+          |internet access from private subnets, routing configuration for corresponding subnets
+          |and security groups.
         EOS
-
-        pre_run { create_ssh_key nat_key_name, region, force_create: false }
-
         value Description: description
+
+        nat_key_name = gen_ssh_key_name('vpc-nat', region, stack_name)
+        pre_run { create_ssh_key nat_key_name, region, force_create: false }
 
         parameter_ec2_instance_type 'NAT', type: 'c4.large'
 

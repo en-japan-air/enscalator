@@ -6,8 +6,8 @@ require 'enscalator/version'
 Gem::Specification.new do |spec|
   spec.name = 'enscalator'
   spec.version = Enscalator::VERSION
-  spec.description = 'Make them really webscale'
-  spec.summary = 'Make enjapan apps webscale'
+  spec.description = 'Webscale applications from AIR at en-japan inc.'
+  spec.summary = 'Make apps created by AIR at en-japan inc. really webscale.'
   spec.license = 'MIT'
   spec.authors = ['Ugo Bataillard', 'Denis Vazhenin', 'David Hagege', 'Yongyu Lee', 'Junji Watanabe']
   spec.email = ['ugo@bataillard.me',
@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
                 'aleeyyu+01@gmail.com',
                 'watanabe0621@gmail.com']
   spec.required_ruby_version = '~> 2.0'
-  spec.homepage = 'https://www.github.com/en-japan/enscalator'
+  spec.homepage = 'https://www.github.com/en-japan-air/enscalator'
 
   spec.files = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir = 'exe'

@@ -14,7 +14,7 @@ module Enscalator
                              ssh_key:,
                              es_config: {},
                              os: 'Amazon Linux 2015.09',
-                             cookbook: 'https://github.com/en-japan/opsworks-elasticsearch-cookbook.git')
+                             cookbook: 'https://github.com/en-japan-air/opsworks-elasticsearch-cookbook.git')
 
         parameter "ES#{app_name}ChefCookbook",
                   Default: cookbook,

@@ -21,6 +21,8 @@ module Enscalator
         ubuntu_init instance_name, instance_type: instance_type, properties: { 'UserData' => redis_user_data }
       end
 
+      # Install and run Redis on EC2 instance
+      # @return [String] user-data
       def redis_user_data
         Base64.encode64(%(
           #!/usr/bin/env bash
