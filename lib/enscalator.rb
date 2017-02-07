@@ -34,7 +34,7 @@ module Enscalator
       opt :region, 'AWS Region', type: String, default: 'us-east-1', short: 'r'
       opt :parameters, "Parameters 'Key1=Value1;Key2=Value2'", type: String, short: 'p'
       opt :stack_name, 'Stack name', type: String, short: 's'
-      opt :private_hosted_zone, "Private hosted zone (e.x. 'enjapan.prod.')", type: String, short: 'z'
+      opt :private_hosted_zone, "Private hosted zone (e.x. 'default-vpc.internal')", type: String, short: 'z'
       opt :public_hosted_zone, 'Public hosted zone', type: String, short: 'g'
       opt :create_stack, 'Create the stack', default: false, short: 'c'
       opt :update_stack, 'Update already deployed stack', default: false, short: 'u'
@@ -42,7 +42,7 @@ module Enscalator
       opt :post_run, 'Use post-run hooks', default: true, short: 'o'
       opt :expand, 'Print generated JSON template', default: false, short: 'x'
       opt :capabilities, 'AWS capabilities', default: 'CAPABILITY_IAM', short: 'a'
-      opt :vpc_stack_name, 'VPC stack name', default: 'enjapan-vpc', short: 'n'
+      opt :vpc_stack_name, 'VPC stack name', default: 'default-vpc', short: 'n'
       opt :availability_zone, 'Deploy to specific availability zone', default: 'all', short: 'd'
       opt :profile, 'Use a specific profile from your credential file', type: String, default: nil
 

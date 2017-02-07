@@ -1,7 +1,7 @@
 module Enscalator
   module Plugins
     # RethinkDB appliance
-    class RethinkDB
+    module RethinkDB
       # Mapping for Rethinkdb x64 images
       def self.mapping
         {
