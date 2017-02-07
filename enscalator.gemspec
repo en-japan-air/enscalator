@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version = Enscalator::VERSION
   spec.description = 'Make them really webscale'
   spec.summary = 'Make enjapan apps webscale'
-  spec.license = 'None'
+  spec.license = 'MIT'
   spec.authors = ['Ugo Bataillard', 'Denis Vazhenin', 'David Hagege', 'Yongyu Lee', 'Junji Watanabe']
   spec.email = ['ugo@bataillard.me',
                 'denis.vazhenin@me.com',
