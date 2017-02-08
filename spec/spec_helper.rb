@@ -1,10 +1,12 @@
 # Coveralls
 require 'simplecov'
 require 'coveralls'
-SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter[
-  Coveralls::SimpleCov::Formatter,
-  SimpleCov::Formatter::HTMLFormatter
-]
+SimpleCov.formatter = SimpleCov::Formatter::MultiFormatter.new(
+  [
+    Coveralls::SimpleCov::Formatter,
+    SimpleCov::Formatter::HTMLFormatter
+  ]
+)
 SimpleCov.start do
   add_filter 'lib/enscalator/templates' # don't track coverage for templates
   add_filter 'spec/lib'

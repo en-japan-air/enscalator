@@ -1,5 +1,9 @@
 # Enscalator
 
+[![Build Status](https://travis-ci.org/en-japan-air/enscalator.svg?branch=master)](https://travis-ci.org/en-japan-air/enscalator)
+[![Coverage Status](https://coveralls.io/repos/github/en-japan-air/enscalator/badge.svg?branch=master)](https://coveralls.io/github/en-japan-air/enscalator?branch=master)
+[![Inline docs](http://inch-ci.org/github/en-japan-air/enscalator.svg?branch=master)](http://inch-ci.org/github/en-japan-air/enscalator)
+
 Enscalator is based on [bazaarvoice/cloudformation-ruby-dsl](https://github.com/bazaarvoice/cloudformation-ruby-dsl) 
 and helps cloudforming applications created by AIR at en-japan inc.
 
@@ -33,7 +37,7 @@ Usage: enscalator [arguments]
   -r, --region=<s>                 AWS Region (default: us-east-1)
   -p, --parameters=<s>             Parameters 'Key1=Value1;Key2=Value2'
   -s, --stack-name=<s>             Stack name
-  -z, --private-hosted-zone=<s>    Private hosted zone (e.x. 'enjapan.prod.')
+  -z, --private-hosted-zone=<s>    Private hosted zone (e.x. 'default-vpc.internal')
   -g, --public-hosted-zone=<s>     Public hosted zone
   -c, --create-stack               Create the stack
   -u, --update-stack               Update already deployed stack
