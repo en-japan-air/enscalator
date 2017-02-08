@@ -47,11 +47,4 @@ Gem::Specification.new do |spec|
   spec.add_runtime_dependency 'ipaddress', '~> 0.8'
   spec.add_runtime_dependency 'semantic', '~> 1.4.0'
   spec.add_runtime_dependency 'ruby-progressbar', '~> 1.7.5'
-
-  # Create pre-release version unless it is a tag
-  if ENV['TRAVIS']
-    if ENV['TRAVIS_TAG'].nil? || ENV['TRAVIS_TAG'].empty?
-      spec.version = "#{spec.version}-alpha-#{ENV['TRAVIS_BUILD_NUMBER']}"
-    end
-  end
 end
