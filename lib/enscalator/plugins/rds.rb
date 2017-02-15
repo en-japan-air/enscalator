@@ -15,6 +15,7 @@ module Enscalator
       def rds_init(db_name,
                    use_snapshot: false,
                    allocated_storage: 5,
+                   backup_retention_period: 5,
                    storage_type: 'gp2',
                    multizone: 'false',
                    engine: 'MySQL',
@@ -115,6 +116,7 @@ module Enscalator
           DBSubnetGroupName: ref("RDS#{db_name}SubnetGroup"),
           DBParameterGroupName: ref("RDS#{db_name}ParameterGroup"),
           AllocatedStorage: ref("RDS#{db_name}AllocatedStorage"),
+          BackupRetentionPeriod: backup_retention_period,
           StorageType: ref("RDS#{db_name}StorageType")
         }
 
