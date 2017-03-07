@@ -1,13 +1,16 @@
-# Enscalator
+<a href="https://github.com/en-japan-air/enscalator">
+	<img height="300" width="100%" src="https://cdn.rawgit.com/en-japan-air/enscalator/84f0b3f/.logo.svg">
+</a>
 
 [![Build Status](https://travis-ci.org/en-japan-air/enscalator.svg?branch=master)](https://travis-ci.org/en-japan-air/enscalator)
 [![Gem](https://img.shields.io/gem/v/enscalator.svg)](https://rubygems.org/gems/enscalator/)
 [![Coverage Status](https://coveralls.io/repos/github/en-japan-air/enscalator/badge.svg?branch=master)](https://coveralls.io/github/en-japan-air/enscalator?branch=master)
 [![Inline docs](http://inch-ci.org/github/en-japan-air/enscalator.svg?branch=master)](http://inch-ci.org/github/en-japan-air/enscalator)
 
+# What is enscalator?
+
 Enscalator is based on [bazaarvoice/cloudformation-ruby-dsl](https://github.com/bazaarvoice/cloudformation-ruby-dsl) 
 and helps cloudforming applications created by AIR at en-japan inc.
-
 
 ## Installation
 
