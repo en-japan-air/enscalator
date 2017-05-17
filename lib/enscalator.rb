@@ -56,7 +56,7 @@ module Enscalator
 
     if opts[:availability_zone_given]
       valid_values = ('a'..'e').to_a << 'all'
-      unless valid_values.include? opts[:availability_zone]
+      unless opts[:availability_zone].split(',').all?{|x| valid_values.include?(x)}
         STDERR.puts %(Availability zone can be only one off "#{valid_values.join(',')}")
         exit
       end
