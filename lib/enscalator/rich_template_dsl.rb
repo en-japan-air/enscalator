@@ -205,5 +205,19 @@ module Enscalator
       resp = cfn_client(region).send(action, options)
       resp.stack_id
     end
+
+    def has_multiple_envs
+      @deployment_env_param = 'DeploymentEnv'
+      parameter @deployment_env_param, {
+        Description: 'Environment parameters to configure stack resources (production, staging or development)',
+        Type: 'String',
+        AllowedValues: %w(production staging development),
+        Default: 'staging'
+      }
+    end
+
+    def deployment_env
+      parameters[@deployment_env_param]
+    end
   end # class RichTemplateDSL
 end # module Enscalator
