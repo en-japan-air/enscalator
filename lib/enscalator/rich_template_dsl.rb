@@ -89,16 +89,16 @@ module Enscalator
 
     # Get a list of availability zones for the given region
     def read_availability_zones
-      az = @options[:availability_zone].to_sym
+      az = @options[:availability_zone]
       supported_az = ec2_client(region).describe_availability_zones.availability_zones
       alive_az = supported_az.select { |zone| zone.state == 'available' }
       az_list = alive_az.collect(&:zone_name).map { |n| [n.last.to_sym, n] }.to_h
 
       # use all zones, specific one, or fail if zone is not supported in given region
-      if az.equal?(:all)
+      if az == 'all'
         az_list
-      elsif az_list.keys.include?(az.to_sym)
-        az_list.select { |k, _| k == az }
+      elsif az.split(',').map(&:to_sym).all?{|x| az_list.include?(x)}
+        az_list.select { |k, _| az.split(',').map(&:to_sym).include?(k) }
       else
         fail("Requested zone #{az} is not supported in #{region}, supported ones are #{az_list.keys.join(',')}")
       end
