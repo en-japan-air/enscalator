@@ -1,7 +1,7 @@
 language: ruby
 cache: bundler
 rvm:
-- 2.2.1
+  - 2.3.4
 script: bundle exec rake test
 notifications:
   email: false
