@@ -74,7 +74,45 @@ describe Enscalator::Plugins::Route53 do
     end
   end
 
-  describe '#create_hosted_zone' do
+  describe '#create_public_hosted_zone' do
+    let(:test_public_hosted_zone) { 'domain.public.zone' }
+    subject(:cmd_opts) do
+      default_cmd_opts(template_fixture.name, template_fixture.name.underscore).merge(hosted_zone: test_public_hosted_zone)
+    end
+
+    context 'when invoked with default parameters' do
+      it 'generates resource template with given fqdn and tags' do
+        route53_template = template_fixture.new(cmd_opts)
+        test_comment = 'test comment'
+        route53_template.create_public_hosted_zone(app_name, cmd_opts[:stack_name], test_public_hosted_zone, test_comment)
+        dict = route53_template.instance_variable_get(:@dict)
+        expect(dict[:Description]).to eq(description)
+        expect(dict[:Resources]["#{app_name}HostedZone"].empty?).to be_falsey
+        test_resources = dict[:Resources]["#{app_name}HostedZone"]
+        expect(test_resources[:Type]).to eq('AWS::Route53::HostedZone')
+        properties = test_resources[:Properties]
+        expect(properties[:Name]).to eq(test_public_hosted_zone)
+        expect(properties[:HostedZoneConfig]).to include(**{ Comment: test_comment })
+        expected_tags = [{ Key: 'Application', Value: app_name }, { Key: 'Stack', Value: cmd_opts[:stack_name], }]
+        expect(properties[:HostedZoneTags]).to include(*expected_tags)
+      end
+    end
+
+    context 'when additional tags passed' do
+      it 'generates resource template using combination of default and provided tags' do
+        route53_template = template_fixture.new(cmd_opts)
+        test_comment = 'test comment'
+        test_tags = [{ Key: 'testtag1', Value: 'sometest1' }]
+        route53_template.create_public_hosted_zone(app_name, cmd_opts[:stack_name], test_public_hosted_zone, test_comment, tags: test_tags)
+        dict = route53_template.instance_variable_get(:@dict)
+        test_resources = dict[:Resources]["#{app_name}HostedZone"]
+        properties = test_resources[:Properties]
+        expect(properties[:HostedZoneTags]).to include(*test_tags)
+      end
+    end
+  end
+
+  describe '#create_private_hosted_zone' do
     let(:test_hosted_zone) { 'private.enjapan.test' }
     subject(:cmd_opts) do
       default_cmd_opts(template_fixture.name, template_fixture.name.underscore).merge(hosted_zone: test_hosted_zone)
@@ -84,7 +122,7 @@ describe Enscalator::Plugins::Route53 do
     context 'when not implemented method gets invoked' do
       it 'raises Runtime exception' do
         route53_template = template_fixture.new(cmd_opts)
-        expect { route53_template.create_hosted_zone }.to raise_exception(RuntimeError)
+        expect { route53_template.create_private_hosted_zone }.to raise_exception(RuntimeError)
       end
     end
   end

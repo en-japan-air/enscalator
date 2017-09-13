@@ -65,9 +65,38 @@ module Enscalator
                  Properties: properties
       end
 
-      # [RESERVED] Create new hosted zone
-      def create_hosted_zone
-        fail('method "create_hosted_zone" is not implemented yet')
+      # Create new public hosted zone
+      def create_public_hosted_zone(app_name, stack_name, name, comment, tags: [])
+        properties = {
+          Name: name
+        }
+
+        properties[:HostedZoneConfig] = {
+          Comment: comment
+        } unless comment.blank?
+
+        properties[:HostedZoneTags] = [
+          {
+            Key: 'Application',
+            Value: app_name
+          },
+          {
+            Key: 'Stack',
+            Value: stack_name
+          }
+        ]
+        properties[:HostedZoneTags].concat(tags) unless tags.blank?
+
+        resource_name = "#{app_name}HostedZone"
+        resource resource_name,
+                 Type: 'AWS::Route53::HostedZone',
+                 Properties: properties
+        resource_name
+      end
+
+      # [RESERVED] Create new private hosted zone
+      def create_private_hosted_zone
+        fail('method "create_private_hosted_zone" is not implemented')
       end
 
       # TODO: http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-recordset.html
