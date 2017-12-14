@@ -1,8 +1,9 @@
-require: rubocop-rspec
-
 inherit_from: .rubocop_todo.yml
 
 AllCops:
+  TargetRubyVersion: 2.3
+  Include:
+    - rubocop-rspec
   Exclude:
     - vendor/**/*
     - tools/openvpn/**/*
